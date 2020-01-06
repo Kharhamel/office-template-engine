@@ -1146,6 +1146,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 
 	function RaiseError($Msg, $NoErrMsg=false) {
 		// Overwrite the parent RaiseError() method.
+        ob_start(); //catch echos from tbs
 		$exit = (!$this->TBS->NoErr);
 		if ($exit) $Msg .= ' The process is ending, unless you set NoErr property to true.';
 		$this->TBS->meth_Misc_Alert('OpenTBS Plugin', $Msg, $NoErrMsg);
@@ -1154,7 +1155,8 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 				if ($this->TbsCurrIdx!==false) $this->DebugLst[$this->TbsGetFileName($this->TbsCurrIdx)] = $this->TBS->Source;
 				$this->TbsDebug_Merge(true, false);
 			}
-			exit;
+            $Msg = ob_get_clean();
+			throw new \Exceptions\TbsPluginException($Msg);
 		}
 		return false;
 	}
