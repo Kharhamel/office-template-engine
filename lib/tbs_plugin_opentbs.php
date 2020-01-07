@@ -1156,7 +1156,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 				$this->TbsDebug_Merge(true, false);
 			}
             $Msg = ob_get_clean();
-			throw new \Exceptions\TbsPluginException($Msg);
+			throw new \RuntimeException($Msg);
 		}
 		return false;
 	}

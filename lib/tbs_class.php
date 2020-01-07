@@ -3005,6 +3005,7 @@ function meth_Conv_Str(&$Txt,$ConvBr=true) {
 
 // Standard alert message provided by TinyButStrong, return False is the message is cancelled.
 function meth_Misc_Alert($Src,$Msg,$NoErrMsg=false,$SrcType=false) {
+    return false; //todo rewrite this function
 	$this->ErrCount++;
 	if ($this->NoErr || (PHP_SAPI==='cli') ) {
 		$t = array('','','','','');
