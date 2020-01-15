@@ -1,7 +1,11 @@
-OpenTBSBundle for Symfony
+HEAVY WIP: rewriting OpenTBSBundle for Symfony
 =========================
 
-This bundle is just a convenient way to use OpenTBS, all the credits go to Skrol29 and the TinyButStrong team. http://www.tinybutstrong.com/
+This is an attempt at rewriting TinyButStrong and its openTDS bundle with more modern code practices.
+
+Originally forked from mbence/opentbs-bundle: https://github.com/mbence/OpenTBSBundle
+
+credits go to Skrol29 and the TinyButStrong team. http://www.tinybutstrong.com/
 
 OpenTBS - create OpenOffice and Ms Office documents with PHP (and Symfony)
 
