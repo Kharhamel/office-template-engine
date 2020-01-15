@@ -616,35 +616,23 @@ public $_ChrProtect = '&#91;';
 public $_PlugIns = array();
 public $_PlugIns_Ok = false;
 public $_piOnFrm_Ok = false;
+    /**
+     * @var array
+     */
+    private $_UserFctLst;
 
-function __construct($Options=null,$VarPrefix='',$FctPrefix='') {
+    function __construct($Options=null,$VarPrefix='',$FctPrefix='') {
 
 	// Compatibility
 	if (is_string($Options)) {
-		$Chrs = $Options;
-		$Options = array('var_prefix'=>$VarPrefix, 'fct_prefix'=>$FctPrefix);
-		if ($Chrs!=='') {
-			$Err = true;
-			$Len = strlen($Chrs);
-			if ($Len===2) { // For compatibility
-				$Options['chr_open']  = $Chrs[0];
-				$Options['chr_close'] = $Chrs[1];
-				$Err = false;
-			} else {
-				$Pos = strpos($Chrs,',');
-				if (($Pos!==false) && ($Pos>0) && ($Pos<$Len-1)) {
-					$Options['chr_open']  = substr($Chrs,0,$Pos);
-					$Options['chr_close'] = substr($Chrs,$Pos+1);
-					$Err = false;
-				}
-			}
-			if ($Err) $this->meth_Misc_Alert('with clsTinyButStrong() function','value \''.$Chrs.'\' is a bad tag delimitor definition.');
-		}
+		$Options = $this->getConfigFromString($Options, $VarPrefix, $FctPrefix);
 	} 
 
 	// Set options
-	$this->VarRef =& $GLOBALS;
-	if (is_array($Options)) $this->SetOption($Options);
+	$this->VarRef =& $GLOBALS; //todo improve this
+	if (is_array($Options)) {
+	    $this->SetOption($Options);
+    }
 
 	// Links to global variables (cannot be converted to static yet because of compatibility)
 	global $_TBS_FormatLst, $_TBS_UserFctLst, $_TBS_BlockAlias, $_TBS_AutoInstallPlugIns, $_TBS_ParallelLst;
@@ -657,6 +645,31 @@ function __construct($Options=null,$VarPrefix='',$FctPrefix='') {
 	// Auto-installing plug-ins
 	if (isset($_TBS_AutoInstallPlugIns)) foreach ($_TBS_AutoInstallPlugIns as $pi) $this->PlugIn(TBS_INSTALL,$pi);
 
+}
+
+    /**
+     * @return string[]
+     */
+private function getConfigFromString(string $Chrs, string $VarPrefix, string $FctPrefix): array
+{
+    $options = ['var_prefix'=>$VarPrefix, 'fct_prefix'=>$FctPrefix];
+    if ($Chrs === '') {
+        return $options;
+    }
+    $Len = strlen($Chrs);
+    if ($Len===2) { // For compatibility
+        $options['chr_open']  = $Chrs[0];
+        $options['chr_close'] = $Chrs[1];
+    } else {
+        $Pos = strpos($Chrs,',');
+        if (($Pos!==false) && ($Pos>0) && ($Pos<$Len-1)) {
+            $options['chr_open']  = substr($Chrs,0,$Pos);
+            $options['chr_close'] = substr($Chrs,$Pos+1);
+        } else {
+            throw new \RuntimeException("with clsTinyButStrong() function, value $Chrs is a bad tag delimitor definition.");
+        }
+    }
+    return $options;
 }
 
 function __call($meth, $args) {
