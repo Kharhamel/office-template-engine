@@ -1155,7 +1155,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 				if ($this->TbsCurrIdx!==false) $this->DebugLst[$this->TbsGetFileName($this->TbsCurrIdx)] = $this->TBS->Source;
 				$this->TbsDebug_Merge(true, false);
 			}
-            $Msg = ob_get_clean();
+            ob_get_clean();
 			throw new \RuntimeException($Msg);
 		}
 		return false;

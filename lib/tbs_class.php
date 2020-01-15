@@ -18,6 +18,8 @@
 if (version_compare(PHP_VERSION,'5.0')<0) echo '<br><b>TinyButStrong Error</b> (PHP Version Check) : Your PHP version is '.PHP_VERSION.' while TinyButStrong needs PHP version 5.0 or higher. You should try with TinyButStrong Edition for PHP 4.';
 /* COMPAT#1 */
 
+include_once __DIR__ .'/utils.php';
+
 // Render flags
 define('TBS_NOTHING', 0);
 define('TBS_OUTPUT', 1);
@@ -246,7 +248,7 @@ public function DataOpen(&$Query,$QryPrms=false) {
 						$Empty = true;
 					}
 				} elseif (is_object($Var)) {
-					$ArgLst = $this->TBS->f_Misc_CheckArgLst($x);
+					[$x, $ArgLst] = CheckArgList($x);
 					if (method_exists($Var,$x)) {
 						$f = array(&$Var,$x); unset($Var);
 						$Var = call_user_func_array($f,$ArgLst);
@@ -1223,7 +1225,7 @@ function meth_Locator_Replace(&$Txt,&$Loc,&$Value,$SubStart) {
 					unset($Value); $Value = ''; break;
 				}
 			} elseif (is_object($Value)) {
-				$ArgLst = $this->f_Misc_CheckArgLst($x);
+				[$x, $ArgLst] = CheckArgList($x);
 				if (method_exists($Value,$x)) {
 					if ($this->MethodsAllowed || !in_array(strtok($Loc->FullName,'.'),array('onload','onshow','var')) ) {
 						$x = call_user_func_array(array(&$Value,$x),$ArgLst);
@@ -3137,7 +3139,7 @@ function meth_Misc_UserFctCheck(&$FctInfo,$FctCat,&$FctObj,&$ErrMsg,$FctCheck=fa
 		for ($i=0;$i<=$iMax;$i++) {
 			$x = &$Lst[$i];
 			if (is_object($ObjRef)) {
-				$ArgLst = $this->f_Misc_CheckArgLst($x);
+				[$x, $ArgLst] = CheckArgList($x);
 				if (method_exists($ObjRef,$x)) {
 					if ($i<$iMax) {
 						$f = array(&$ObjRef,$x); unset($ObjRef);
@@ -3709,17 +3711,7 @@ static function f_Misc_ConvSpe(&$Loc) {
 	}
 }
 
-static function f_Misc_CheckArgLst(&$Str) {
-	$ArgLst = array();
-	if (substr($Str,-1,1)===')') {
-		$pos = strpos($Str,'(');
-		if ($pos!==false) {
-			$ArgLst = explode(',',substr($Str,$pos+1,strlen($Str)-$pos-2));
-			$Str = substr($Str,0,$pos);
-		}
-	}
-	return $ArgLst;
-}
+
 
 static function f_Misc_CheckCondition($Str) {
 // Check if an expression like "exrp1=expr2" is true or false.
