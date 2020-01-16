@@ -10,13 +10,18 @@ class OpenTBSTest extends TestCase
 {
     public function testBasicPowerpoint(): void
     {
+        $editedPath = __DIR__.'/var/edited.pptx';
+        if (file_exists($editedPath)) {
+            unlink($editedPath);
+        }
+        
         $tbs = new OpenTBS();
         $handle = fopen(__DIR__.'/var/testOpenTBS.pptx', 'r');
         $tbs->LoadTemplate($handle);
         $tbs->VarRef['textreplace'] = 'super';
         $tbs->VarRef['pic2'] = __DIR__.'/var/pierre.jpeg';
         $tbs->Show(OPENTBS_FILE, __DIR__.'/var/edited.pptx');
-        $this->assertNotNull('');
+        $this->assertFileExists($editedPath);
     }
     
     public function testSubTemplateNotfFound(): void
