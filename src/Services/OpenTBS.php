@@ -2,9 +2,6 @@
 
 namespace OpenTBS\Services;
 
-require_once __DIR__ . '/../lib/tbs_class.php';
-require_once __DIR__ . '/../lib/tbs_plugin_opentbs.php';
-
 /**
  * Service for OpenTBS Bundle
  */
