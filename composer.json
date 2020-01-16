@@ -14,7 +14,6 @@
         },
         "files": [
             "src/lib/utils.php",
-            "src/lib/tbs_class.php",
             "src/lib/tbs_plugin_opentbs.php"
         ]
     },

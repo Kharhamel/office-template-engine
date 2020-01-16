@@ -14,6 +14,8 @@
  * @license LGPL-3.0
  */
 
+use OpenTBS\lib\TBSEngine;
+
 /**
  * Constants to drive the plugin.
  */
@@ -254,7 +256,7 @@ class clsOpenTBS extends clsTbsZip
             $TBS->OtbsCurrFile = $this->TbsGetFileName($idx); // usefull for TbsPicAdd()
             $this->TbsCurrIdx = $idx; // usefull for debug mode
             if ($TbsShow && $onshow) {
-                $TBS->Show(TBS_NOTHING);
+                $TBS->Show(TBSEngine::TBS_NOTHING);
             }
             if ($this->ExtEquiv == 'docx') {
                 $this->MsWord_RenumDocPr($TBS->Source);
@@ -294,11 +296,11 @@ class clsOpenTBS extends clsTbsZip
         if ($Debug) {
             // Do the debug even if other options are used
             $this->TbsDebug_Merge(true, false);
-        } elseif (($Render & TBS_OUTPUT)==TBS_OUTPUT) { // notice that TBS_OUTPUT = OPENTBS_DOWNLOAD
+        } elseif (($Render & TBSEngine::TBS_OUTPUT)==TBSEngine::TBS_OUTPUT) { // notice that TBSEngine::TBS_OUTPUT = OPENTBS_DOWNLOAD
             // download
             $ContentType = (isset($this->ExtInfo['ctype'])) ? $this->ExtInfo['ctype'] : '';
             $this->Flush($Render, $File, $ContentType); // $Render is used because it can contain options OPENTBS_DOWNLOAD and OPENTBS_NOHEADER.
-            $Render = $Render - TBS_OUTPUT; //prevent TBS from an extra output.
+            $Render -= TBSEngine::TBS_OUTPUT; //prevent TBS from an extra output.
         } elseif (($Render & OPENTBS_FILE)==OPENTBS_FILE) {
             // to file
             $this->Flush(TBSZIP_FILE, $File);
@@ -309,7 +311,7 @@ class clsOpenTBS extends clsTbsZip
             $this->OutputSrc = '';
         }
 
-        if (($Render & TBS_EXIT)==TBS_EXIT) {
+        if (($Render & TBSEngine::TBS_EXIT)==TBSEngine::TBS_EXIT) {
             $this->Close();
             exit;
         }
@@ -1322,7 +1324,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         // This technical works with cached fields because already cached fields are placed before the picture.
         $prefix = ($backward) ? '' : '+';
         $Loc->PrmLst['att'] = $prefix.$att;
-        clsTinyButStrong::f_Xml_AttFind($Txt, $Loc, true);
+        TBSEngine::f_Xml_AttFind($Txt, $Loc, true);
 
         // Delete parameter att to prevent TBS from another processing
         unset($Loc->PrmLst['att']);
@@ -1421,7 +1423,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
     {
 
         while (true) {
-            $p = clsTinyButStrong::f_Xml_FindTagStart($Txt, $Element, true, $Pos, $Forward, true);
+            $p = TBSEngine::f_Xml_FindTagStart($Txt, $Element, true, $Pos, $Forward, true);
             if ($p===false) {
                 return false;
             }
@@ -3756,12 +3758,12 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $p = 0;
         $compat_limit_miss = 1000;
         $compat_limit_num = 1048576 - 10000;
-        while (($p=clsTinyButStrong::f_Xml_FindTagStart($Txt, $Tag, true, $p, true, true))!==false) {
+        while (($p=TBSEngine::f_Xml_FindTagStart($Txt, $Tag, true, $p, true, true))!==false) {
             $Loc->PrmPos = array();
             $Loc->PrmLst = array();
             $p2 = $p + $tag_len + 2; // count the char '<' before and the char ' ' after
             $PosEnd = strpos($Txt, '>', $p2);
-            clsTinyButStrong::f_Loc_PrmRead($Txt, $p2, true, '\'"', '<', '>', $Loc, $PosEnd, true); // read parameters
+            TBSEngine::f_Loc_PrmRead($Txt, $p2, true, '\'"', '<', '>', $Loc, $PosEnd, true); // read parameters
             $Delete = false;
             if (isset($Loc->PrmPos[$Att])) {
                 // attribute found
@@ -3857,7 +3859,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $rpl_nbr = 0;
         $item_num = 0;
 
-        $p = clsTinyButStrong::f_Xml_FindTagStart($Txt, $Tag, true, 0, true, true);
+        $p = TBSEngine::f_Xml_FindTagStart($Txt, $Tag, true, 0, true, true);
         if ($p === false) {
             return;
         }
@@ -3871,7 +3873,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         
         do {
             // Next item
-            $p_next = clsTinyButStrong::f_Xml_FindTagStart($Txt, $Tag, true, 0 + $tag_pc, true, true);
+            $p_next = TBSEngine::f_Xml_FindTagStart($Txt, $Tag, true, 0 + $tag_pc, true, true);
             
             // Small text containing the current item
             if ($p_next === false) {
@@ -3912,7 +3914,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
     // In order to refresh the formula results when the merged XLSX is opened, then we delete all <v> elements having a formula.
         $c_close = '</c>';
         $p = 0;
-        while (($p=clsTinyButStrong::f_Xml_FindTagStart($Txt, 'f', true, $p, true, true))!==false) {
+        while (($p=TBSEngine::f_Xml_FindTagStart($Txt, 'f', true, $p, true, true))!==false) {
             $c_p = strpos($Txt, $c_close, $p);
             if ($c_p===false) {
                 return false; // error in the XML
@@ -4017,7 +4019,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
             return false;
         }
 
-        $t0 = clsTinyButStrong::f_Xml_FindTagStart($Txt, 'c', true, $Loc->PosBeg, false, true);
+        $t0 = TBSEngine::f_Xml_FindTagStart($Txt, 'c', true, $Loc->PosBeg, false, true);
         if ($t0===false) {
             return false; // error in the XML structure
         }
@@ -5289,7 +5291,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         // scann sheet/slide list
         $p = 0;
         $idx = 0;
-        while ($loc=clsTinyButStrong::f_Xml_FindTag($Txt, $tag, true, $p, true, false, true, true)) {
+        while ($loc=TBSEngine::f_Xml_FindTag($Txt, $tag, true, $p, true, false, true, true)) {
             $this->OpenDoc_SheetSlides[$idx] = $loc;
             $idx++;
             $p = $loc->PosEnd;
@@ -5369,7 +5371,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
             $tag_close = '</style:style>';
             $tag_close_len = strlen($tag_close);
             $p = 0;
-            while ($loc=clsTinyButStrong::f_Xml_FindTag($Txt, 'style:style', true, $p, true, false, true, false)) {
+            while ($loc=TBSEngine::f_Xml_FindTag($Txt, 'style:style', true, $p, true, false, true, false)) {
                 $p = $loc->PosEnd;
                 if (isset($loc->PrmLst['style:name'])) {
                     $name = $loc->PrmLst['style:name'];
@@ -6404,14 +6406,14 @@ class clsTbsXmlLoc
             $SelfClosing = $this->_SelfClosing($pe);
             if (!$SelfClosing) {
                 if ($Encaps) {
-                    $loc = clsTinyButStrong::f_Xml_FindTag($this->Txt, $this->FindName(), null, $pe, true, -1, false, false);
+                    $loc = TBSEngine::f_Xml_FindTag($this->Txt, $this->FindName(), null, $pe, true, -1, false, false);
                     if ($loc===false) {
                         return false;
                     }
                     $this->pET_PosBeg = $loc->PosBeg;
                     $this->PosEnd = $loc->PosEnd;
                 } else {
-                    $pe = clsTinyButStrong::f_Xml_FindTagStart($this->Txt, $this->FindName(), false, $pe, true, true);
+                    $pe = TBSEngine::f_Xml_FindTagStart($this->Txt, $this->FindName(), false, $pe, true, true);
                     if ($pe===false) {
                         return false;
                     }
@@ -6478,7 +6480,7 @@ class clsTbsXmlLoc
             $Parent = false;
         }
 
-        $PosBeg = clsTinyButStrong::f_Xml_FindTagStart($Txt, $Tag, true, $PosBeg, $Forward, true);
+        $PosBeg = TBSEngine::f_Xml_FindTagStart($Txt, $Tag, true, $PosBeg, $Forward, true);
         if ($PosBeg===false) {
             return false;
         }
@@ -6522,7 +6524,7 @@ class clsTbsXmlLoc
     static function FindElement(&$TxtOrObj, $Tag, $PosBeg, $Forward = true)
     {
 
-        $XmlLoc = clsTbsXmlLoc::FindStartTag($TxtOrObj, $Tag, $PosBeg, $Forward);
+        $XmlLoc = self::FindStartTag($TxtOrObj, $Tag, $PosBeg, $Forward);
         if ($XmlLoc===false) {
             return false;
         }
@@ -6568,7 +6570,7 @@ class clsTbsXmlLoc
     static function FindElementHavingAtt(&$Txt, $Att, $PosBeg, $Forward = true)
     {
 
-        $XmlLoc = clsTbsXmlLoc::FindStartTagHavingAtt($Txt, $Att, $PosBeg, $Forward);
+        $XmlLoc = self::FindStartTagHavingAtt($Txt, $Att, $PosBeg, $Forward);
         if ($XmlLoc===false) {
             return false;
         }
