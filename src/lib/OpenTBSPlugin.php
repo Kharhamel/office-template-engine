@@ -16,6 +16,8 @@
 
 namespace OpenTBS\lib;
 
+use OpenTBS\Exceptions\OpenTBSException;
+
 /**
  * Main class which is a TinyButStrong plug-in.
  * It is also a extension of clsTbsZip so it can directly manage the archive underlying the template.
@@ -1222,7 +1224,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                 $this->TbsDebug_Merge(true, false);
             }
             ob_get_clean();
-            throw new \RuntimeException($Msg);
+            throw new OpenTBSException($Msg);
         }
         return false;
     }

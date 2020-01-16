@@ -18,6 +18,8 @@ namespace OpenTBS\lib;
 
 // *********************************************
 
+use OpenTBS\Exceptions\OpenTBSException;
+
 class TBSEngine
 {
     // Render flags
@@ -129,7 +131,7 @@ class TBSEngine
                 $options['chr_open']  = substr($Chrs, 0, $Pos);
                 $options['chr_close'] = substr($Chrs, $Pos+1);
             } else {
-                throw new \RuntimeException("with clsTinyButStrong() function, value $Chrs is a bad tag delimitor definition.");
+                throw new OpenTBSException("with clsTinyButStrong() function, value $Chrs is a bad tag delimitor definition.");
             }
         }
         return $options;
