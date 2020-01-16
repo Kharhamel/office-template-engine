@@ -14,15 +14,15 @@
  * @license LGPL-3.0
  */
 
-use OpenTBS\lib\clsTbsXmlLoc;
-use OpenTBS\lib\clsTbsZip;
+use OpenTBS\lib\TBSXmlLoc;
+use OpenTBS\lib\TBSZip;
 use OpenTBS\lib\TBSEngine;
 
 /**
  * Main class which is a TinyButStrong plug-in.
  * It is also a extension of clsTbsZip so it can directly manage the archive underlying the template.
  */
-class clsOpenTBS extends clsTbsZip
+class clsOpenTBS extends TBSZip
 {
 
     function OnInstall()
@@ -1336,7 +1336,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         // Try to find the drawing element
         if (isset($this->ExtInfo['pic_entity'])) {
             $tag = $this->ExtInfo['pic_entity'];
-            $Loc = clsTbsXmlLoc::FindElement($Txt, $this->ExtInfo['pic_entity'], $Pos, false);
+            $Loc = TBSXmlLoc::FindElement($Txt, $this->ExtInfo['pic_entity'], $Pos, false);
             if ($Loc) {
                 $Txt = $Loc->GetSrc();
                 $Pos = 0;
@@ -1450,14 +1450,14 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
             $PosEl = 0;
         } else {
             // Found  parent element
-            $loc = clsTbsXmlLoc::FindStartTag($Txt, 'xdr:twoCellAnchor', $Pos, false);
+            $loc = TBSXmlLoc::FindStartTag($Txt, 'xdr:twoCellAnchor', $Pos, false);
             if ($loc===false) {
                 return false;
             }
             $PosEl = $loc->PosBeg;
         }
         
-        $loc = clsTbsXmlLoc::FindStartTag($Txt, 'xdr:to', $PosEl, true);
+        $loc = TBSXmlLoc::FindStartTag($Txt, 'xdr:to', $PosEl, true);
         if ($loc===false) {
             return false;
         }
@@ -1467,7 +1467,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 
         $el_lst = array('w'=>'xdr:colOff', 'h'=>'xdr:rowOff');
         foreach ($el_lst as $i => $el) {
-            $loc = clsTbsXmlLoc::FindElement($Txt, $el, $p, true);
+            $loc = TBSXmlLoc::FindElement($Txt, $el, $p, true);
             if ($loc===false) {
                 return false;
             }
@@ -1879,7 +1879,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $Txt = substr_replace($Txt, '', $PosBeg, $PosEnd - $PosBeg + 1);
 
         // Look for the source of the table
-        $Loc = clsTbsXmlLoc::FindElement($Txt, $el_table, $PosBeg, false);
+        $Loc = TBSXmlLoc::FindElement($Txt, $el_table, $PosBeg, false);
         if ($Loc===false) {
             return false;
         }
@@ -1891,7 +1891,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                 $this->XML_DeleteColumnElements($Src, $info['c'], $info['s'], $col_lst, $col_max);
             } else {
                 $ParentPos = 0;
-                while ($ParentLoc = clsTbsXmlLoc::FindElement($Src, $info['p'], $ParentPos, true)) {
+                while ($ParentLoc = TBSXmlLoc::FindElement($Src, $info['p'], $ParentPos, true)) {
                     $ParentSrc = $ParentLoc->GetSrc();
                     $ModifNbr = $this->XML_DeleteColumnElements($ParentSrc, $info['c'], $info['s'], $col_lst, $col_max);
                     if ($ModifNbr>0) {
@@ -1952,7 +1952,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         if ($this->ExtEquiv=='docx') {
             // Move the locator just inside the <w:tcPr> element.
             // See OnOperation() for other process
-            $xml = clsTbsXmlLoc::FindStartTag($Txt, 'w:tcPr', $Loc->PosBeg, false);
+            $xml = TBSXmlLoc::FindStartTag($Txt, 'w:tcPr', $Loc->PosBeg, false);
             if ($xml) {
                 $Txt = substr_replace($Txt, '', $Loc->PosBeg, $Loc->PosEnd - $Loc->PosBeg + 1);
                 $Loc->PosBeg = $xml->PosEnd+1;
@@ -2237,7 +2237,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $Content = !$OnlyInner;
         foreach ($TagLst as $tag) {
             $p = 0;
-            while ($x = clsTbsXmlLoc::FindElement($Txt, $tag, $p)) {
+            while ($x = TBSXmlLoc::FindElement($Txt, $tag, $p)) {
                 $x->Delete($Content);
                 $p = $x->PosBeg;
                 $nb++;
@@ -2259,7 +2259,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $Continue = true;
         $ModifNbr = 0;
 
-        while ($Continue && ($Loc = clsTbsXmlLoc::FindElement($Txt, $Tag, $ColPos, true))) {
+        while ($Continue && ($Loc = TBSXmlLoc::FindElement($Txt, $Tag, $ColPos, true))) {
             // get colmun quantity covered by the element (1 by default)
             if ($SpanAtt!==false) {
                 $ColQty = $Loc->GetAttLazy($SpanAtt);
@@ -2322,7 +2322,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $loc_prev = false;
         while ($el_idx < $end) {
             $loc_prev = $loc;
-            $loc = clsTbsXmlLoc::FindStartTag($Txt, $el_lst[$el_idx], $p);
+            $loc = TBSXmlLoc::FindStartTag($Txt, $el_lst[$el_idx], $p);
             if ($loc === false) {
                 if ($AddElIfMissing) {
                     // stop the loop
@@ -2403,7 +2403,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
     function XML_BlockAlias_Prefix($TagPrefix, $Txt, $PosBeg, $Forward, $LevelStop)
     {
 
-        $loc = clsTbsXmlLoc::FindStartTagByPrefix($Txt, $TagPrefix, $PosBeg, false);
+        $loc = TBSXmlLoc::FindStartTagByPrefix($Txt, $TagPrefix, $PosBeg, false);
 
         if ($Forward) {
             $loc->FindEndTag();
@@ -2516,10 +2516,10 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $Txt = $this->TbsStoreGet($idx, "EditCredits");
         
         if ($Att) {
-            $loc = clsTbsXmlLoc::FindElementHavingAtt($Txt, $Att, 0);
+            $loc = TBSXmlLoc::FindElementHavingAtt($Txt, $Att, 0);
             $TagOpen = $Tag.' '.$Att;
         } else {
-            $loc = clsTbsXmlLoc::FindElement($Txt, $Tag, 0);
+            $loc = TBSXmlLoc::FindElement($Txt, $Tag, 0);
             $TagOpen = $Tag;
         }
         
@@ -2696,7 +2696,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         }
         $txt = $this->TbsStoreGet($idx, 'Replace target in rels file');
         
-        $loc = clsTbsXmlLoc::FindElementHavingAtt($txt, $AttExpr, 0);
+        $loc = TBSXmlLoc::FindElementHavingAtt($txt, $AttExpr, 0);
         if ($loc) {
             $ret = true;
             if (is_array($ReturnAttLst)) {
@@ -2920,7 +2920,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         // Delete PartNames
         foreach ($this->OpenXmlCTypes['PartName'] as $part => $val) {
             if ($val===false) {
-                $loc = clsTbsXmlLoc::FindElementHavingAtt($Txt, 'PartName="'.$part.'"', 0);
+                $loc = TBSXmlLoc::FindElementHavingAtt($Txt, 'PartName="'.$part.'"', 0);
                 if ($loc!==false) {
                     $loc->ReplaceSrc('');
                     $ok = true;
@@ -3199,7 +3199,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $res = array('p'=>$p);
 
         if ($OnlyBounds) {
-            if ($loc = clsTbsXmlLoc::FindElement($Txt, 'c:ser', $p, false)) {
+            if ($loc = TBSXmlLoc::FindElement($Txt, 'c:ser', $p, false)) {
                 $res['p'] = $loc->PosBeg;
                 $res['l'] = $loc->PosEnd - $loc->PosBeg + 1;
                 return $res;
@@ -3412,23 +3412,23 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
             $o->ChartLst = array();
 
             $p = 0;
-            while ($t = clsTbsXmlLoc::FindStartTag($Txt, 'c:chart', $p)) {
+            while ($t = TBSXmlLoc::FindStartTag($Txt, 'c:chart', $p)) {
                 $rid = $t->GetAttLazy('r:id');
                 $name = false;
                 $title = false;
                 $descr = false;
-                $parent = clsTbsXmlLoc::FindStartTag($Txt, 'w:drawing', $t->PosBeg, false); // DOCX <w:drawing> can embeds <wp:inline> if inline with text, or <wp:anchor> otherwise
+                $parent = TBSXmlLoc::FindStartTag($Txt, 'w:drawing', $t->PosBeg, false); // DOCX <w:drawing> can embeds <wp:inline> if inline with text, or <wp:anchor> otherwise
                 if ($parent===false) {
-                    $parent = clsTbsXmlLoc::FindStartTag($Txt, 'p:nvGraphicFramePr', $t->PosBeg, false); // PPTX
+                    $parent = TBSXmlLoc::FindStartTag($Txt, 'p:nvGraphicFramePr', $t->PosBeg, false); // PPTX
                 }
                 if ($parent!==false) {
                     $parent->FindEndTag();
                     $src = $parent->GetInnerSrc();
-                    $el = clsTbsXmlLoc::FindStartTagHavingAtt($src, 'title', 0);
+                    $el = TBSXmlLoc::FindStartTagHavingAtt($src, 'title', 0);
                     if ($el!==false) {
                         $title = $el->GetAttLazy('title');
                     }
-                    $el = clsTbsXmlLoc::FindStartTagHavingAtt($src, 'descr', 0);
+                    $el = TBSXmlLoc::FindStartTagHavingAtt($src, 'descr', 0);
                     if ($el!==false) {
                         $descr = $el->GetAttLazy('descr');
                     }
@@ -3460,7 +3460,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
     {
 
         if ($Delete) {
-            if ($loc = clsTbsXmlLoc::FindElement($Txt, 'c:externalData', 0)) {
+            if ($loc = TBSXmlLoc::FindElement($Txt, 'c:externalData', 0)) {
                 // Delete the relationship
                 $rid = $loc->GetAttLazy('r:id');
                 if ($rid) {
@@ -3514,14 +3514,14 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         // Loop
         $loop_res = array();
         $ser_p = 0;
-        while ($ser_loc = clsTbsXmlLoc::FindElement($Txt, 'c:ser', $ser_p)) {
+        while ($ser_loc = TBSXmlLoc::FindElement($Txt, 'c:ser', $ser_p)) {
             $res = array();
             foreach ($loop_conf as $key => $conf) {
-                if ($loc_parent = clsTbsXmlLoc::FindElement($ser_loc, $conf['parent'], 0)) {
+                if ($loc_parent = TBSXmlLoc::FindElement($ser_loc, $conf['parent'], 0)) {
                     // Search format
                     $format = false;
                     if ($conf['format']) {
-                        if ($loc = clsTbsXmlLoc::FindElement($loc_parent, $conf['format'], 0)) {
+                        if ($loc = TBSXmlLoc::FindElement($loc_parent, $conf['format'], 0)) {
                             $format = $loc->GetInnerSrc();
                             $res[$key . '_format'] = $format;
                         }
@@ -3530,9 +3530,9 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                     // It is possible that a val item is missing for a cat idx
                     $items = array();
                     $loc_p = 0;
-                    while ($loc_pt = clsTbsXmlLoc::FindElement($loc_parent, 'c:pt', $loc_p)) {
+                    while ($loc_pt = TBSXmlLoc::FindElement($loc_parent, 'c:pt', $loc_p)) {
                         $idx = $loc_pt->GetAttLazy('idx');
-                        $loc = clsTbsXmlLoc::FindElement($loc_pt, 'c:v', 0);
+                        $loc = TBSXmlLoc::FindElement($loc_pt, 'c:v', 0);
                         $items[$idx] = $loc->GetInnerSrc();
                         $loc_p = $loc_pt->PosEnd;
                     }
@@ -4089,7 +4089,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $p = 0;
         $i = 0;
         $rels = array();
-        while ($loc=clsTbsXmlLoc::FindStartTag($Txt, 'sheet', $p, true)) {
+        while ($loc=TBSXmlLoc::FindStartTag($Txt, 'sheet', $p, true)) {
             $o = (object) null;
             $o->num = $i + 1;
             // SheetId is not the numbered sheet in the workbook. It may have a missing sheet id.
@@ -4113,7 +4113,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         }
 
         $p = 0;
-        while ($loc=clsTbsXmlLoc::FindStartTag($Txt, 'Relationship', $p, true)) {
+        while ($loc=TBSXmlLoc::FindStartTag($Txt, 'Relationship', $p, true)) {
             $rid = $loc->GetAttLazy('Id');
             if (isset($rels[$rid])) {
                 $rels[$rid]->file =  $loc->GetAttLazy('Target');
@@ -4210,7 +4210,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                     if (!$visible) {
                         $change = true;
                     }
-                    $loc = clsTbsXmlLoc::FindStartTagHavingAtt($WkbTxt, 'r:id="'.$o->rid.'"', 0);
+                    $loc = TBSXmlLoc::FindStartTagHavingAtt($WkbTxt, 'r:id="'.$o->rid.'"', 0);
                     if ($loc!==false) {
                         $loc->ReplaceAtt('state', $state, true);
                     }
@@ -4223,7 +4223,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         // If they are deleted or hidden sheet, then it could be the active sheet, so we delete the active tab information
         // Note: activeTab attribute seems to not be a sheet id, but rather a tab id.
         if ($change) {
-            $loc = clsTbsXmlLoc::FindStartTag($WkbTxt, 'workbookView', 0);
+            $loc = TBSXmlLoc::FindStartTag($WkbTxt, 'workbookView', 0);
             if ($loc!==false) {
                 $loc->DeleteAtt('activeTab');
             }
@@ -4261,7 +4261,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 
         // Delete in workbook.xml
         if ($rid!=false) {
-            $loc = clsTbsXmlLoc::FindElementHavingAtt($WkbTxt, 'r:id="'.$rid.'"', 0);
+            $loc = TBSXmlLoc::FindElementHavingAtt($WkbTxt, 'r:id="'.$rid.'"', 0);
             if ($loc!==false) {
                 $loc->ReplaceSrc('');
             }
@@ -4318,7 +4318,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $i = 0;
         $lst = array();
         $tag = ($Master) ? 'p:sldMasterId' : 'p:sldId';
-        while ($loc = clsTbsXmlLoc::FindStartTag($Txt, $tag, $p)) {
+        while ($loc = TBSXmlLoc::FindStartTag($Txt, $tag, $p)) {
             $i++;
             $rid = $loc->GetAttLazy('r:id');
             if ($rid===false) {
@@ -4358,7 +4358,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
     function MsPowerpoint_CleanRpr(&$Txt, $elem)
     {
         $p = 0;
-        while ($x = clsTbsXmlLoc::FindStartTag($Txt, $elem, $p)) {
+        while ($x = TBSXmlLoc::FindStartTag($Txt, $elem, $p)) {
             $x->DeleteAtt('noProof');
             $x->DeleteAtt('lang');
             $x->DeleteAtt('err');
@@ -4454,11 +4454,11 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
             $ref = 'i:'.($i+1);
             if (isset($this->OtbsSheetSlidesDelete[$ref]) && $this->OtbsSheetSlidesDelete[$ref]) {
                 // the rid may be used several time in the fiel. i.e.: in <p:sldIdLst><p:sldIdLst>, but also in <p:custShow><p:sldLst>
-                while (($x = clsTbsXmlLoc::FindElementHavingAtt($xml_txt, 'r:id="'.$s['rid'].'"', 0))!==false) {
+                while (($x = TBSXmlLoc::FindElementHavingAtt($xml_txt, 'r:id="'.$s['rid'].'"', 0))!==false) {
                     $x->ReplaceSrc(''); // delete the element
                 }
 
-                $x = clsTbsXmlLoc::FindElementHavingAtt($rel_txt, 'Id="'.$s['rid'].'"', 0);
+                $x = TBSXmlLoc::FindElementHavingAtt($rel_txt, 'Id="'.$s['rid'].'"', 0);
                 if ($x!==false) {
                     $x->ReplaceSrc(''); // delete the element
                 }
@@ -4541,7 +4541,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         
         $p = 0;
         $nb = 0;
-        while (($loc = clsTbsXmlLoc::FindElement($Txt, 'mc:Fallback', $p))!==false) {
+        while (($loc = TBSXmlLoc::FindElement($Txt, 'mc:Fallback', $p))!==false) {
             if (strpos($loc->GetSrc(), $this->TBS->_ChrOpen) !== false) {
                 $loc->Delete();
                 $nb++;
@@ -4719,7 +4719,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
      */
     function MsWord_CleanSpacePreserve(&$Txt)
     {
-        $XmlLoc = clsTbsXmlLoc::FindStartTag($Txt, 'w:document', 0);
+        $XmlLoc = TBSXmlLoc::FindStartTag($Txt, 'w:document', 0);
         if ($XmlLoc===false) {
             return;
         }
@@ -4789,22 +4789,22 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
     {
 
         // Search the two possible tags for having a page-break
-        $loc1 = clsTbsXmlLoc::FindStartTagHavingAtt($Txt, 'w:type="page"', $Pos, $Forward);
-        $loc2 = clsTbsXmlLoc::FindStartTag($Txt, 'w:pageBreakBefore', $Pos, $Forward);
+        $loc1 = TBSXmlLoc::FindStartTagHavingAtt($Txt, 'w:type="page"', $Pos, $Forward);
+        $loc2 = TBSXmlLoc::FindStartTag($Txt, 'w:pageBreakBefore', $Pos, $Forward);
 
         // Define the position of start for the corresponding paragraph
         if (($loc1===false) && ($loc2===false)) {
             if ($Forward) {
                 // End of the last paragraph of the document.
                 // The <w:p> elements can be embeded, and it can be a single tag if it cnotains no text.
-                $loc = clsTbsXmlLoc::FindElement($Txt, 'w:p', strlen($Txt), false);
+                $loc = TBSXmlLoc::FindElement($Txt, 'w:p', strlen($Txt), false);
                 if ($loc===false) {
                     return false;
                 }
                 return $loc->PosEnd;
             } else {
                 // start of the first paragraph of the document
-                $loc = clsTbsXmlLoc::FindStartTag($Txt, 'w:p', 0, true);
+                $loc = TBSXmlLoc::FindStartTag($Txt, 'w:p', 0, true);
                 if ($loc===false) {
                     return false;
                 }
@@ -4825,7 +4825,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                 $s = ($loc1->PosBeg > $loc2->PosBeg) ? $loc1->PosBeg : $loc2->PosBeg;
             }
         }
-        $loc = clsTbsXmlLoc::FindStartTag($Txt, 'w:p', $s, false);
+        $loc = TBSXmlLoc::FindStartTag($Txt, 'w:p', $s, false);
 
         $p = $loc->PosBeg;
         if ($Forward) {
@@ -4844,12 +4844,12 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 
         // First we check if the TBS tag is inside a <w:p> and if this <w:p> has a <w:sectPr>
         $case = false;
-        $locP = clsTbsXmlLoc::FindStartTag($Txt, 'w:p', $Pos, false);
+        $locP = TBSXmlLoc::FindStartTag($Txt, 'w:p', $Pos, false);
         if ($locP!==false) {
             $locP->FindEndTag(true);
             if ($locP->PosEnd>$Pos) {
                 $src = $locP->GetSrc();
-                $loc = clsTbsXmlLoc::FindStartTag($src, 'w:sectPr', 0, true);
+                $loc = TBSXmlLoc::FindStartTag($src, 'w:sectPr', 0, true);
                 if ($loc!==false) {
                     $case = true;
                 }
@@ -4862,7 +4862,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 
         // Look for the next section-break
         $p = ($Forward) ? $locP->PosEnd : $locP->PosBeg;
-        $locS = clsTbsXmlLoc::FindStartTag($Txt, 'w:sectPr', $p, $Forward);
+        $locS = TBSXmlLoc::FindStartTag($Txt, 'w:sectPr', $p, $Forward);
 
         if ($locS===false) {
             if ($Forward) {
@@ -4871,7 +4871,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                 return ($p===false) ? false : $p - 1;
             } else {
                 // start of the body
-                $loc2 = clsTbsXmlLoc::FindStartTag($Txt, 'w:body', 0, true);
+                $loc2 = TBSXmlLoc::FindStartTag($Txt, 'w:body', 0, true);
                 return ($loc2===false) ? false : $loc2->PosEnd + 1;
             }
         }
@@ -4881,7 +4881,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $inside = false;
         $p = strpos($Txt, $ewp, $locS->PosBeg);
         if ($p!==false) {
-            $loc2 = clsTbsXmlLoc::FindStartTag($Txt, 'w:p', $locS->PosBeg, true);
+            $loc2 = TBSXmlLoc::FindStartTag($Txt, 'w:p', $locS->PosBeg, true);
             if (($loc2===false) || ($loc2->PosBeg>$p)) {
                 $inside = true;
             }
@@ -4932,7 +4932,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         foreach ($places as $place) {
             $p = 0;
             $entity = 'w:' . $place . 'Reference';
-            while ($loc = clsTbsXmlLoc::FindStartTag($Txt, $entity, $p)) {
+            while ($loc = TBSXmlLoc::FindStartTag($Txt, $entity, $p)) {
                 $p = $loc->PosEnd;
                 $type = $loc->GetAttLazy('w:type');
                 if (isset($types_ok[$type]) && $types_ok[$type]) {
@@ -5012,10 +5012,10 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         // Get all style names about RSID for <span> elements
         $styles = array();
         $p = 0;
-        while (($el = clsTbsXmlLoc::FindStartTagHavingAtt($Txt, 'officeooo:rsid', $p)) !== false) {
+        while (($el = TBSXmlLoc::FindStartTagHavingAtt($Txt, 'officeooo:rsid', $p)) !== false) {
             // If the <style:text-properties> element has only this attribute then its length is 50.
             if ($el->GetLen() < 60) {
-                if ($par = clsTbsXmlLoc::FindStartTag($Txt, 'style:style', $el->PosBeg, false)) {
+                if ($par = TBSXmlLoc::FindStartTag($Txt, 'style:style', $el->PosBeg, false)) {
                     if ($name = $par->GetAttLazy('style:name')) {
                         $styles[] = $name;
                     }
@@ -5155,7 +5155,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $new_type = $OpeLst[$Ope];
         $new_atts = $TypeLst[$new_type];
         
-        $xLoc = clsTbsXmlLoc::FindStartTag($Txt, 'table:table-cell', $Loc->PosBeg, false);
+        $xLoc = TBSXmlLoc::FindStartTag($Txt, 'table:table-cell', $Loc->PosBeg, false);
         if ($xLoc===false) {
             return false; // error in the XML structure
         }
@@ -5176,7 +5176,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         }
 
         // Delete contents
-        $xLocP = clsTbsXmlLoc::FindElement($xLoc, 'text:p', 0);
+        $xLocP = TBSXmlLoc::FindElement($xLoc, 'text:p', 0);
         if ($xLocP!==false) {
             $xLocP->Delete();
             $xLocP->UpdateParent();
@@ -5416,7 +5416,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
     function OpenDoc_StylesFeed(&$Styles, $Txt)
     {
         $p = 0;
-        while ($loc = clsTbsXmlLoc::FindElement($Txt, 'style:style', $p)) {
+        while ($loc = TBSXmlLoc::FindElement($Txt, 'style:style', $p)) {
             unset($o);
             $o = (object) null;
             $o->name = $loc->GetAttLazy('style:name');
@@ -5464,7 +5464,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 
         $p = $Pos;
 
-        while (($loc = clsTbsXmlLoc::FindStartTagHavingAtt($Txt, 'text:style-name', $p, $Forward))!==false) {
+        while (($loc = TBSXmlLoc::FindStartTagHavingAtt($Txt, 'text:style-name', $p, $Forward))!==false) {
             $style = $loc->GetAttLazy('text:style-name');
 
             if (($style!==false) && isset($this->OpenDoc_Styles[$style])) {
@@ -5501,7 +5501,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
             }
             return $p-1;
         } else {
-            $loc = clsTbsXmlLoc::FindStartTag($Txt, 'office:text', $Pos, false);
+            $loc = TBSXmlLoc::FindStartTag($Txt, 'office:text', $Pos, false);
             if ($loc===false) {
                 return false;
             }
@@ -5641,17 +5641,17 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         unset($NewValues);
 
         // Scann all rows for changing cells
-        $elData = clsTbsXmlLoc::FindElement($Txt, 'table:table-rows', 0);
+        $elData = TBSXmlLoc::FindElement($Txt, 'table:table-rows', 0);
         $p_row = 0;
-        while (($elRow=clsTbsXmlLoc::FindElement($elData, 'table:table-row', $p_row))!==false) {
+        while (($elRow=TBSXmlLoc::FindElement($elData, 'table:table-row', $p_row))!==false) {
             $p_cell = 0;
             $category = false;
             $data_r = false;
             for ($i=1; $i<=$s_colend; $i++) {
-                if ($elCell = clsTbsXmlLoc::FindElement($elRow, 'table:table-cell', $p_cell)) {
+                if ($elCell = TBSXmlLoc::FindElement($elRow, 'table:table-cell', $p_cell)) {
                     if ($i==$col_cat) {
                         // Category
-                        if ($elP = clsTbsXmlLoc::FindElement($elCell, 'text:p', 0)) {
+                        if ($elP = TBSXmlLoc::FindElement($elCell, 'text:p', 0)) {
                             $category = $elP->GetInnerSrc();
                         }
                     } elseif ($i>=$s_col) {
@@ -5676,7 +5676,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                         }
                         $elCell->ReplaceAtt('office:value', $x);
                         // Delete the cached legend
-                        if ($elP = clsTbsXmlLoc::FindElement($elCell, 'text:p', 0)) {
+                        if ($elP = TBSXmlLoc::FindElement($elCell, 'text:p', 0)) {
                             $elP->ReplaceSrc('');
                             $elP->UpdateParent(); // update $elCell source
                         }
@@ -5738,18 +5738,18 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $Txt = $this->TbsStoreGet($idx, 'OpenDoc_ChartInit');
 
         $p = 0;
-        while ($drEl = clsTbsXmlLoc::FindElement($Txt, 'draw:frame', $p)) {
+        while ($drEl = TBSXmlLoc::FindElement($Txt, 'draw:frame', $p)) {
             $src = $drEl->GetInnerSrc();
-            $objEl = clsTbsXmlLoc::FindStartTag($src, 'draw:object', 0);
+            $objEl = TBSXmlLoc::FindStartTag($src, 'draw:object', 0);
 
             if ($objEl) { // Picture have <draw:frame> without <draw:object>
                 $href = $objEl->GetAttLazy('xlink:href'); // example "./Object 1"
                 if ($href) {
-                    $imgEl = clsTbsXmlLoc::FindElement($src, 'draw:image', 0);
+                    $imgEl = TBSXmlLoc::FindElement($src, 'draw:image', 0);
                     $img_href = ($imgEl) ? $imgEl->GetAttLazy('xlink:href') : false; // "./ObjectReplacements/Object 1"
                     $img_src = ($imgEl) ? $imgEl->GetSrc('xlink:href') : false;
 
-                    $titEl = clsTbsXmlLoc::FindElement($src, 'svg:title', 0);
+                    $titEl = TBSXmlLoc::FindElement($src, 'svg:title', 0);
                     $title = ($titEl) ? $titEl->GetInnerSrc() : '';
 
                     if (substr($href, 0, 2)=='./') {
@@ -5783,7 +5783,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $manifest = $this->FileGetIdx('META-INF/manifest.xml');
         if ($manifest!==false) {
             $Txt = $this->TbsStoreGet($manifest, 'OpenDoc_ChartClear');
-            $el = clsTbsXmlLoc::FindStartTagHavingAtt($Txt, 'manifest:full-path="'.$chart['img_href']."'", 0);
+            $el = TBSXmlLoc::FindStartTagHavingAtt($Txt, 'manifest:full-path="'.$chart['img_href']."'", 0);
             if ($el) {
                 $el->ReplaceSrc('');
                 $this->TbsStorePut($manifest, $Txt);
@@ -5803,7 +5803,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $series = array();
         $cols = array(); // all columns attached to a series
         $cols_name = array();
-        while ($elSeries = clsTbsXmlLoc::FindElement($Txt, 'chart:series', $p)) {
+        while ($elSeries = TBSXmlLoc::FindElement($Txt, 'chart:series', $p)) {
             $s_cols = array();
             // Column of main value
             $col = $this->OpenDoc_ChartFindCol($cols, $elSeries, 'chart:values-cell-range-address', $s_idx);
@@ -5813,7 +5813,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
             // List of column's nums for other values
             $src = $elSeries->GetInnerSrc();
             $p2 = 0;
-            while ($elDom = clsTbsXmlLoc::FindStartTag($src, 'chart:domain', $p2)) {
+            while ($elDom = TBSXmlLoc::FindStartTag($src, 'chart:domain', $p2)) {
                 $col = $this->OpenDoc_ChartFindCol($cols, $elDom, 'table:cell-range-address', $s_idx);
                 $s_cols[$col] = true;
                 $p2 = $elDom->PosEnd;
@@ -5838,7 +5838,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 
         // Column of categories
         $col_cat = false;
-        $elCat = clsTbsXmlLoc::FindStartTag($Txt, 'chart:categories', 0);
+        $elCat = TBSXmlLoc::FindStartTag($Txt, 'chart:categories', 0);
         if ($elCat!==false) {
             $att = $elCat->GetAttLazy('table:cell-range-address');
             $col_cat = $this->Misc_ColNum($att, true); // the column of categories is always #1
@@ -5847,16 +5847,16 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 
 
         // Brows headers columns
-        $elHeaders = clsTbsXmlLoc::FindElement($Txt, 'table:table-header-rows', 0);
+        $elHeaders = TBSXmlLoc::FindElement($Txt, 'table:table-header-rows', 0);
         if ($elHeaders===false) {
             return $this->RaiseError("(ChartFindSeries) : unable to found the series names in the chart ".$this->_ChartCaption.".");
         }
         $p = 0;
         $col_num = 0;
-        while (($elCell=clsTbsXmlLoc::FindElement($elHeaders, 'table:table-cell', $p))!==false) {
+        while (($elCell=TBSXmlLoc::FindElement($elHeaders, 'table:table-cell', $p))!==false) {
             $col_num++;
             if (isset($cols_name[$col_num])) {
-                $elP = clsTbsXmlLoc::FindElement($elCell, 'text:p', 0);
+                $elP = TBSXmlLoc::FindElement($elCell, 'text:p', 0);
                 $name = ($elP===false) ? '' : $elP->GetInnerSrc();
                 $s_idx = $cols_name[$col_num];
                 $series[$s_idx]['name'] = $name;
@@ -5886,7 +5886,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
     {
 
         $att = 'chart:label-cell-address="'.$series['ref'].'"';
-        $elSeries = clsTbsXmlLoc::FindElementHavingAtt($Txt, $att, 0);
+        $elSeries = TBSXmlLoc::FindElementHavingAtt($Txt, $att, 0);
 
         if ($elSeries!==false) {
             $elSeries->ReplaceSrc('');
@@ -5899,14 +5899,14 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $NewName = htmlspecialchars($NewName);
         $col_name = $series['col_name'];
 
-        $el = clsTbsXmlLoc::FindStartTag($Txt, 'table:table-header-rows', 0);
-        $el = clsTbsXmlLoc::FindStartTag($Txt, 'table:table-row', $el->PosEnd);
+        $el = TBSXmlLoc::FindStartTag($Txt, 'table:table-header-rows', 0);
+        $el = TBSXmlLoc::FindStartTag($Txt, 'table:table-row', $el->PosEnd);
         for ($i=1; $i<$col_name; $i++) {
-            $el = clsTbsXmlLoc::FindStartTag($Txt, 'table:table-cell', $el->PosEnd);
+            $el = TBSXmlLoc::FindStartTag($Txt, 'table:table-cell', $el->PosEnd);
         }
-        $elCell = clsTbsXmlLoc::FindElement($Txt, 'table:table-cell', $el->PosEnd);
+        $elCell = TBSXmlLoc::FindElement($Txt, 'table:table-cell', $el->PosEnd);
 
-        $elP = clsTbsXmlLoc::FindElement($elCell, 'text:p', 0);
+        $elP = TBSXmlLoc::FindElement($elCell, 'text:p', 0);
         if ($elP===false) {
             $elCell->ReplaceInnerSrc($elCell->GetInnerSrc().'<text:p>'.$NewName.'</text:p>');
         } else {
@@ -5933,20 +5933,20 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 
         // Read the data table
         $table = array();
-        $rows = clsTbsXmlLoc::FindElement($Txt, 'table:table-rows', 0);
+        $rows = TBSXmlLoc::FindElement($Txt, 'table:table-rows', 0);
         $pr = 0;
-        while ($r = clsTbsXmlLoc::FindElement($rows, 'table:table-row', $pr)) {
+        while ($r = TBSXmlLoc::FindElement($rows, 'table:table-row', $pr)) {
             $pr = $r->PosEnd;
             $pc = 0;
             $row = array();
-            while ($c = clsTbsXmlLoc::FindElement($r, 'table:table-cell', $pc)) {
+            while ($c = TBSXmlLoc::FindElement($r, 'table:table-cell', $pc)) {
                 $pc = $c->PosEnd;
                 $val = $c->getAttLazy('office:value');
                 if ($val == 'NaN') { // Not a Number, happens when the cell is empty
                     $val = false;
                     $txt = '';
                 } else {
-                    if ($x = clsTbsXmlLoc::FindElement($c, 'text:p', 0)) {
+                    if ($x = TBSXmlLoc::FindElement($c, 'text:p', 0)) {
                         $txt = $x->GetInnerSrc();
                     } else {
                         $txt = false;
@@ -6037,12 +6037,12 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         // Loop for deleting useless repeated columns
         foreach ($loop as $att_rep) {
             $p = 0;
-            while ($xml = clsTbsXmlLoc::FindElementHavingAtt($Txt, $att_rep, $p)) {
+            while ($xml = TBSXmlLoc::FindElementHavingAtt($Txt, $att_rep, $p)) {
                 $xml->FindName();
                 $p = $xml->PosEnd;
                 
                 // Next tag (opening or closing)
-                $next = clsTbsXmlLoc::FindStartTagByPrefix($Txt, '', $p);
+                $next = TBSXmlLoc::FindStartTagByPrefix($Txt, '', $p);
                 $next_name = $next->Name;
                 if ($next_name == '') {
                     $next_name = $next->GetSrc();

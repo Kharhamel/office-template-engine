@@ -9,7 +9,7 @@ namespace OpenTBS\lib;
  * The object represents only the opening tag until method FindEndTag() is called.
  * Then is represents the complete entity.
  */
-class clsTbsXmlLoc
+class TBSXmlLoc
 {
 
     var $PosBeg;
@@ -385,7 +385,7 @@ class clsTbsXmlLoc
             }
         } while ($p!==false);
 
-        return new clsTbsXmlLoc($Txt, $Tag, $PosBeg);
+        return new TBSXmlLoc($Txt, $Tag, $PosBeg);
     }
 
     // Search an element in the TXT contents, and return an object if it's found.
@@ -432,7 +432,7 @@ class clsTbsXmlLoc
             }
         } while ($search);
 
-        return new clsTbsXmlLoc($Txt, '', $p);
+        return new TBSXmlLoc($Txt, '', $p);
     }
 
     static function FindElementHavingAtt(&$Txt, $Att, $PosBeg, $Forward = true)
