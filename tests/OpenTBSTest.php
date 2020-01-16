@@ -52,6 +52,16 @@ class OpenTBSTest extends TestCase
         $this->expectException(OpenTBSException::class);
         $tbs->LoadTemplate(__DIR__.'/var/notExist.pptx');
     }
+    
+    public function testExceptionOnUnfoundVariable(): void
+    {
+        $tbs = new OpenTBS();
+        $handle = fopen(__DIR__.'/var/testOpenTBSWithText.pptx', 'r');
+        $tbs->LoadTemplate($handle);
+        $tbs->LoadTemplate('#ppt/slides/slide2.xml');
+        $this->expectException(OpenTBSException::class);
+        $tbs->Show(OPENTBS_FILE, 'osef');
+    }
 
     //todo: find a way to insert than the variable is actually injected
     public function testTextAndPictureInjection(): void
@@ -62,7 +72,7 @@ class OpenTBSTest extends TestCase
         }
 
         $tbs = new OpenTBS();
-        $handle = fopen(__DIR__.'/var/testOpenTBS.pptx', 'r');
+        $handle = fopen(__DIR__.'/var/testOpenTBSWithImage.pptx', 'r');
         $tbs->LoadTemplate($handle);
         $tbs->VarRef['textreplace'] = 'super';
         $tbs->VarRef['pic2'] = __DIR__.'/var/pierre.jpeg';
@@ -70,19 +80,18 @@ class OpenTBSTest extends TestCase
         $this->assertFileExists($editedPath);
     }
 
-    public function testSubTemplateFound(): void
+    public function testTextInjectionOn2slides(): void
     {
         $editedPath = __DIR__.'/var/edited4.pptx';
         if (file_exists($editedPath)) {
             unlink($editedPath);
         }
         $tbs = new OpenTBS();
-        $handle = fopen(__DIR__.'/var/testOpenTBS.pptx', 'r');
+        $handle = fopen(__DIR__.'/var/testOpenTBSWithText.pptx', 'r');
         $tbs->LoadTemplate($handle);
         $tbs->LoadTemplate('#ppt/slides/slide2.xml');
         $tbs->VarRef['textreplace'] = 'super';
         $tbs->VarRef['textreplace2'] = 'encore plus super';
-        $tbs->VarRef['pic2'] = __DIR__.'/var/pierre.jpeg';
         $tbs->Show(OPENTBS_FILE, $editedPath);
         $this->assertFileExists($editedPath);
         
@@ -94,7 +103,7 @@ class OpenTBSTest extends TestCase
         $handle = fopen(__DIR__.'/var/testOpenTBS.pptx', 'r');
         $tbs->LoadTemplate($handle);
         $this->expectException(OpenTBSException::class);
-        $tbs->LoadTemplate("#ppt/slides/slide10.xml");
+        $tbs->LoadTemplate('#ppt/slides/slide10.xml');
     }
 
 }

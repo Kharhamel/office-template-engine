@@ -2958,8 +2958,8 @@ class TBSEngine
 // Standard alert message provided by TinyButStrong, return False is the message is cancelled.
     function meth_Misc_Alert($Src, $Msg, $NoErrMsg = false, $SrcType = false)
     {
-        return false; //todo rewrite this function
-        $this->ErrCount++;
+        throw new OpenTBSException($Msg);
+        /*$this->ErrCount++;
         if ($this->NoErr || (PHP_SAPI==='cli')) {
             $t = array('','','','','');
         } else {
@@ -2992,6 +2992,7 @@ class TBSEngine
             echo $x;
         }
         return false;
+        */
     }
 
     function meth_Misc_Assign($Name, &$ArgLst, $CallingMeth)
