@@ -16,10 +16,6 @@
 
 namespace OpenTBS\lib;
 
-// Check PHP version
-use OpenTBS\lib\TBSDataSource;
-use OpenTBS\lib\TBSLocator;
-
 // *********************************************
 
 class TBSEngine

@@ -3,7 +3,6 @@
 /**
  * Constants to drive the plugin.
  */
-define('OPENTBS_PLUGIN', 'clsOpenTBS');
 define('OPENTBS_DOWNLOAD', 1);   // download (default) = TBS_OUTPUT
 define('OPENTBS_NOHEADER', 4);   // option to use with DOWNLOAD: no header is sent
 define('OPENTBS_FILE', 8);       // output to file   = TBSZIP_FILE

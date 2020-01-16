@@ -2,6 +2,7 @@
 
 namespace OpenTBS\Services;
 
+use OpenTBS\lib\OpenTBSPlugin;
 use OpenTBS\lib\TBSEngine;
 
 /**
@@ -15,6 +16,6 @@ class OpenTBS extends TBSEngine
         parent::__construct();
 
         // load the OpenTBS plugin
-        $this->Plugin(self::TBS_INSTALL, OPENTBS_PLUGIN);
+        $this->Plugin(self::TBS_INSTALL, OpenTBSPlugin::class);
     }
 }

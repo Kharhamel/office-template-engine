@@ -13,8 +13,7 @@
             "OpenTBS\\": "src/"
         },
         "files": [
-            "src/lib/utils.php",
-            "src/lib/tbs_plugin_opentbs.php"
+            "src/lib/utils.php"
         ]
     },
     "scripts": {

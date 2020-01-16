@@ -14,15 +14,13 @@
  * @license LGPL-3.0
  */
 
-use OpenTBS\lib\TBSXmlLoc;
-use OpenTBS\lib\TBSZip;
-use OpenTBS\lib\TBSEngine;
+namespace OpenTBS\lib;
 
 /**
  * Main class which is a TinyButStrong plug-in.
  * It is also a extension of clsTbsZip so it can directly manage the archive underlying the template.
  */
-class clsOpenTBS extends TBSZip
+class OpenTBSPlugin extends TBSZip
 {
 
     function OnInstall()
