@@ -22,3 +22,4 @@ before_script:
 script:
 - composer dump-autoload
 - composer csfix # todo: use cscheck instead
+- composer phpstan

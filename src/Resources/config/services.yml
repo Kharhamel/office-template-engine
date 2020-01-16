@@ -1,4 +1,0 @@
-services:
-    opentbs:
-        class:        MBence\OpenTBSBundle\Services\OpenTBS
-        arguments:    []

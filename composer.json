@@ -10,14 +10,14 @@
     },
     "autoload": {
         "psr-4": {
-            "OpenTBS\\": "src/"
+            "OpenTBS\\": ["src/", "tests/"]
         },
         "files": [
             "src/lib/utils.php"
         ]
     },
     "scripts": {
-        "phpstan": "vendor/bin/phpstan analyse --level 0 src/ tests/",
+        "phpstan": "vendor/bin/phpstan analyse --level 3 --configuration phpstan.neon src/ tests/",
         "csfix": "phpcbf",
         "cscheck": "phpcs"
     },

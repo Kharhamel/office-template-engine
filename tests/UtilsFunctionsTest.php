@@ -1,8 +1,7 @@
 <?php
 
 
-namespace tests;
-
+namespace OpenTBS;
 
 use PHPUnit\Framework\TestCase;
 
