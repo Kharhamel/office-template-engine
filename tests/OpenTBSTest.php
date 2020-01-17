@@ -3,14 +3,13 @@
 
 namespace OpenTBS;
 
-use http\Exception\RuntimeException;
 use OpenTBS\Exceptions\OpenTBSException;
 use OpenTBS\Services\OpenTBS;
 use PHPUnit\Framework\TestCase;
 use ZipArchive;
 
 class OpenTBSTest extends TestCase
-{    
+{
     public function testBasicPowerpointCreationFromHandle(): void
     {
         $editedPath = __DIR__.'/var/edited.pptx';
@@ -121,6 +120,16 @@ class OpenTBSTest extends TestCase
         $tbs->LoadTemplate($handle);
         $this->expectException(OpenTBSException::class);
         $tbs->LoadTemplate('#ppt/slides/slide10.xml');
+    }
+    
+    public function testUnloadTemplate(): void
+    {
+        $tbs = new OpenTBS();
+        $handle = fopen(__DIR__.'/var/testOpenTBS.pptx', 'r');
+        $tbs->LoadTemplate($handle);
+        $tbs->LoadTemplate(false);
+        $handle = fopen(__DIR__.'/var/testOpenTBS.pptx', 'r');
+        $this->assertTrue(true); //todo find something to assert
     }
 
 }
