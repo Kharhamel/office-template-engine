@@ -107,7 +107,7 @@ class OpenTBSPlugin extends TBSZip
             $ok = @$this->Open($FilePath);  // Open the archive
             if (!$ok) {
                 if ($this->ArchHnd===false) {
-                    return $this->RaiseError("The template '".$this->ArchFile."' cannot be found.");
+                    return $this->raiseError("The template '".$this->ArchFile."' cannot be found.");
                 } else {
                     return false;
                 }
@@ -120,7 +120,7 @@ class OpenTBSPlugin extends TBSZip
             }
             $TBS->OtbsSubFileLst = $SubFileLst;
         } elseif ($this->ArchFile==='') {
-            $this->RaiseError('Cannot read file(s) "'.$SubFileLst.'" because no archive is opened.');
+            $this->raiseError('Cannot read file(s) "'.$SubFileLst.'" because no archive is opened.');
         }
 
         // Change the Charset if a new archive is opended, or if LoadTemplate is called explicitely for that
@@ -155,7 +155,7 @@ class OpenTBSPlugin extends TBSZip
         $TBS =& $this->TBS;
 
         if ($this->ArchFile==='') {
-            return $this->RaiseError('Command Show() cannot be processed because no archive is opened.');
+            return $this->raiseError('Command Show() cannot be processed because no archive is opened.');
         }
 
         if ($TBS->_Mode!=0) {
@@ -351,7 +351,7 @@ class OpenTBSPlugin extends TBSZip
         
         // Check that a template is loaded
         if ($this->ExtInfo===false) {
-            $this->RaiseError("Cannot execute the plug-in commande because no template is loaded.");
+            $this->raiseError("Cannot execute the plug-in commande because no template is loaded.");
             return true;
         }
         
@@ -453,7 +453,7 @@ class OpenTBSPlugin extends TBSZip
                     return;
                 }
                 if ($o->file===false) {
-                    return $this->RaiseError("($Cmd) Error with sheet '$x1'. The corresponding XML subfile is not referenced.");
+                    return $this->raiseError("($Cmd) Error with sheet '$x1'. The corresponding XML subfile is not referenced.");
                 }
                 return $this->TbsLoadSubFileAsTemplate('xl/'.$o->file);
             }
@@ -487,7 +487,7 @@ class OpenTBSPlugin extends TBSZip
                 $this->TbsLoadSubFileAsTemplate($RefLst[$s]['idx']);
                 return true;
             } else {
-                return $this->RaiseError("($Cmd) $slide number $x1 is not found inside the Presentation.");
+                return $this->raiseError("($Cmd) $slide number $x1 is not found inside the Presentation.");
             }
         } elseif ($Cmd==OPENTBS_DELETE_COMMENTS) {
             // Default values
@@ -746,7 +746,7 @@ class OpenTBSPlugin extends TBSZip
         foreach ($SubFileLst as $SubFile) {
             $idx = $this->FileGetIdx($SubFile);
             if ($idx===false) {
-                $ok = $this->RaiseError('Cannot load "'.$SubFile.'". The file is not found in the archive "'.$this->ArchFile.'".');
+                $ok = $this->raiseError('Cannot load "'.$SubFile.'". The file is not found in the archive "'.$this->ArchFile.'".');
             } elseif ($idx!==$this->TbsCurrIdx) {
                 // Save the current loaded subfile if any
                 $this->TbsStorePark();
@@ -896,7 +896,7 @@ class OpenTBSPlugin extends TBSZip
                 if ($caller===false) {
                     return $txt; // return the uncompressed contents
                 } else {
-                    return $this->RaiseError("(".$caller.") unable to uncompress '".$this->TbsGetFileName($idx)."'.");
+                    return $this->raiseError("(".$caller.") unable to uncompress '".$this->TbsGetFileName($idx)."'.");
                 }
             } else {
                 return $txt;
@@ -1207,28 +1207,6 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         return $Res;
     }
 
-    function RaiseError($Msg, $NoErrMsg = false)
-    {
-        // Overwrite the parent RaiseError() method.
-        ob_start(); //catch echos from tbs
-        $exit = (!$this->TBS->NoErr);
-        if ($exit) {
-            $Msg .= ' The process is ending, unless you set NoErr property to true.';
-        }
-        $this->TBS->meth_Misc_Alert('OpenTBS Plugin', $Msg, $NoErrMsg);
-        if ($exit) {
-            if ($this->DebugLst!==false) {
-                if ($this->TbsCurrIdx!==false) {
-                    $this->DebugLst[$this->TbsGetFileName($this->TbsCurrIdx)] = $this->TBS->Source;
-                }
-                $this->TbsDebug_Merge(true, false);
-            }
-            ob_get_clean();
-            throw new OpenTBSException($Msg);
-        }
-        return false;
-    }
-
     // Found the relevant attribute for the image source, and then add parameter 'att' to the TBS locator.
     function TbsPicPrepare(&$Txt, &$Loc, $IsCaching)
     {
@@ -1238,7 +1216,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         }
     
         if (isset($Loc->PrmLst['att'])) {
-            return $this->RaiseError('Parameter att is used with parameter ope=changepic in the field ['.$Loc->FullName.']. changepic will be ignored');
+            return $this->raiseError('Parameter att is used with parameter ope=changepic in the field ['.$Loc->FullName.']. changepic will be ignored');
         }
         
         $backward = true;
@@ -1261,10 +1239,10 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         } elseif ($this->ExtType==='openxml') {
             $att = $this->OpenXML_FirstPicAtt($Txt, $Loc->PosBeg, $backward);
             if ($att===false) {
-                return $this->RaiseError('Parameter ope=changepic used in the field ['.$Loc->FullName.'] has failed to found the picture.');
+                return $this->raiseError('Parameter ope=changepic used in the field ['.$Loc->FullName.'] has failed to found the picture.');
             }
         } else {
-            return $this->RaiseError('Parameter ope=changepic used in the field ['.$Loc->FullName.'] is not supported with the current document type.');
+            return $this->raiseError('Parameter ope=changepic used in the field ['.$Loc->FullName.'] is not supported with the current document type.');
         }
                 
         // Move the field to the attribute
@@ -1300,7 +1278,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
             } elseif ($this->ExtType==='openxml') {
                 $InternalPicPath = $this->OpenXML_GetInternalPicPath($Value);
                 if ($InternalPicPath === false) {
-                    $this->RaiseError('The picture to merge with field ['.$Loc->FullName.'] cannot be found. Value=' . $Value);
+                    $this->raiseError('The picture to merge with field ['.$Loc->FullName.'] cannot be found. Value=' . $Value);
                 }
             }
 
@@ -1522,7 +1500,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                 } elseif (file_exists($x)) {
                     $FullPath = $x;
                 } else {
-                    return $this->RaiseError('The default picture "'.$x.'" defined by parameter "default" of the field ['.$Loc->FullName.'] is not found.');
+                    return $this->raiseError('The default picture "'.$x.'" defined by parameter "default" of the field ['.$Loc->FullName.'] is not found.');
                 }
             } else {
                 return false;
@@ -1763,10 +1741,10 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
     function TbsSheetCheck()
     {
         if (count($this->OtbsSheetSlidesDelete)>0) {
-            $this->RaiseError("Unable to delete the following sheets because they are not found in the workbook: ".(str_replace(array('i:','n:'), '', implode(', ', $this->OtbsSheetSlidesDelete))).'.');
+            $this->raiseError("Unable to delete the following sheets because they are not found in the workbook: ".(str_replace(array('i:','n:'), '', implode(', ', $this->OtbsSheetSlidesDelete))).'.');
         }
         if (count($this->OtbsSheetSlidesVisible)>0) {
-            $this->RaiseError("Unable to change visibility of the following sheets because they are not found in the workbook: ".(str_replace(array('i:','n:'), '', implode(', ', array_keys($this->OtbsSheetSlidesVisible)))).'.');
+            $this->raiseError("Unable to change visibility of the following sheets because they are not found in the workbook: ".(str_replace(array('i:','n:'), '', implode(', ', array_keys($this->OtbsSheetSlidesVisible)))).'.');
         }
     }
 
@@ -2361,7 +2339,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                 }
                 $loc_prev->FindEndTag();
                 if ($loc_prev->pET_PosBeg === false) {
-                    return $this->RaiseError("Cannot apply attribute because entity '" . $loc_prev->FindName() . "' has no ending tag in file [$SubFile].");
+                    return $this->raiseError("Cannot apply attribute because entity '" . $loc_prev->FindName() . "' has no ending tag in file [$SubFile].");
                 }
                 $Txt = substr_replace($Txt, $x, $loc_prev->pET_PosBeg, 0);
             }
@@ -2438,7 +2416,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                 if ($l>0 && $l<27) {
                     $num = $num + $l*pow(26, $rank);
                 } else {
-                    return $this->RaiseError('(Sheet) Reference of cell \''.$ColRef.'\' cannot be recognized.');
+                    return $this->raiseError('(Sheet) Reference of cell \''.$ColRef.'\' cannot be recognized.');
                 }
                 $rank++;
             }
@@ -2692,7 +2670,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $RelsPath = $this->OpenXML_Rels_GetPath($DocPath);
         $idx = $this->FileGetIdx($RelsPath);
         if ($idx===false) {
-            $this->RaiseError("Cannot edit target in '$RelsPath' because the file is not found.");
+            $this->raiseError("Cannot edit target in '$RelsPath' because the file is not found.");
         }
         $txt = $this->TbsStoreGet($idx, 'Replace target in rels file');
         
@@ -2769,21 +2747,21 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                 $p1 = $p + strlen($zTarget);
                 $p2 = strpos($Txt, '"', $p1);
                 if ($p2===false) {
-                    return $this->RaiseError("(OpenXML) end of attribute Target not found in position ".$p1." of sub-file ".$o->FicPath);
+                    return $this->raiseError("(OpenXML) end of attribute Target not found in position ".$p1." of sub-file ".$o->FicPath);
                 }
                 $TargetEnd = substr($Txt, $p1, $p2 -$p1);
                 $Target = $TargetPrefix.$TargetEnd;
                 // Get the Id
                 $p1 = strrpos(substr($Txt, 0, $p), '<');
                 if ($p1===false) {
-                    return $this->RaiseError("(OpenXML) beginning of tag not found in position ".$p." of sub-file ".$o->FicPath);
+                    return $this->raiseError("(OpenXML) beginning of tag not found in position ".$p." of sub-file ".$o->FicPath);
                 }
                 $p1 = strpos($Txt, $zId, $p1);
                 if ($p1!==false) {
                     $p1 = $p1 + strlen($zId);
                     $p2 = strpos($Txt, '"', $p1);
                     if ($p2===false) {
-                        return $this->RaiseError("(OpenXML) end of attribute Id not found in position ".$p1." of sub-file ".$o->FicPath);
+                        return $this->raiseError("(OpenXML) end of attribute Id not found in position ".$p1." of sub-file ".$o->FicPath);
                     }
                     $Rid = substr($Txt, $p1, $p2 - $p1);
                     $o->RidLst[$Target] = $Rid;
@@ -2829,7 +2807,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                 // search position for insertion
                 $p = strpos($o->FicTxt, '</Relationships>');
                 if ($p===false) {
-                    return $this->RaiseError("(OpenXML) closing tag </Relationships> not found in subfile ".$o->FicPath);
+                    return $this->raiseError("(OpenXML) closing tag </Relationships> not found in subfile ".$o->FicPath);
                 }
 
                 // build the string to insert
@@ -2934,7 +2912,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
             $p = strpos($Txt, ' Extension="'.$ext.'"');
             if ($p===false) {
                 if ($ct==='') {
-                    $this->RaiseError("(OpenXML) '".$ext."' is not an picture's extension recognize by OpenTBS.");
+                    $this->raiseError("(OpenXML) '".$ext."' is not an picture's extension recognize by OpenTBS.");
                 } else {
                     $x .= '<Default Extension="'.$ext.'" ContentType="'.$ct.'"/>';
                 }
@@ -2943,7 +2921,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         if ($x!=='') {
             $p = strpos($Txt, '</Types>'); // search position for insertion
             if ($p===false) {
-                return $this->RaiseError("(OpenXML) closing tag </Types> not found in subfile ".$file);
+                return $this->raiseError("(OpenXML) closing tag </Types> not found in subfile ".$file);
             }
             $Txt = substr_replace($Txt, $x, $p, 0);
             $ok = true;
@@ -3299,7 +3277,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                 // For debug
                 $chart['parent_idx'] = $idx;
             } else {
-                return $this->RaiseError("($ErrTitle) : unable to found the chart corresponding to '".$ChartRef."'.");
+                return $this->raiseError("($ErrTitle) : unable to found the chart corresponding to '".$ChartRef."'.");
             }
         }
         
@@ -3330,11 +3308,11 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 
         $Delete = ($NewValues===false);
         if (is_array($SeriesNameOrNum)) {
-            return $this->RaiseError("(ChartChangeSeries) '$ChartRef' : The series reference is an array, a string or a number is expected. ".$ChartRef."'."); // usual mistake in arguments
+            return $this->raiseError("(ChartChangeSeries) '$ChartRef' : The series reference is an array, a string or a number is expected. ".$ChartRef."'."); // usual mistake in arguments
         }
         $ser = $this->OpenXML_ChartSeriesFound($Txt, $SeriesNameOrNum, $Delete);
         if (!is_array($ser)) {
-            return $this->RaiseError("(ChartChangeSeries) '$ChartRef' : unable change series '".$SeriesNameOrNum."' in the chart '".$ref."' : ".$ser);
+            return $this->raiseError("(ChartChangeSeries) '$ChartRef' : unable change series '".$SeriesNameOrNum."' in the chart '".$ref."' : ".$ser);
         }
 
         if ($Delete) {
@@ -3622,12 +3600,12 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                 $last_id++;
                 $p1 = strpos($Txt, $x1, $p2+1);
                 if ($p1===false) {
-                    return $this->RaiseError("(Excel SharedStrings) id $id is searched but id $last_id is not found.");
+                    return $this->raiseError("(Excel SharedStrings) id $id is searched but id $last_id is not found.");
                 }
                 $p1 = strpos($Txt, '>', $p1+$x1_len)+1;
                 $p2 = strpos($Txt, $x2, $p1);
                 if ($p2===false) {
-                    return $this->RaiseError("(Excel SharedStrings) id $id is searched but no closing tag found for id $last_id.");
+                    return $this->raiseError("(Excel SharedStrings) id $id is searched but no closing tag found for id $last_id.");
                 }
                 $this->OpenXmlSharedStr[$last_id] = array('beg'=>$p1, 'end'=>$p2, 'len'=>($p2-$p1));
             }
@@ -3722,7 +3700,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                 }
                 $missing_nbr = $r - $item_num -1;
                 if ($missing_nbr<0) {
-                    return $this->RaiseError('(Excel Consistency) error in counting items <'.$Tag.'>, found number '.$r.', previous was '.$item_num);
+                    return $this->raiseError('(Excel Consistency) error in counting items <'.$Tag.'>, found number '.$r.', previous was '.$item_num);
                 } elseif ($IsRow && ($missing_nbr > $compat_limit_miss) && ($r >= $compat_limit_num)) { // Excel limit is 1048576
                     // Useless final rows: LibreOffice add several final useless rows in the sheet when saving as XLSX.
                     $Delete = true;
@@ -3757,7 +3735,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                 if (($Txt[$PosEnd-1]!=='/')) {
                     $x_p = strpos($Txt, $closing, $PosEnd);
                     if ($x_p===false) {
-                        return $this->RaiseError('(Excel Consistency) closing row tag is not found.');
+                        return $this->raiseError('(Excel Consistency) closing row tag is not found.');
                     }
                     $PosEnd = $x_p + strlen($closing) - 1;
                 }
@@ -3766,7 +3744,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                 // It's a row item that may contain columns
                 $x_p = strpos($Txt, $closing, $PosEnd);
                 if ($x_p===false) {
-                    return $this->RaiseError('(Excel Consistency) closing row tag is not found.');
+                    return $this->raiseError('(Excel Consistency) closing row tag is not found.');
                 }
                 $x_len0 = $x_p - $PosEnd -1;
                 $x = substr($Txt, $PosEnd+1, $x_len0);
@@ -4139,7 +4117,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                 }
             }
         }
-        return $this->RaiseError("(MsExcel_SheetInit) The sheet '$IdOrName' is not found inside the Workbook. Try command OPENTBS_DEBUG_INFO to check all sheets inside the current Workbook.");
+        return $this->raiseError("(MsExcel_SheetInit) The sheet '$IdOrName' is not found inside the Workbook. Try command OPENTBS_DEBUG_INFO to check all sheets inside the current Workbook.");
     }
 
     /**
@@ -4322,12 +4300,12 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
             $i++;
             $rid = $loc->GetAttLazy('r:id');
             if ($rid===false) {
-                $this->RaiseError("(Init Slide List) attribute 'r:id' is missing for slide #$i in '$PresFile'.");
+                $this->raiseError("(Init Slide List) attribute 'r:id' is missing for slide #$i in '$PresFile'.");
             } elseif (isset($o->TargetLst[$rid])) {
                 $f = 'ppt/'.$o->TargetLst[$rid];
                 $lst[] = array('file' => $f, 'idx' => $this->FileGetIdx($f), 'rid' => $rid);
             } else {
-                $this->RaiseError("(Init Slide List) Slide corresponding to rid=$rid is not found in the Rels file of '$PresFile'.");
+                $this->raiseError("(Init Slide List) Slide corresponding to rid=$rid is not found in the Rels file of '$PresFile'.");
             }
             $p = $loc->PosEnd;
         }
@@ -4488,7 +4466,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
             $z = 'Target="slides/'.$f.'"';
             if (strpos($txt, $z)) {
                 if ($first_kept===false) {
-                    return $this->RaiseError("(Slide Delete and Display) : no slide left to replace the default slide in 'viewProps.xml.rels'.");
+                    return $this->raiseError("(Slide Delete and Display) : no slide left to replace the default slide in 'viewProps.xml.rels'.");
                 }
                 $ok = true;
                 $txt = str_replace($z, 'Target="slides/'.$first_kept.'"', $txt);
@@ -5531,7 +5509,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
             $ChartCaption = 'number '.$ChartRef;
             $idx = intval($ChartRef) -1;
             if (!isset($this->OpenDocCharts[$idx])) {
-                return $this->RaiseError("($ErrTitle) : unable to found the chart $ChartCaption.");
+                return $this->raiseError("($ErrTitle) : unable to found the chart $ChartCaption.");
             }
         } else {
             $ChartCaption = 'with title "'.$ChartRef.'"';
@@ -5543,7 +5521,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                 }
             }
             if ($idx===false) {
-                return $this->RaiseError("($ErrTitle) : unable to found the chart $ChartCaption.");
+                return $this->raiseError("($ErrTitle) : unable to found the chart $ChartCaption.");
             }
         }
         $this->_ChartCaption = $ChartCaption; // for error messages
@@ -5558,7 +5536,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $file_name = $chart['href'] . '/content.xml';
         $file_idx = $this->FileGetIdx($file_name);
         if ($file_idx===false) {
-            return $this->RaiseError("($ErrTitle) : unable to found the data in the chart $ChartCaption.");
+            return $this->raiseError("($ErrTitle) : unable to found the data in the chart $ChartCaption.");
         }
         $chart['file_name'] = $file_name;
         $chart['file_idx'] = $file_idx;
@@ -5604,7 +5582,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
             }
         }
         if ($s_info===false) {
-            return $this->RaiseError("(ChartChangeSeries) : unable to found the series $s_caption in the chart ".$this->_ChartCaption.".");
+            return $this->raiseError("(ChartChangeSeries) : unable to found the series $s_caption in the chart ".$this->_ChartCaption.".");
         }
 
         if ($NewLegend!==false) {
@@ -5849,7 +5827,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         // Brows headers columns
         $elHeaders = TBSXmlLoc::FindElement($Txt, 'table:table-header-rows', 0);
         if ($elHeaders===false) {
-            return $this->RaiseError("(ChartFindSeries) : unable to found the series names in the chart ".$this->_ChartCaption.".");
+            return $this->raiseError("(ChartFindSeries) : unable to found the series names in the chart ".$this->_ChartCaption.".");
         }
         $p = 0;
         $col_num = 0;
@@ -5873,7 +5851,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
     {
         $x = $el->GetAttLazy($att);
         if ($x===false) {
-            return $this->RaiseError("(ChartFindCol) : unable to find cell references for series number #".($idx+1)." in the chart ".$this->_ChartCaption.".");
+            return $this->raiseError("(ChartFindCol) : unable to find cell references for series number #".($idx+1)." in the chart ".$this->_ChartCaption.".");
         }
         $c = $this->Misc_ColNum($x, true);
         if ($s_idx!==false) {

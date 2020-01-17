@@ -12,7 +12,7 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$DebugLst\\.$#"
-			count: 9
+			count: 8
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -47,7 +47,7 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsCurrIdx\\.$#"
-			count: 19
+			count: 18
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -87,7 +87,7 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TBS\\.$#"
-			count: 24
+			count: 21
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -1042,7 +1042,7 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$DisplayError\\.$#"
-			count: 3
+			count: 2
 			path: src/lib/TBSZip.php
 
 		-
@@ -1052,7 +1052,7 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$Error\\.$#"
-			count: 4
+			count: 3
 			path: src/lib/TBSZip.php
 
 		-
