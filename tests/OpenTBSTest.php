@@ -7,6 +7,7 @@ use http\Exception\RuntimeException;
 use OpenTBS\Exceptions\OpenTBSException;
 use OpenTBS\Services\OpenTBS;
 use PHPUnit\Framework\TestCase;
+use ZipArchive;
 
 class OpenTBSTest extends TestCase
 {    
@@ -60,10 +61,9 @@ class OpenTBSTest extends TestCase
         $tbs->LoadTemplate($handle);
         $tbs->LoadTemplate('#ppt/slides/slide2.xml');
         $this->expectException(OpenTBSException::class);
-        $tbs->Show(OPENTBS_FILE, 'osef');
+        $tbs->Show(OPENTBS_FILE, __DIR__.'/var/editedTruc.pptx');
     }
-
-    //todo: find a way to insert than the variable is actually injected
+    
     public function testTextAndPictureInjection(): void
     {
         $editedPath = __DIR__.'/var/edited3.pptx';
@@ -74,10 +74,19 @@ class OpenTBSTest extends TestCase
         $tbs = new OpenTBS();
         $handle = fopen(__DIR__.'/var/testOpenTBSWithImage.pptx', 'r');
         $tbs->LoadTemplate($handle);
-        $tbs->VarRef['textreplace'] = 'super';
+        $textToInject = 'here is the injected text';
+        $tbs->VarRef['textreplace'] = $textToInject;
         $tbs->VarRef['pic2'] = __DIR__.'/var/pierre.jpeg';
         $tbs->Show(OPENTBS_FILE, $editedPath);
         $this->assertFileExists($editedPath);
+
+        $zip = new ZipArchive();
+        $res = $zip->open($editedPath);
+        $this->assertTrue($res);
+        $injectImageName = $zip->getFromName('ppt/media/opentbs_added_1.jpeg');
+        $this->assertNotFalse($injectImageName);
+        $editedSlideText = $zip->getFromName('ppt/slides/slide1.xml');
+        $this->assertNotFalse(strpos($editedSlideText, $textToInject));
     }
 
     public function testTextInjectionOn2slides(): void
@@ -90,10 +99,18 @@ class OpenTBSTest extends TestCase
         $handle = fopen(__DIR__.'/var/testOpenTBSWithText.pptx', 'r');
         $tbs->LoadTemplate($handle);
         $tbs->LoadTemplate('#ppt/slides/slide2.xml');
-        $tbs->VarRef['textreplace'] = 'super';
-        $tbs->VarRef['textreplace2'] = 'encore plus super';
+        $tbs->VarRef['textreplace'] = 'injected text slide 1';
+        $tbs->VarRef['textreplace2'] = 'injected text slide 2';
         $tbs->Show(OPENTBS_FILE, $editedPath);
         $this->assertFileExists($editedPath);
+
+        $zip = new ZipArchive();
+        $res = $zip->open($editedPath);
+        $this->assertTrue($res);
+        $editedSlideText = $zip->getFromName('ppt/slides/slide1.xml');
+        $this->assertNotFalse(strpos($editedSlideText, 'injected text slide 1'));
+        $editedSlideText = $zip->getFromName('ppt/slides/slide2.xml');
+        $this->assertNotFalse(strpos($editedSlideText, 'injected text slide 2'));
         
     } 
     

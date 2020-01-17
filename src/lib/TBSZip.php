@@ -13,13 +13,15 @@ for TinyButStrong Template Engine (TBS). OpenTbs makes TBS able to merge OpenOff
 Visit http://www.tinybutstrong.com
 */
 
-define('TBSZIP_DOWNLOAD', 1);   // download (default)
-define('TBSZIP_NOHEADER', 4);   // option to use with DOWNLOAD: no header is sent
-define('TBSZIP_FILE', 8);       // output to file  , or add from file
-define('TBSZIP_STRING', 32);    // output to string, or add from string
+
+use OpenTBS\Exceptions\OpenTBSException;
 
 class TBSZip
 {
+    public const TBSZIP_DOWNLOAD = 1;// download (default)
+    public const TBSZIP_NOHEADER = 4;// option to use with DOWNLOAD: no header is sent
+    public const TBSZIP_FILE = 8;// output to file  , or add from file
+    public const TBSZIP_STRING = 32;// output to string, or add from string
 
     function __construct()
     {
@@ -94,7 +96,7 @@ class TBSZip
         $this->AddInfo = array();
     }
 
-    function FileAdd($Name, $Data, $DataType = TBSZIP_STRING, $Compress = true)
+    function FileAdd($Name, $Data, $DataType = self::TBSZIP_STRING, $Compress = true)
     {
 
         if ($Data===false) {
@@ -124,7 +126,7 @@ class TBSZip
             $p = $this->_FindCDEnd($cd_info);
             //echo 'p='.var_export($p,true); exit;
             if ($p===false) {
-                return $this->RaiseError('The End of Central Directory Record is not found.');
+                return $this->raiseError('The End of Central Directory Record is not found.');
             } else {
                 $this->CdEndPos = $p;
                 $this->_MoveTo($p+4);
@@ -136,10 +138,10 @@ class TBSZip
         $this->CdPos = $this->CdInfo['p_cd'];
 
         if ($this->CdFileNbr<=0) {
-            return $this->RaiseError('No header found in the Central Directory.');
+            return $this->raiseError('No header found in the Central Directory.');
         }
         if ($this->CdPos<=0) {
-            return $this->RaiseError('No position found for the Central Directory.');
+            return $this->raiseError('No position found for the Central Directory.');
         }
 
         $this->_MoveTo($this->CdPos);
@@ -176,7 +178,7 @@ class TBSZip
 
         $x = $this->_GetHex($b, 0, 4);
         if ($x!=='h:02014b50') {
-            return $this->RaiseError("Signature of Central Directory Header #".$idx." (file information) expected but not found at position ".$this->_TxtPos(ftell($this->ArchHnd) - 46).".");
+            return $this->raiseError("Signature of Central Directory Header #".$idx." (file information) expected but not found at position ".$this->_TxtPos(ftell($this->ArchHnd) - 46).".");
         }
 
         $x = array();
@@ -205,17 +207,9 @@ class TBSZip
         return $x;
     }
 
-    function RaiseError($Msg)
+    public function raiseError(string $Msg, $NoErrMsg = false)
     {
-        if ($this->DisplayError) {
-            if (PHP_SAPI==='cli') {
-                echo get_class($this).' ERROR with the zip archive: '.$Msg."\r\n";
-            } else {
-                echo '<strong>'.get_class($this).' ERROR with the zip archive:</strong> '.$Msg.'<br>'."\r\n";
-            }
-        }
-        $this->Error = $Msg;
-        return false;
+        throw new OpenTBSException($Msg);
     }
 
     function Debug($FileHeaders = false)
@@ -319,7 +313,7 @@ class TBSZip
 
         $idx = $this->FileGetIdx($NameOrIdx);
         if ($idx===false) {
-            return $this->RaiseError('File "'.$NameOrIdx.'" is not found in the Central Directory.');
+            return $this->raiseError('File "'.$NameOrIdx.'" is not found in the Central Directory.');
         }
 
         $pos = $this->CdFileLst[$idx]['p_loc'];
@@ -338,14 +332,14 @@ class TBSZip
                     $Data = gzinflate($Data);
                     $Comp = -1; // means uncompressed
                 } else {
-                    $this->RaiseError('Unable to uncompress file "'.$NameOrIdx.'" because extension Zlib is not installed.');
+                    $this->raiseError('Unable to uncompress file "'.$NameOrIdx.'" because extension Zlib is not installed.');
                 }
             }
         } elseif ($meth==0) {
             $Comp = 0; // means stored without compression
         } else {
             if ($Uncompress) {
-                $this->RaiseError('Unable to uncompress file "'.$NameOrIdx.'" because it is compressed with method '.$meth.'.');
+                $this->raiseError('Unable to uncompress file "'.$NameOrIdx.'" because it is compressed with method '.$meth.'.');
             }
         }
         $this->LastReadComp = $Comp;
@@ -361,7 +355,7 @@ class TBSZip
 
         $x = $this->_GetHex($b, 0, 4);
         if ($x!=='h:04034b50') {
-            return $this->RaiseError("Signature of Local File Header #".$idx." (data section) expected but not found at position ".$this->_TxtPos(ftell($this->ArchHnd)-30).".");
+            return $this->raiseError("Signature of Local File Header #".$idx." (data section) expected but not found at position ".$this->_TxtPos(ftell($this->ArchHnd)-30).".");
         }
 
         $x = array();
@@ -395,7 +389,7 @@ class TBSZip
         } else {
             $len = $x['l_data_c'];
             if ($len==0) {
-                $this->RaiseError("File Data #".$idx." cannt be read because no length is specified in the Local File Header and its Central Directory information has not been found.");
+                $this->raiseError("File Data #".$idx." cannt be read because no length is specified in the Local File Header and its Central Directory information has not been found.");
             }
         }
 
@@ -436,13 +430,13 @@ class TBSZip
         }
     }
 
-    function FileReplace($NameOrIdx, $Data, $DataType = TBSZIP_STRING, $Compress = true)
+    function FileReplace($NameOrIdx, $Data, $DataType = self::TBSZIP_STRING, $Compress = true)
     {
         // Store replacement information.
 
         $idx = $this->FileGetIdx($NameOrIdx);
         if ($idx===false) {
-            return $this->RaiseError('File "'.$NameOrIdx.'" is not found in the Central Directory.');
+            return $this->raiseError('File "'.$NameOrIdx.'" is not found in the Central Directory.');
         }
 
         $pos = $this->CdFileLst[$idx]['p_loc'];
@@ -523,11 +517,11 @@ class TBSZip
         return $nbr;
     }
 
-    function Flush($Render = TBSZIP_DOWNLOAD, $File = '', $ContentType = '')
+    function Flush($Render = self::TBSZIP_DOWNLOAD, $File = '', $ContentType = '')
     {
 
-        if (($File!=='') && ($this->ArchFile===$File) && ($Render==TBSZIP_FILE)) {
-            $this->RaiseError('Method Flush() cannot overwrite the current opened archive: \''.$File.'\''); // this makes corrupted zip archives without PHP error.
+        if (($File!=='') && ($this->ArchFile===$File) && ($Render==self::TBSZIP_FILE)) {
+            $this->raiseError('Method Flush() cannot overwrite the current opened archive: \''.$File.'\''); // this makes corrupted zip archives without PHP error.
             return false;
         }
 
@@ -693,25 +687,25 @@ class TBSZip
     function OutputOpen($Render, $File, $ContentType)
     {
 
-        if (($Render & TBSZIP_FILE)==TBSZIP_FILE) {
-            $this->OutputMode = TBSZIP_FILE;
+        if (($Render & self::TBSZIP_FILE)==self::TBSZIP_FILE) {
+            $this->OutputMode = self::TBSZIP_FILE;
             if (''.$File=='') {
                 $File = basename($this->ArchFile).'.zip';
             }
             $this->OutputHandle = @fopen($File, 'w');
             if ($this->OutputHandle===false) {
-                return $this->RaiseError('Method Flush() cannot overwrite the target file \''.$File.'\'. This may not be a valid file path or the file may be locked by another process or because of a denied permission.');
+                return $this->raiseError('Method Flush() cannot overwrite the target file \''.$File.'\'. This may not be a valid file path or the file may be locked by another process or because of a denied permission.');
             }
-        } elseif (($Render & TBSZIP_STRING)==TBSZIP_STRING) {
-            $this->OutputMode = TBSZIP_STRING;
+        } elseif (($Render & self::TBSZIP_STRING)==self::TBSZIP_STRING) {
+            $this->OutputMode = self::TBSZIP_STRING;
             $this->OutputSrc = '';
-        } elseif (($Render & TBSZIP_DOWNLOAD)==TBSZIP_DOWNLOAD) {
-            $this->OutputMode = TBSZIP_DOWNLOAD;
+        } elseif (($Render & self::TBSZIP_DOWNLOAD)==self::TBSZIP_DOWNLOAD) {
+            $this->OutputMode = self::TBSZIP_DOWNLOAD;
             // Output the file
             if (''.$File=='') {
                 $File = basename($this->ArchFile);
             }
-            if (($Render & TBSZIP_NOHEADER)==TBSZIP_NOHEADER) {
+            if (($Render & self::TBSZIP_NOHEADER)==self::TBSZIP_NOHEADER) {
             } else {
                 header('Pragma: no-cache');
                 if ($ContentType!='') {
@@ -729,7 +723,7 @@ class TBSZip
                 }
             }
         } else {
-            return $this->RaiseError('Method Flush is called with a unsupported render option.');
+            return $this->raiseError('Method Flush is called with a unsupported render option.');
         }
 
         return true;
@@ -754,18 +748,18 @@ class TBSZip
 
     function OutputFromString($data)
     {
-        if ($this->OutputMode===TBSZIP_DOWNLOAD) {
+        if ($this->OutputMode===self::TBSZIP_DOWNLOAD) {
             echo $data; // donwload
-        } elseif ($this->OutputMode===TBSZIP_STRING) {
+        } elseif ($this->OutputMode===self::TBSZIP_STRING) {
             $this->OutputSrc .= $data; // to string
-        } elseif (TBSZIP_FILE) {
+        } elseif (self::TBSZIP_FILE) {
             fwrite($this->OutputHandle, $data); // to file
         }
     }
 
     function OutputClose()
     {
-        if (($this->OutputMode===TBSZIP_FILE) && ($this->OutputHandle!==false)) {
+        if (($this->OutputMode===self::TBSZIP_FILE) && ($this->OutputHandle!==false)) {
             fclose($this->OutputHandle);
             $this->OutputHandle = false;
         }
@@ -998,7 +992,7 @@ class TBSZip
             $Compress = false;
         }
 
-        if ($DataType==TBSZIP_STRING) {
+        if ($DataType==self::TBSZIP_STRING) {
             $path = false;
             if ($Compress) {
                 // we compress now in order to save PHP memory
@@ -1023,7 +1017,7 @@ class TBSZip
                 }
                 $len_c = ($Compress) ? false : $fz;
             } else {
-                return $this->RaiseError("Cannot add the file '".$path."' because it is not found.");
+                return $this->raiseError("Cannot add the file '".$path."' because it is not found.");
             }
         }
 
