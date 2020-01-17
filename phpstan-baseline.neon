@@ -1,0 +1,1067 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$Version\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$DebugLst\\.$#"
+			count: 8
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ExtInfo\\.$#"
+			count: 14
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsSystemCredits\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ExtEquiv\\.$#"
+			count: 28
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsStoreLst\\.$#"
+			count: 16
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsCurrIdx\\.$#"
+			count: 18
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsExcel_KeepRelative\\.$#"
+			count: 4
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlCTypes\\.$#"
+			count: 7
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenDocManif\\.$#"
+			count: 4
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlRid\\.$#"
+			count: 4
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ExtType\\.$#"
+			count: 13
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OutputSrc\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$PrevVals\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TBS\\.$#"
+			count: 21
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsExcel_Sheets\\.$#"
+			count: 7
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Function instr not found\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Undefined variable\\: \\$TBS$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Undefined variable\\: \\$str$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsWord_HeaderFooter\\.$#"
+			count: 4
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsNoField\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$IdxToCheck\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ImageIndex\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ImageInternal\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OtbsSheetSlidesDelete\\.$#"
+			count: 13
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OtbsSheetSlidesVisible\\.$#"
+			count: 12
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenDocCharts\\.$#"
+			count: 4
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenDoc_SheetSlides\\.$#"
+			count: 6
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenDoc_Styles\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlCharts\\.$#"
+			count: 6
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlSharedStr\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlSlideLst\\.$#"
+			count: 9
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlSlideMasterLst\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsExcel_NoTBS\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsWord_DocPrId\\.$#"
+			count: 6
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$SubFileLst Can be an index or a name or a file, or an array of such values\\.\\)\\: Unexpected token \"\\$SubFileLst\", expected type at offset 252$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$LastReadNotStored\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$LastReadComp\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Variable \\$MergeAutoFields might not be defined\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$_ModeSave\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\{integer\\} \\$idx The index of the file to read\\.\\)\\: Unexpected token \"\\{\", expected type at offset 192$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\{string\\|false\\} \\$caller A text describing the calling function, for error reporting purpose\\. If caller\\=false it means TbsStoreLoad\\(\\)\\.\\)\\: Unexpected token \"\\{\", expected type at offset 252$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Variable \\$SaveIdx might not be defined\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Variable \\$SaveName might not be defined\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Method OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:TbsApplyOptim\\(\\) should return bool but returns null\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ReplInfo\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$AddInfo\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$FullName\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$PosBeg\\.$#"
+			count: 11
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$otbsDim\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$PosEnd\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Variable \\$InternalPicPath might not be defined\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Undefined variable\\: \\$Loc$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Variable \\$adjust_coef might not be defined\\.$#"
+			count: 4
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$files An associated array of sub\\-files to scann\\. Structure\\: \\$key \\=\\> IdxOrName\\)\\: Unexpected token \"\\$files\", expected type at offset 87$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$returnFirstFind  true to return only the first record fund\\.\\)\\: Unexpected token \"\\$returnFirstFind\", expected type at offset 223$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$str   The string to search\\.\\)\\: Unexpected token \"\\$str\", expected type at offset 180$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Return typehint of method OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:TbsSearchInFiles\\(\\) has invalid type OfficeTemplateEngine\\\\lib\\\\a\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Method OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:TbsSearchInFiles\\(\\) should return OfficeTemplateEngine\\\\lib\\\\a but returns array\\<string, mixed\\>\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Method OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:TbsSearchInFiles\\(\\) should return OfficeTemplateEngine\\\\lib\\\\a but returns array\\<string, false\\>\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Method OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:TbsSearchInFiles\\(\\) should return OfficeTemplateEngine\\\\lib\\\\a but returns array\\<int, array\\<string, mixed\\>\\>\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$delete     true to Delete/Keep, false to Display/Hide\\)\\: Unexpected token \"\\$delete\", expected type at offset 229$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$id_or_name Id or Name of the Sheet/Slide\\)\\: Unexpected token \"\\$id_or_name\", expected type at offset 98$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$ok         true to Keep or Display, false to Delete or Hide\\)\\: Unexpected token \"\\$ok\", expected type at offset 154$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Variable \\$GLOBAL in isset\\(\\) is never defined\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Offset 'main' does not exist on array\\('ext' \\=\\> mixed, 'load' \\=\\> array\\(\\)\\)\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\{array\\} \\$TagLst List of tag names to delete\\.\\)\\: Unexpected token \"\\{\", expected type at offset 134$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\{boolean\\} \\$OnlyInner Set to true to keep the content inside the element\\. Set to false to delete the entire element\\. Default is false\\.\\)\\: Unexpected token \"\\{\", expected type at offset 193$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\{string\\} \\$Txt The text content to search into\\.\\)\\: Unexpected token \"\\{\", expected type at offset 73$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\{mixed\\}  \\$SubFile \\: the name or the index of the sub\\-file\\. Use value false to get the current sub\\-file\\.\\)\\: Unexpected token \"\\{\", expected type at offset 116$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\{string\\|boolean\\} \\$Att    \\: the attribute, or false to replace the entity's value\\.\\)\\: Unexpected token \"\\{\", expected type at offset 328$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\{string\\|boolean\\} \\$NewVal \\: the new value, or false to delete the attribute\\.\\)\\: Unexpected token \"\\{\", expected type at offset 424$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\{string\\} \\$ElPath  \\: path of the element\\. For example \\: 'w\\:document/w\\:body/w\\:p'\\.\\)\\: Unexpected token \"\\{\", expected type at offset 234$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @return has invalid value \\(\\{boolean\\} True if the attribute is found and processed\\. False otherwise\\.\\)\\: Unexpected token \"\\{\", expected type at offset 515$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\{array\\}  \\$RelatedTo List of the the full paths of the files than may have relationship with the file to delete\\.\\)\\: Unexpected token \"\\{\", expected type at offset 261$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\{string\\} \\$FullPath The full path of the file to delete\\.\\)\\: Unexpected token \"\\{\", expected type at offset 191$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @return has invalid value \\(\\{mixed\\} False if it is not possible to delete the file, or the number of modifier relations ship in case of success \\(may be 0\\)\\.\\)\\: Unexpected token \"\\{\", expected type at offset 388$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$DocPath      Full path of the sub\\-file in the archive\\)\\: Unexpected token \"\\$DocPath\", expected type at offset 98$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$DocPath      Full path of the sub\\-file in the archive\\)\\: Unexpected token \"\\$DocPath\", expected type at offset 360$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$TargetPrefix Prefix of the 'Target' attribute\\. For example \\$TargetPrefix\\='\\.\\./drawings/'\\)\\: Unexpected token \"\\$TargetPrefix\", expected type at offset 429$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$PartName \\: path of the file to delete\\)\\: Unexpected token \"\\$PartName\", expected type at offset 64$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlMap\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Instantiated class OfficeTemplateEngine\\\\lib\\\\clsTbsLocator not found\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$PrmLst\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsExcel_Sheets_WkbIdx\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property \\$this\\(OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\)\\:\\:\\$OtbsSheetSlidesVisible\\.$#"
+			count: 4
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\{boolean\\} \\$Master Trye to operate on master slides\\.\\)\\: Unexpected token \"\\{\", expected type at offset 86$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @return has invalid value \\(\\{array\\} The list of the slides, of false if an error occurs\\.\\)\\: Unexpected token \"\\{\", expected type at offset 153$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Variable \\$superfluous_len might not be defined\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Variable \\$superfluous might not be defined\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Variable \\$p_first_att might not be defined\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(int \\[\\$Offset\\] Since a DCX can have several sections, and each section can have its own header/footer, this options\\)\\: Unexpected token \"\\[\", expected variable at offset 220$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenDoc_SheetSlides_FileId\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$PrmPos\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$_ChartCaption\\.$#"
+			count: 4
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Undefined variable\\: \\$idx$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\Iterator not found\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\ArrayObject not found\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\IteratorAggregate not found\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\MySQLi not found\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\PDO not found\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\Zend_Db_Adapter_Abstract not found\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\SQLite3 not found\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\SQLite3Stmt not found\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\SQLite3Result not found\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Variable \\$FctCat might not be defined\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Offset 'type' does not exist on string\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$FctPrm\\.$#"
+			count: 2
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Offset 'open' does not exist on string\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Cannot assign offset 'open' to string\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Cannot assign offset 'fetch' to string\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Cannot assign offset 'close' to string\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$FirstRec\\.$#"
+			count: 3
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$OnDataArgs\\.$#"
+			count: 5
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Variable \\$Var might not be defined\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$RecNbr\\.$#"
+			count: 3
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$NumMin\\.$#"
+			count: 2
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$NumMax\\.$#"
+			count: 2
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$NumStep\\.$#"
+			count: 2
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$NumVal\\.$#"
+			count: 6
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$FctOpen\\.$#"
+			count: 4
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Caught class OfficeTemplateEngine\\\\lib\\\\Exception not found\\.$#"
+			count: 2
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Call to method getMessage\\(\\) on an unknown class OfficeTemplateEngine\\\\lib\\\\Exception\\.$#"
+			count: 2
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$OnDataPrmRef\\.$#"
+			count: 2
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$OnDataPiRef\\.$#"
+			count: 2
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$FctFetch\\.$#"
+			count: 2
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Access to constant FETCH_ASSOC on an unknown class OfficeTemplateEngine\\\\lib\\\\PDO\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Access to constant FETCH_ASSOC on an unknown class OfficeTemplateEngine\\\\lib\\\\Zend_Db\\.$#"
+			count: 1
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$FctClose\\.$#"
+			count: 2
+			path: src/lib/TBSDataSource.php
+
+		-
+			message: "#^Variable \\$PosSep might not be defined\\.$#"
+			count: 2
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Variable \\$FctInfo might not be defined\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_piOnMergeField\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_PlugIns_Ok_save\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_piOnFrm_Ok_save\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_piOnCommand\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$PosBeg\\.$#"
+			count: 10
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$PosBeg0\\.$#"
+			count: 3
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$PosEnd0\\.$#"
+			count: 3
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$Enlarged\\.$#"
+			count: 2
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_piOnCacheField\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$PosEnd\\.$#"
+			count: 10
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$FirstMerge\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$OnFrmInfo\\.$#"
+			count: 2
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$FullName\\.$#"
+			count: 2
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$OnFrmArg\\.$#"
+			count: 2
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$ConvMode\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$ConvProtect\\.$#"
+			count: 3
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Binary operation \"\\+\" between '0' and string results in an error\\.$#"
+			count: 4
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_piOnFormat\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_piOnOperation\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$PrmThenVar\\.$#"
+			count: 2
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$PrmElseVar\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_Subscript\\.$#"
+			count: 2
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$AttName\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$MagnetId\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Variable \\$Block might not be defined\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Variable \\$Loc might not be defined\\.$#"
+			count: 12
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$P1\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$FieldOutside\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$FOStop\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$BDefLst\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$NoData\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$Special\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$HeaderFound\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$FooterFound\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$SerialEmpty\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$GrpBreak\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$WhenFound\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$WhenDefault\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$SectionNbr\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$SectionLst\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$PosDefEnd\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$BlockSrc\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Variable \\$x might not be defined\\.$#"
+			count: 3
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Variable \\$len might not be defined\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$OnDataPrmRef\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Variable \\$piOMG might not be defined\\.$#"
+			count: 3
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_piOnMergeGroup\\.$#"
+			count: 3
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Variable \\$SecDef might not be defined\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_piOnMergeSection\\.$#"
+			count: 2
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Variable \\$Charset might not be defined\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Variable \\$_SERVER in isset\\(\\) always exists and is not nullable\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$SubNbr\\.$#"
+			count: 2
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$PrmLst\\.$#"
+			count: 5
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$SubName\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$Name\\.$#"
+			count: 2
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$Prm\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Method OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:meth_Misc_Alert\\(\\) invoked with 1 parameter, 2\\-4 required\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Constant TBS_OUTPUT not found\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Undefined variable\\: \\$Cls$#"
+			count: 2
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Variable \\$InnerLim might not be defined\\.$#"
+			count: 3
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Default value of the parameter \\#3 \\$iFirst \\(0\\) of method OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:f_Loc_Sort\\(\\) is incompatible with type bool\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$PrmPos\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$AttEnd\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Variable \\$Ins1 might not be defined\\.$#"
+			count: 2
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Variable \\$Ins2 might not be defined\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Variable \\$PosBeg might not be defined\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Variable \\$PosEnd might not be defined\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$RightLevel\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Variable \\$PosX might not be defined\\.$#"
+			count: 4
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSXmlLoc\\:\\:\\$pST_PosBeg\\.$#"
+			count: 1
+			path: src/lib/TBSXmlLoc.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$LastReadComp\\.$#"
+			count: 2
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$LastReadIdx\\.$#"
+			count: 2
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$ReplInfo\\.$#"
+			count: 8
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$ReplByPos\\.$#"
+			count: 5
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$AddInfo\\.$#"
+			count: 11
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Variable \\$Data might not be defined\\.$#"
+			count: 1
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^PHPDoc tag @return has invalid value \\(\\{string\\} 'u'\\=unchanged, 'm'\\=modified, 'd'\\=deleted, 'a'\\=added, false\\=unknown\\)\\: Unexpected token \"\\{\", expected type at offset 56$#"
+			count: 1
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Access to an undefined property \\$this\\(OfficeTemplateEngine\\\\lib\\\\TBSZip\\)\\:\\:\\$ReplByPos\\.$#"
+			count: 1
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Variable \\$AddLst might not be defined\\.$#"
+			count: 1
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$OutputMode\\.$#"
+			count: 6
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$OutputHandle\\.$#"
+			count: 3
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$OutputSrc\\.$#"
+			count: 2
+			path: src/lib/TBSZip.php
+

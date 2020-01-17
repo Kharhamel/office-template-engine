@@ -1,14 +1,14 @@
 <?php
 
-namespace OpenTBS\Services;
+namespace OfficeTemplateEngine\Services;
 
-require_once __DIR__ . '/../lib/tbs_class.php';
-require_once __DIR__ . '/../lib/tbs_plugin_opentbs.php';
+use OfficeTemplateEngine\lib\OpenTBSPlugin;
+use OfficeTemplateEngine\lib\TBSEngine;
 
 /**
  * Service for OpenTBS Bundle
  */
-class OpenTBS extends \clsTinyButStrong
+class OpenTBS extends TBSEngine
 {
     public function __construct()
     {
@@ -16,6 +16,6 @@ class OpenTBS extends \clsTinyButStrong
         parent::__construct();
 
         // load the OpenTBS plugin
-        $this->Plugin(TBS_INSTALL, OPENTBS_PLUGIN);
+        $this->Plugin(self::TBS_INSTALL, OpenTBSPlugin::class);
     }
 }

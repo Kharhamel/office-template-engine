@@ -1,24 +1,30 @@
 {
-    "name": "kharhamel/opentbs-bundle",
-    "type": "symfony-bundle",
+    "name": "kharhamel/office-template-engine",
     "description": "OpenTBS Bundle for Symfony - create OpenOffice and Ms Office documents with Symfony",
-    "keywords": ["symfony","TBS","OpenTBS", "document", "OpenOffice", "MS Office", "odt", "docx", "xlsx", "pptx"],
-    "homepage": "https://github.com/kharhamel/OpenTBSBundle",
+    "keywords": ["TBS","OpenTBS", "document", "OpenOffice", "MS Office", "odt", "docx", "xlsx", "pptx"],
+    "homepage": "https://github.com/Kharhamel/office-template-engine",
     "license": "MIT",
     "require": {
         "php": ">=7.2"
     },
     "autoload": {
-        "psr-0": {
-            "MBence\\OpenTBSBundle": ""
-        }
+        "psr-4": {
+            "OfficeTemplateEngine\\": ["src/", "tests/"]
+        },
+        "files": [
+            "src/lib/utils.php"
+        ]
     },
     "scripts": {
+        "phpstan": "vendor/bin/phpstan analyse --level 3 --configuration phpstan.neon src/ tests/",
+        "editBaseline": "vendor/bin/phpstan analyse --level 3 --configuration phpstan.neon --error-format baselineNeon src/ tests/ > phpstan-baseline.neon",
         "csfix": "phpcbf",
         "cscheck": "phpcs"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.5",
-        "squizlabs/php_codesniffer": "^3.5"
+        "squizlabs/php_codesniffer": "^3.5",
+        "phpstan/phpstan": "^0.12.5",
+        "php-coveralls/php-coveralls": "^2.2"
     }
 }
