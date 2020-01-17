@@ -13,13 +13,13 @@ for TinyButStrong Template Engine (TBS). OpenTbs makes TBS able to merge OpenOff
 Visit http://www.tinybutstrong.com
 */
 
-define('TBSZIP_DOWNLOAD', 1);   // download (default)
-define('TBSZIP_NOHEADER', 4);   // option to use with DOWNLOAD: no header is sent
-define('TBSZIP_FILE', 8);       // output to file  , or add from file
-define('TBSZIP_STRING', 32);    // output to string, or add from string
 
 class TBSZip
 {
+    public const TBSZIP_DOWNLOAD = 1;// download (default)
+    public const TBSZIP_NOHEADER = 4;// option to use with DOWNLOAD: no header is sent
+    public const TBSZIP_FILE = 8;// output to file  , or add from file
+    public const TBSZIP_STRING = 32;// output to string, or add from string
 
     function __construct()
     {
@@ -94,7 +94,7 @@ class TBSZip
         $this->AddInfo = array();
     }
 
-    function FileAdd($Name, $Data, $DataType = TBSZIP_STRING, $Compress = true)
+    function FileAdd($Name, $Data, $DataType = self::TBSZIP_STRING, $Compress = true)
     {
 
         if ($Data===false) {
@@ -436,7 +436,7 @@ class TBSZip
         }
     }
 
-    function FileReplace($NameOrIdx, $Data, $DataType = TBSZIP_STRING, $Compress = true)
+    function FileReplace($NameOrIdx, $Data, $DataType = self::TBSZIP_STRING, $Compress = true)
     {
         // Store replacement information.
 
@@ -523,10 +523,10 @@ class TBSZip
         return $nbr;
     }
 
-    function Flush($Render = TBSZIP_DOWNLOAD, $File = '', $ContentType = '')
+    function Flush($Render = self::TBSZIP_DOWNLOAD, $File = '', $ContentType = '')
     {
 
-        if (($File!=='') && ($this->ArchFile===$File) && ($Render==TBSZIP_FILE)) {
+        if (($File!=='') && ($this->ArchFile===$File) && ($Render==self::TBSZIP_FILE)) {
             $this->RaiseError('Method Flush() cannot overwrite the current opened archive: \''.$File.'\''); // this makes corrupted zip archives without PHP error.
             return false;
         }
@@ -693,8 +693,8 @@ class TBSZip
     function OutputOpen($Render, $File, $ContentType)
     {
 
-        if (($Render & TBSZIP_FILE)==TBSZIP_FILE) {
-            $this->OutputMode = TBSZIP_FILE;
+        if (($Render & self::TBSZIP_FILE)==self::TBSZIP_FILE) {
+            $this->OutputMode = self::TBSZIP_FILE;
             if (''.$File=='') {
                 $File = basename($this->ArchFile).'.zip';
             }
@@ -702,16 +702,16 @@ class TBSZip
             if ($this->OutputHandle===false) {
                 return $this->RaiseError('Method Flush() cannot overwrite the target file \''.$File.'\'. This may not be a valid file path or the file may be locked by another process or because of a denied permission.');
             }
-        } elseif (($Render & TBSZIP_STRING)==TBSZIP_STRING) {
-            $this->OutputMode = TBSZIP_STRING;
+        } elseif (($Render & self::TBSZIP_STRING)==self::TBSZIP_STRING) {
+            $this->OutputMode = self::TBSZIP_STRING;
             $this->OutputSrc = '';
-        } elseif (($Render & TBSZIP_DOWNLOAD)==TBSZIP_DOWNLOAD) {
-            $this->OutputMode = TBSZIP_DOWNLOAD;
+        } elseif (($Render & self::TBSZIP_DOWNLOAD)==self::TBSZIP_DOWNLOAD) {
+            $this->OutputMode = self::TBSZIP_DOWNLOAD;
             // Output the file
             if (''.$File=='') {
                 $File = basename($this->ArchFile);
             }
-            if (($Render & TBSZIP_NOHEADER)==TBSZIP_NOHEADER) {
+            if (($Render & self::TBSZIP_NOHEADER)==self::TBSZIP_NOHEADER) {
             } else {
                 header('Pragma: no-cache');
                 if ($ContentType!='') {
@@ -754,18 +754,18 @@ class TBSZip
 
     function OutputFromString($data)
     {
-        if ($this->OutputMode===TBSZIP_DOWNLOAD) {
+        if ($this->OutputMode===self::TBSZIP_DOWNLOAD) {
             echo $data; // donwload
-        } elseif ($this->OutputMode===TBSZIP_STRING) {
+        } elseif ($this->OutputMode===self::TBSZIP_STRING) {
             $this->OutputSrc .= $data; // to string
-        } elseif (TBSZIP_FILE) {
+        } elseif (self::TBSZIP_FILE) {
             fwrite($this->OutputHandle, $data); // to file
         }
     }
 
     function OutputClose()
     {
-        if (($this->OutputMode===TBSZIP_FILE) && ($this->OutputHandle!==false)) {
+        if (($this->OutputMode===self::TBSZIP_FILE) && ($this->OutputHandle!==false)) {
             fclose($this->OutputHandle);
             $this->OutputHandle = false;
         }
@@ -998,7 +998,7 @@ class TBSZip
             $Compress = false;
         }
 
-        if ($DataType==TBSZIP_STRING) {
+        if ($DataType==self::TBSZIP_STRING) {
             $path = false;
             if ($Compress) {
                 // we compress now in order to save PHP memory

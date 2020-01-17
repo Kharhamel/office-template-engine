@@ -214,7 +214,7 @@ class OpenTBSPlugin extends TBSZip
             if ($Debug) {
                 $this->DebugLst[$this->TbsGetFileName($idx)] = $TBS->Source;
             }
-            $this->FileReplace($idx, $TBS->Source, TBSZIP_STRING, $TBS->OtbsAutoUncompress);
+            $this->FileReplace($idx, $TBS->Source, TBSZip::TBSZIP_STRING, $TBS->OtbsAutoUncompress);
         }
         $TBS->Plugin(-10); // reactivate other plugins
         $this->TbsCurrIdx = false;
@@ -250,10 +250,10 @@ class OpenTBSPlugin extends TBSZip
             $Render -= TBSEngine::TBS_OUTPUT; //prevent TBS from an extra output.
         } elseif (($Render & OPENTBS_FILE)==OPENTBS_FILE) {
             // to file
-            $this->Flush(TBSZIP_FILE, $File);
+            $this->Flush(TBSZip::TBSZIP_FILE, $File);
         } elseif (($Render & OPENTBS_STRING)==OPENTBS_STRING) {
             // to string
-            $this->Flush(TBSZIP_STRING);
+            $this->Flush(TBSZip::TBSZIP_STRING);
             $TBS->Source = $this->OutputSrc;
             $this->OutputSrc = '';
         }
@@ -375,7 +375,7 @@ class OpenTBSPlugin extends TBSZip
             // Add a new file or cancel a previous add
             $Name = (is_null($x1)) ? false : $x1;
             $Data = (is_null($x2)) ? false : $x2;
-            $DataType = (is_null($x3)) ? TBSZIP_STRING : $x3;
+            $DataType = (is_null($x3)) ? TBSZip::TBSZIP_STRING : $x3;
             $Compress = (is_null($x4)) ? true : $x4;
 
             if ($Cmd==OPENTBS_ADDFILE) {
@@ -1305,7 +1305,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
             }
 
             // Set the picture file to empty
-            $this->FileReplace($InternalPicPath, '', TBSZIP_STRING, false);
+            $this->FileReplace($InternalPicPath, '', TBSZip::TBSZIP_STRING, false);
         }
         
         $Loc->PrmLst['pic_prepared'] = true;
@@ -1582,7 +1582,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 
         // actually add the picture inside the archive
         if ($this->FileGetIdxAdd($InternalPath)===false) {
-            $this->FileAdd($InternalPath, $ExternalPath, TBSZIP_FILE, true);
+            $this->FileAdd($InternalPath, $ExternalPath, TBSZip::TBSZIP_FILE, true);
         }
 
         // preparation for others file in the archive
