@@ -25,5 +25,11 @@ script:
 - composer phpstan
 - ./vendor/bin/phpunit
 
-after_success:
-  - travis_retry php vendor/bin/php-coveralls -v
+jobs:
+  include:
+    -
+      stage: coverage
+      php: 7.3
+      name: Test Coverage
+      script:
+        - php vendor/bin/php-coveralls -v
