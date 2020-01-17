@@ -22,23 +22,61 @@ class TBSZip
     public const TBSZIP_NOHEADER = 4;// option to use with DOWNLOAD: no header is sent
     public const TBSZIP_FILE = 8;// output to file  , or add from file
     public const TBSZIP_STRING = 32;// output to string, or add from string
+    /**
+     * @var bool
+     */
+    private $DisplayError;
+    /**
+     * @var bool
+     */
+    protected $Meth8Ok;
+    /**
+     * @var string
+     */
+    protected $ArchFile;
+    /**
+     * @var bool
+     */
+    private $ArchIsNew;
+    /**
+     * @var int
+     */
+    private $CdEndPos;
+    /**
+     * @var array
+     */
+    private $CdInfo;
+    private $CdPos;
+    /**
+     * @var bool
+     */
+    protected $ArchIsStream;
+    /**
+     * @var resource|false
+     */
+    protected $ArchHnd;
+    /**
+     * @var array
+     */
+    protected $CdFileLst;
+    private $CdFileNbr;
+    protected $CdFileByName;
+    /**
+     * @var array
+     */
+    private $VisFileLst;
 
-    function __construct()
+    public function __construct()
     {
         $this->Meth8Ok = extension_loaded('zlib'); // check if Zlib extension is available. This is need for compress and uncompress with method 8.
         $this->DisplayError = true;
         $this->ArchFile = '';
-        $this->Error = false;
     }
 
-    function CreateNew($ArchName = 'new.zip')
+    public function createNew($ArchName = 'new.zip')
     {
         // Create a new virtual empty archive, the name will be the default name when the archive is flushed.
-        if (!isset($this->Meth8Ok)) {
-            $this->__construct();  // for PHP 4 compatibility
-        }
-        $this->Close(); // note that $this->ArchHnd is set to false here
-        $this->Error = false;
+        $this->close(); // note that $this->ArchHnd is set to false here
         $this->ArchFile = $ArchName;
         $this->ArchIsNew = true;
         $bin = 'PK'.chr(05).chr(06).str_repeat(chr(0), 18);
@@ -47,14 +85,10 @@ class TBSZip
         $this->CdPos = $this->CdInfo['p_cd'];
     }
 
-    function Open($ArchFile, $UseIncludePath = false)
+    public function open($ArchFile, $UseIncludePath = false): bool
     {
         // Open the zip archive
-        if (!isset($this->Meth8Ok)) {
-            $this->__construct();  // for PHP 4 compatibility
-        }
-        $this->Close(); // close handle and init info
-        $this->Error = false;
+        $this->close(); // close handle and init info
         $this->ArchIsNew = false;
         $this->ArchIsStream = (is_resource($ArchFile) && (get_resource_type($ArchFile)=='stream'));
         if ($this->ArchIsStream) {
@@ -67,14 +101,14 @@ class TBSZip
         }
         $ok = !($this->ArchHnd===false);
         if ($ok) {
-            $ok = $this->CentralDirRead();
+            $ok = $this->centralDirRead();
         }
         return $ok;
     }
 
-    function Close()
+    public function close(): void
     {
-        if (isset($this->ArchHnd) and ($this->ArchHnd!==false)) {
+        if (isset($this->ArchHnd) && ($this->ArchHnd!==false)) {
             fclose($this->ArchHnd);
         }
         $this->ArchFile = '';
@@ -114,7 +148,7 @@ class TBSZip
         return $Ref['res'];
     }
 
-    function CentralDirRead()
+    public function centralDirRead(): bool
     {
         $cd_info = 'PK'.chr(05).chr(06); // signature of the Central Directory
         $cd_pos = -22;
@@ -124,29 +158,27 @@ class TBSZip
             $this->CdEndPos = ftell($this->ArchHnd) - 4;
         } else {
             $p = $this->_FindCDEnd($cd_info);
-            //echo 'p='.var_export($p,true); exit;
             if ($p===false) {
-                return $this->raiseError('The End of Central Directory Record is not found.');
-            } else {
-                $this->CdEndPos = $p;
-                $this->_MoveTo($p+4);
+                throw new OpenTBSException('The End of Central Directory Record is not found.');
             }
+            $this->CdEndPos = $p;
+            $this->_MoveTo($p+4);
         }
-        $this->CdInfo = $this->CentralDirRead_End($cd_info);
+        $this->CdInfo = $this->centralDirReadEnd($cd_info);
         $this->CdFileLst = array();
         $this->CdFileNbr = $this->CdInfo['file_nbr_curr'];
         $this->CdPos = $this->CdInfo['p_cd'];
 
         if ($this->CdFileNbr<=0) {
-            return $this->raiseError('No header found in the Central Directory.');
+            throw new OpenTBSException('No header found in the Central Directory.');
         }
         if ($this->CdPos<=0) {
-            return $this->raiseError('No position found for the Central Directory.');
+            throw new OpenTBSException('No position found for the Central Directory.');
         }
 
         $this->_MoveTo($this->CdPos);
         for ($i=0; $i<$this->CdFileNbr; $i++) {
-            $x = $this->CentralDirRead_File($i);
+            $x = $this->centralDirReadFile($i);
             if ($x!==false) {
                 $this->CdFileLst[$i] = $x;
                 $this->CdFileByName[$x['v_name']] = $i;
@@ -155,10 +187,10 @@ class TBSZip
         return true;
     }
 
-    function CentralDirRead_End($cd_info)
+    public function centralDirReadEnd($cd_info)
     {
         $b = $cd_info.$this->_ReadData(18);
-        $x = array();
+        $x = [];
         $x['disk_num_curr'] = $this->_GetDec($b, 4, 2);  // number of this disk
         $x['disk_num_cd'] = $this->_GetDec($b, 6, 2);    // number of the disk with the start of the central directory
         $x['file_nbr_curr'] = $this->_GetDec($b, 8, 2);  // total number of entries in the central directory on this disk
@@ -171,14 +203,14 @@ class TBSZip
         return $x;
     }
 
-    function CentralDirRead_File($idx)
+    public function centralDirReadFile(int $idx): array
     {
 
         $b = $this->_ReadData(46);
 
         $x = $this->_GetHex($b, 0, 4);
         if ($x!=='h:02014b50') {
-            return $this->raiseError("Signature of Central Directory Header #".$idx." (file information) expected but not found at position ".$this->_TxtPos(ftell($this->ArchHnd) - 46).".");
+            throw new OpenTBSException("Signature of Central Directory Header #$idx (file information) expected but not found at position ".$this->_TxtPos(ftell($this->ArchHnd) - 46). '.');
         }
 
         $x = array();

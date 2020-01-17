@@ -3,14 +3,13 @@
 
 namespace OpenTBS;
 
-use http\Exception\RuntimeException;
 use OpenTBS\Exceptions\OpenTBSException;
 use OpenTBS\Services\OpenTBS;
 use PHPUnit\Framework\TestCase;
 use ZipArchive;
 
 class OpenTBSTest extends TestCase
-{    
+{
     public function testBasicPowerpointCreationFromHandle(): void
     {
         $editedPath = __DIR__.'/var/edited.pptx';

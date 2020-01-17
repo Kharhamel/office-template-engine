@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$Meth8Ok\\.$#"
-			count: 2
-			path: src/lib/OpenTBSPlugin.php
-
-		-
 			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$Version\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
@@ -18,16 +13,6 @@ parameters:
 		-
 			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ExtInfo\\.$#"
 			count: 14
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ArchHnd\\.$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ArchFile\\.$#"
-			count: 9
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -113,11 +98,6 @@ parameters:
 		-
 			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsWord_HeaderFooter\\.$#"
 			count: 4
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$CdFileLst\\.$#"
-			count: 5
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -341,11 +321,6 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ArchIsStream\\.$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
 			message: "#^Variable \\$GLOBAL in isset\\(\\) is never defined\\.$#"
 			count: 1
 			path: src/lib/OpenTBSPlugin.php
@@ -433,11 +408,6 @@ parameters:
 		-
 			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlMap\\.$#"
 			count: 3
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$CdFileByName\\.$#"
-			count: 1
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -1036,76 +1006,6 @@ parameters:
 			path: src/lib/TBSXmlLoc.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$Meth8Ok\\.$#"
-			count: 3
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$DisplayError\\.$#"
-			count: 2
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$ArchFile\\.$#"
-			count: 9
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$Error\\.$#"
-			count: 3
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$ArchIsNew\\.$#"
-			count: 3
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$CdEndPos\\.$#"
-			count: 4
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$CdInfo\\.$#"
-			count: 7
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$CdPos\\.$#"
-			count: 5
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$ArchIsStream\\.$#"
-			count: 2
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$ArchHnd\\.$#"
-			count: 12
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$CdFileLst\\.$#"
-			count: 14
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$CdFileNbr\\.$#"
-			count: 4
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$CdFileByName\\.$#"
-			count: 3
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$VisFileLst\\.$#"
-			count: 8
-			path: src/lib/TBSZip.php
-
-		-
 			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$LastReadComp\\.$#"
 			count: 2
 			path: src/lib/TBSZip.php
@@ -1137,11 +1037,6 @@ parameters:
 
 		-
 			message: "#^PHPDoc tag @return has invalid value \\(\\{string\\} 'u'\\=unchanged, 'm'\\=modified, 'd'\\=deleted, 'a'\\=added, false\\=unknown\\)\\: Unexpected token \"\\{\", expected type at offset 56$#"
-			count: 1
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property \\$this\\(OpenTBS\\\\lib\\\\TBSZip\\)\\:\\:\\$CdFileLst\\.$#"
 			count: 1
 			path: src/lib/TBSZip.php
 

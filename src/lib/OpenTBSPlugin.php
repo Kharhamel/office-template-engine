@@ -85,7 +85,7 @@ class OpenTBSPlugin extends TBSZip
 
         if ($File === false) {
             // Close the current template if any
-            @$this->Close();
+            @$this->close();
             // Save memory space
             $this->TbsInitArchive();
             return false;
@@ -104,7 +104,7 @@ class OpenTBSPlugin extends TBSZip
 
         // Open the archive
         if ($FilePath!=='') {
-            $ok = @$this->Open($FilePath);  // Open the archive
+            $ok = @$this->open($FilePath);  // Open the archive
             if (!$ok) {
                 if ($this->ArchHnd===false) {
                     return $this->raiseError("The template '".$this->ArchFile."' cannot be found.");
@@ -259,7 +259,7 @@ class OpenTBSPlugin extends TBSZip
         }
 
         if (($Render & TBSEngine::TBS_EXIT)==TBSEngine::TBS_EXIT) {
-            $this->Close();
+            $this->close();
             exit;
         }
 
