@@ -1,9 +1,9 @@
 <?php
 
-namespace OpenTBS\Services;
+namespace OfficeTemplateEngine\Services;
 
-use OpenTBS\lib\OpenTBSPlugin;
-use OpenTBS\lib\TBSEngine;
+use OfficeTemplateEngine\lib\OpenTBSPlugin;
+use OfficeTemplateEngine\lib\TBSEngine;
 
 /**
  * Service for OpenTBS Bundle

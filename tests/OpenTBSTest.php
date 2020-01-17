@@ -1,10 +1,10 @@
 <?php
 
 
-namespace OpenTBS;
+namespace OfficeTemplateEngine;
 
-use OpenTBS\Exceptions\OpenTBSException;
-use OpenTBS\Services\OpenTBS;
+use OfficeTemplateEngine\Exceptions\OfficeTemplateEngineException;
+use OfficeTemplateEngine\Services\OpenTBS;
 use PHPUnit\Framework\TestCase;
 use ZipArchive;
 
@@ -49,7 +49,7 @@ class OpenTBSTest extends TestCase
     public function testExceptionOnNoTemplatePath(): void
     {
         $tbs = new OpenTBS();
-        $this->expectException(OpenTBSException::class);
+        $this->expectException(OfficeTemplateEngineException::class);
         $tbs->LoadTemplate(__DIR__.'/var/notExist.pptx');
     }
     
@@ -59,7 +59,7 @@ class OpenTBSTest extends TestCase
         $handle = fopen(__DIR__.'/var/testOpenTBSWithText.pptx', 'r');
         $tbs->LoadTemplate($handle);
         $tbs->LoadTemplate('#ppt/slides/slide2.xml');
-        $this->expectException(OpenTBSException::class);
+        $this->expectException(OfficeTemplateEngineException::class);
         $tbs->Show(OPENTBS_FILE, __DIR__.'/var/editedTruc.pptx');
     }
     
@@ -118,7 +118,7 @@ class OpenTBSTest extends TestCase
         $tbs = new OpenTBS();
         $handle = fopen(__DIR__.'/var/testOpenTBS.pptx', 'r');
         $tbs->LoadTemplate($handle);
-        $this->expectException(OpenTBSException::class);
+        $this->expectException(OfficeTemplateEngineException::class);
         $tbs->LoadTemplate('#ppt/slides/slide10.xml');
     }
     

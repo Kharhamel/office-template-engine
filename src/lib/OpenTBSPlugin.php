@@ -14,9 +14,9 @@
  * @license LGPL-3.0
  */
 
-namespace OpenTBS\lib;
+namespace OfficeTemplateEngine\lib;
 
-use OpenTBS\Exceptions\OpenTBSException;
+use OfficeTemplateEngine\Exceptions\OfficeTemplateEngineException;
 
 /**
  * Main class which is a TinyButStrong plug-in.

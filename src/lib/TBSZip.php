@@ -1,7 +1,7 @@
 <?php
 
 
-namespace OpenTBS\lib;
+namespace OfficeTemplateEngine\lib;
 
 /*
 TbsZip version 2.16
@@ -14,7 +14,7 @@ Visit http://www.tinybutstrong.com
 */
 
 
-use OpenTBS\Exceptions\OpenTBSException;
+use OfficeTemplateEngine\Exceptions\OfficeTemplateEngineException;
 
 class TBSZip
 {
@@ -159,7 +159,7 @@ class TBSZip
         } else {
             $p = $this->_FindCDEnd($cd_info);
             if ($p===false) {
-                throw new OpenTBSException('The End of Central Directory Record is not found.');
+                throw new OfficeTemplateEngineException('The End of Central Directory Record is not found.');
             }
             $this->CdEndPos = $p;
             $this->_MoveTo($p+4);
@@ -170,10 +170,10 @@ class TBSZip
         $this->CdPos = $this->CdInfo['p_cd'];
 
         if ($this->CdFileNbr<=0) {
-            throw new OpenTBSException('No header found in the Central Directory.');
+            throw new OfficeTemplateEngineException('No header found in the Central Directory.');
         }
         if ($this->CdPos<=0) {
-            throw new OpenTBSException('No position found for the Central Directory.');
+            throw new OfficeTemplateEngineException('No position found for the Central Directory.');
         }
 
         $this->_MoveTo($this->CdPos);
@@ -210,7 +210,7 @@ class TBSZip
 
         $x = $this->_GetHex($b, 0, 4);
         if ($x!=='h:02014b50') {
-            throw new OpenTBSException("Signature of Central Directory Header #$idx (file information) expected but not found at position ".$this->_TxtPos(ftell($this->ArchHnd) - 46). '.');
+            throw new OfficeTemplateEngineException("Signature of Central Directory Header #$idx (file information) expected but not found at position ".$this->_TxtPos(ftell($this->ArchHnd) - 46). '.');
         }
 
         $x = array();
@@ -241,7 +241,7 @@ class TBSZip
 
     public function raiseError(string $Msg, $NoErrMsg = false)
     {
-        throw new OpenTBSException($Msg);
+        throw new OfficeTemplateEngineException($Msg);
     }
 
     function Debug($FileHeaders = false)

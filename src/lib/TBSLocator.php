@@ -1,7 +1,7 @@
 <?php
 
 
-namespace OpenTBS\lib;
+namespace OfficeTemplateEngine\lib;
 
 class TBSLocator
 {

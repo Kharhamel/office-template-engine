@@ -1,7 +1,7 @@
 <?php
 
 
-namespace OpenTBS;
+namespace OfficeTemplateEngine;
 
 use PHPUnit\Framework\TestCase;
 

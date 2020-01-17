@@ -1,82 +1,82 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$Version\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$Version\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$DebugLst\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$DebugLst\\.$#"
 			count: 8
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ExtInfo\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ExtInfo\\.$#"
 			count: 14
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsSystemCredits\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsSystemCredits\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ExtEquiv\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ExtEquiv\\.$#"
 			count: 28
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsStoreLst\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsStoreLst\\.$#"
 			count: 16
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsCurrIdx\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsCurrIdx\\.$#"
 			count: 18
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsExcel_KeepRelative\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsExcel_KeepRelative\\.$#"
 			count: 4
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlCTypes\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlCTypes\\.$#"
 			count: 7
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenDocManif\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenDocManif\\.$#"
 			count: 4
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlRid\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlRid\\.$#"
 			count: 4
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ExtType\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ExtType\\.$#"
 			count: 13
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OutputSrc\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OutputSrc\\.$#"
 			count: 2
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$PrevVals\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$PrevVals\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TBS\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TBS\\.$#"
 			count: 21
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsExcel_Sheets\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsExcel_Sheets\\.$#"
 			count: 7
 			path: src/lib/OpenTBSPlugin.php
 
@@ -96,82 +96,82 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsWord_HeaderFooter\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsWord_HeaderFooter\\.$#"
 			count: 4
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsNoField\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsNoField\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$IdxToCheck\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$IdxToCheck\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ImageIndex\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ImageIndex\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ImageInternal\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ImageInternal\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OtbsSheetSlidesDelete\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OtbsSheetSlidesDelete\\.$#"
 			count: 13
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OtbsSheetSlidesVisible\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OtbsSheetSlidesVisible\\.$#"
 			count: 12
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenDocCharts\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenDocCharts\\.$#"
 			count: 4
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenDoc_SheetSlides\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenDoc_SheetSlides\\.$#"
 			count: 6
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenDoc_Styles\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenDoc_Styles\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlCharts\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlCharts\\.$#"
 			count: 6
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlSharedStr\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlSharedStr\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlSlideLst\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlSlideLst\\.$#"
 			count: 9
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlSlideMasterLst\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlSlideMasterLst\\.$#"
 			count: 1
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsExcel_NoTBS\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsExcel_NoTBS\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsWord_DocPrId\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsWord_DocPrId\\.$#"
 			count: 6
 			path: src/lib/OpenTBSPlugin.php
 
@@ -181,12 +181,12 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$LastReadNotStored\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$LastReadNotStored\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$LastReadComp\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$LastReadComp\\.$#"
 			count: 2
 			path: src/lib/OpenTBSPlugin.php
 
@@ -196,7 +196,7 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$_ModeSave\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$_ModeSave\\.$#"
 			count: 2
 			path: src/lib/OpenTBSPlugin.php
 
@@ -221,17 +221,17 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Method OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:TbsApplyOptim\\(\\) should return bool but returns null\\.$#"
+			message: "#^Method OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:TbsApplyOptim\\(\\) should return bool but returns null\\.$#"
 			count: 1
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ReplInfo\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ReplInfo\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$AddInfo\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$AddInfo\\.$#"
 			count: 2
 			path: src/lib/OpenTBSPlugin.php
 
@@ -286,22 +286,22 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Return typehint of method OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:TbsSearchInFiles\\(\\) has invalid type OpenTBS\\\\lib\\\\a\\.$#"
+			message: "#^Return typehint of method OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:TbsSearchInFiles\\(\\) has invalid type OfficeTemplateEngine\\\\lib\\\\a\\.$#"
 			count: 1
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Method OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:TbsSearchInFiles\\(\\) should return OpenTBS\\\\lib\\\\a but returns array\\<string, mixed\\>\\.$#"
+			message: "#^Method OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:TbsSearchInFiles\\(\\) should return OfficeTemplateEngine\\\\lib\\\\a but returns array\\<string, mixed\\>\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Method OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:TbsSearchInFiles\\(\\) should return OpenTBS\\\\lib\\\\a but returns array\\<string, false\\>\\.$#"
+			message: "#^Method OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:TbsSearchInFiles\\(\\) should return OfficeTemplateEngine\\\\lib\\\\a but returns array\\<string, false\\>\\.$#"
 			count: 1
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Method OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:TbsSearchInFiles\\(\\) should return OpenTBS\\\\lib\\\\a but returns array\\<int, array\\<string, mixed\\>\\>\\.$#"
+			message: "#^Method OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:TbsSearchInFiles\\(\\) should return OfficeTemplateEngine\\\\lib\\\\a but returns array\\<int, array\\<string, mixed\\>\\>\\.$#"
 			count: 1
 			path: src/lib/OpenTBSPlugin.php
 
@@ -406,12 +406,12 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlMap\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlMap\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Instantiated class OpenTBS\\\\lib\\\\clsTbsLocator not found\\.$#"
+			message: "#^Instantiated class OfficeTemplateEngine\\\\lib\\\\clsTbsLocator not found\\.$#"
 			count: 1
 			path: src/lib/OpenTBSPlugin.php
 
@@ -421,12 +421,12 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsExcel_Sheets_WkbIdx\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsExcel_Sheets_WkbIdx\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property \\$this\\(OpenTBS\\\\lib\\\\OpenTBSPlugin\\)\\:\\:\\$OtbsSheetSlidesVisible\\.$#"
+			message: "#^Access to an undefined property \\$this\\(OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\)\\:\\:\\$OtbsSheetSlidesVisible\\.$#"
 			count: 4
 			path: src/lib/OpenTBSPlugin.php
 
@@ -461,7 +461,7 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenDoc_SheetSlides_FileId\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenDoc_SheetSlides_FileId\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
@@ -471,7 +471,7 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\OpenTBSPlugin\\:\\:\\$_ChartCaption\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$_ChartCaption\\.$#"
 			count: 4
 			path: src/lib/OpenTBSPlugin.php
 
@@ -481,47 +481,47 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Class OpenTBS\\\\lib\\\\Iterator not found\\.$#"
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\Iterator not found\\.$#"
 			count: 1
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Class OpenTBS\\\\lib\\\\ArrayObject not found\\.$#"
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\ArrayObject not found\\.$#"
 			count: 1
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Class OpenTBS\\\\lib\\\\IteratorAggregate not found\\.$#"
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\IteratorAggregate not found\\.$#"
 			count: 1
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Class OpenTBS\\\\lib\\\\MySQLi not found\\.$#"
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\MySQLi not found\\.$#"
 			count: 1
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Class OpenTBS\\\\lib\\\\PDO not found\\.$#"
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\PDO not found\\.$#"
 			count: 1
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Class OpenTBS\\\\lib\\\\Zend_Db_Adapter_Abstract not found\\.$#"
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\Zend_Db_Adapter_Abstract not found\\.$#"
 			count: 1
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Class OpenTBS\\\\lib\\\\SQLite3 not found\\.$#"
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\SQLite3 not found\\.$#"
 			count: 1
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Class OpenTBS\\\\lib\\\\SQLite3Stmt not found\\.$#"
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\SQLite3Stmt not found\\.$#"
 			count: 1
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Class OpenTBS\\\\lib\\\\SQLite3Result not found\\.$#"
+			message: "#^Class OfficeTemplateEngine\\\\lib\\\\SQLite3Result not found\\.$#"
 			count: 1
 			path: src/lib/TBSDataSource.php
 
@@ -536,7 +536,7 @@ parameters:
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSDataSource\\:\\:\\$FctPrm\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$FctPrm\\.$#"
 			count: 2
 			path: src/lib/TBSDataSource.php
 
@@ -561,12 +561,12 @@ parameters:
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSDataSource\\:\\:\\$FirstRec\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$FirstRec\\.$#"
 			count: 3
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSDataSource\\:\\:\\$OnDataArgs\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$OnDataArgs\\.$#"
 			count: 5
 			path: src/lib/TBSDataSource.php
 
@@ -576,72 +576,72 @@ parameters:
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSDataSource\\:\\:\\$RecNbr\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$RecNbr\\.$#"
 			count: 3
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSDataSource\\:\\:\\$NumMin\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$NumMin\\.$#"
 			count: 2
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSDataSource\\:\\:\\$NumMax\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$NumMax\\.$#"
 			count: 2
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSDataSource\\:\\:\\$NumStep\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$NumStep\\.$#"
 			count: 2
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSDataSource\\:\\:\\$NumVal\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$NumVal\\.$#"
 			count: 6
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSDataSource\\:\\:\\$FctOpen\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$FctOpen\\.$#"
 			count: 4
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Caught class OpenTBS\\\\lib\\\\Exception not found\\.$#"
+			message: "#^Caught class OfficeTemplateEngine\\\\lib\\\\Exception not found\\.$#"
 			count: 2
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Call to method getMessage\\(\\) on an unknown class OpenTBS\\\\lib\\\\Exception\\.$#"
+			message: "#^Call to method getMessage\\(\\) on an unknown class OfficeTemplateEngine\\\\lib\\\\Exception\\.$#"
 			count: 2
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSDataSource\\:\\:\\$OnDataPrmRef\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$OnDataPrmRef\\.$#"
 			count: 2
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSDataSource\\:\\:\\$OnDataPiRef\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$OnDataPiRef\\.$#"
 			count: 2
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSDataSource\\:\\:\\$FctFetch\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$FctFetch\\.$#"
 			count: 2
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Access to constant FETCH_ASSOC on an unknown class OpenTBS\\\\lib\\\\PDO\\.$#"
+			message: "#^Access to constant FETCH_ASSOC on an unknown class OfficeTemplateEngine\\\\lib\\\\PDO\\.$#"
 			count: 1
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Access to constant FETCH_ASSOC on an unknown class OpenTBS\\\\lib\\\\Zend_Db\\.$#"
+			message: "#^Access to constant FETCH_ASSOC on an unknown class OfficeTemplateEngine\\\\lib\\\\Zend_Db\\.$#"
 			count: 1
 			path: src/lib/TBSDataSource.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSDataSource\\:\\:\\$FctClose\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$FctClose\\.$#"
 			count: 2
 			path: src/lib/TBSDataSource.php
 
@@ -656,22 +656,22 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSEngine\\:\\:\\$_piOnMergeField\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_piOnMergeField\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSEngine\\:\\:\\$_PlugIns_Ok_save\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_PlugIns_Ok_save\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSEngine\\:\\:\\$_piOnFrm_Ok_save\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_piOnFrm_Ok_save\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSEngine\\:\\:\\$_piOnCommand\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_piOnCommand\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
@@ -696,7 +696,7 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSEngine\\:\\:\\$_piOnCacheField\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_piOnCacheField\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
@@ -741,12 +741,12 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSEngine\\:\\:\\$_piOnFormat\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_piOnFormat\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSEngine\\:\\:\\$_piOnOperation\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_piOnOperation\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
@@ -761,7 +761,7 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSEngine\\:\\:\\$_Subscript\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_Subscript\\.$#"
 			count: 2
 			path: src/lib/TBSEngine.php
 
@@ -786,72 +786,72 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSLocator\\:\\:\\$P1\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$P1\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSLocator\\:\\:\\$FieldOutside\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$FieldOutside\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSLocator\\:\\:\\$FOStop\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$FOStop\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSLocator\\:\\:\\$BDefLst\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$BDefLst\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSLocator\\:\\:\\$NoData\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$NoData\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSLocator\\:\\:\\$Special\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$Special\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSLocator\\:\\:\\$HeaderFound\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$HeaderFound\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSLocator\\:\\:\\$FooterFound\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$FooterFound\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSLocator\\:\\:\\$SerialEmpty\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$SerialEmpty\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSLocator\\:\\:\\$GrpBreak\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$GrpBreak\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSLocator\\:\\:\\$WhenFound\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$WhenFound\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSLocator\\:\\:\\$WhenDefault\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$WhenDefault\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSLocator\\:\\:\\$SectionNbr\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$SectionNbr\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSLocator\\:\\:\\$SectionLst\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$SectionLst\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
@@ -876,7 +876,7 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSDataSource\\:\\:\\$OnDataPrmRef\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSDataSource\\:\\:\\$OnDataPrmRef\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
@@ -886,7 +886,7 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSEngine\\:\\:\\$_piOnMergeGroup\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_piOnMergeGroup\\.$#"
 			count: 3
 			path: src/lib/TBSEngine.php
 
@@ -896,7 +896,7 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSEngine\\:\\:\\$_piOnMergeSection\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$_piOnMergeSection\\.$#"
 			count: 2
 			path: src/lib/TBSEngine.php
 
@@ -936,7 +936,7 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Method OpenTBS\\\\lib\\\\TBSEngine\\:\\:meth_Misc_Alert\\(\\) invoked with 1 parameter, 2\\-4 required\\.$#"
+			message: "#^Method OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:meth_Misc_Alert\\(\\) invoked with 1 parameter, 2\\-4 required\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
@@ -956,7 +956,7 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Default value of the parameter \\#3 \\$iFirst \\(0\\) of method OpenTBS\\\\lib\\\\TBSEngine\\:\\:f_Loc_Sort\\(\\) is incompatible with type bool\\.$#"
+			message: "#^Default value of the parameter \\#3 \\$iFirst \\(0\\) of method OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:f_Loc_Sort\\(\\) is incompatible with type bool\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
@@ -991,7 +991,7 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSLocator\\:\\:\\$RightLevel\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSLocator\\:\\:\\$RightLevel\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
@@ -1001,32 +1001,32 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSXmlLoc\\:\\:\\$pST_PosBeg\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSXmlLoc\\:\\:\\$pST_PosBeg\\.$#"
 			count: 1
 			path: src/lib/TBSXmlLoc.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$LastReadComp\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$LastReadComp\\.$#"
 			count: 2
 			path: src/lib/TBSZip.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$LastReadIdx\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$LastReadIdx\\.$#"
 			count: 2
 			path: src/lib/TBSZip.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$ReplInfo\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$ReplInfo\\.$#"
 			count: 8
 			path: src/lib/TBSZip.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$ReplByPos\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$ReplByPos\\.$#"
 			count: 5
 			path: src/lib/TBSZip.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$AddInfo\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$AddInfo\\.$#"
 			count: 11
 			path: src/lib/TBSZip.php
 
@@ -1041,7 +1041,7 @@ parameters:
 			path: src/lib/TBSZip.php
 
 		-
-			message: "#^Access to an undefined property \\$this\\(OpenTBS\\\\lib\\\\TBSZip\\)\\:\\:\\$ReplByPos\\.$#"
+			message: "#^Access to an undefined property \\$this\\(OfficeTemplateEngine\\\\lib\\\\TBSZip\\)\\:\\:\\$ReplByPos\\.$#"
 			count: 1
 			path: src/lib/TBSZip.php
 
@@ -1051,17 +1051,17 @@ parameters:
 			path: src/lib/TBSZip.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$OutputMode\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$OutputMode\\.$#"
 			count: 6
 			path: src/lib/TBSZip.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$OutputHandle\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$OutputHandle\\.$#"
 			count: 3
 			path: src/lib/TBSZip.php
 
 		-
-			message: "#^Access to an undefined property OpenTBS\\\\lib\\\\TBSZip\\:\\:\\$OutputSrc\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$OutputSrc\\.$#"
 			count: 2
 			path: src/lib/TBSZip.php
 

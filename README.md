@@ -1,95 +1,26 @@
-HEAVY WIP: rewriting OpenTBSBundle for Symfony
+Office template engine for php
 =========================
 
-This is an attempt at rewriting TinyButStrong and its openTDS bundle with more modern code practices.
+This library allow you to easily inject text or images into a template office document
 
-Originally forked from mbence/opentbs-bundle: https://github.com/mbence/OpenTBSBundle
+This project is a (still in progress) rewriting of the template engine TBS and its plugin OpenTBS, 
+with more modern practices such as a CI environement, an exception-based error gestion, etc.
+Check its documentation here: https://www.tinybutstrong.com/opentbs.php?doc
+
 
 credits go to Skrol29 and the TinyButStrong team. http://www.tinybutstrong.com/
 
-OpenTBS - create OpenOffice and Ms Office documents with PHP (and Symfony)
+### Work in progress
 
+This project is a heavy wip. The first objective is to increase the code coverage as much as possible, before refractoring the code, and then maybe had features or edit the template syntax.
 
-## Introduction
+### How to use
 
-(Taken from http://www.tinybutstrong.com/plugins/opentbs/tbs_plugin_opentbs.html)
+This project try to keep the same api than OpenTBS for the moment. Everything you can see in its doc shouold be applicable here.
 
-OpenTBS is a PHP tool to produce any OpenOffice and Ms Office documents with templates.
+###Symfony integration
 
-OpenTBS can merge any OpenDocument and Open XML files. It autommatically reconize extensions: odt, ods, odg, odf, odm, odp, ott, ots, otg, otp, docx, xlsx, pptx.
-In fact it can merge any XML or Text file saved in a zip container (which is the case for both OpenDocuments and OpenXML documents).
-
-What is special to OpenTBS:
-* Design your templates directly with OpenOffice or MS Office.
-* No exe file needed to merge documents.
-* No temporary files needed to merge documents.
-* Output directly as an http download, a new file on the disk, or as a string (for file attachment for example).
-* Works with both PHP 4 and PHP 5.
-
-## Versions included
-TinyButStrong - 3.10.1
-
-OpenTBS - 1.9.7
-
-## Requirements
-
-* Symfony2
-* PHP needs to be a minimum version of PHP 5.3.2 (for Symfony2)
-* It is better to have the [Zlib](http://www.php.net/manual/en/book.zlib.php) extension enabled on your PHP installation. If it's not, [here is what to do](http://www.tinybutstrong.com/plugins/opentbs/tbs_plugin_opentbs.html#zlib).
-
-## Installation
-
-### Setp 0: [Install Composer](https://getcomposer.org/doc/00-intro.md#installation-linux-unix-osx)
-
-### Step 1: Download the bundle using composer
-
-``` bash
-> composer require mbence/opentbs-bundle
-```
-
-Composer will install the bundle to your project's `vendor/mbence/opentbs-bundle` directory.
-
-### Step 2: Enable the bundle in your AppKernel
-
-```php
-<?php
-// app/AppKernel.php
-
-public function registerBundles()
-{
-    $bundles = array(
-        // ...
-        new MBence\OpenTBSBundle\OpenTBSBundle(),
-    );
-}
-```
-
-#### Now you can use the 'opentbs' service.
-
-
-## Using OpenTBSBundle
-
-First you need to define the variables in your docx template (you can use any other supported document format).
-```
-... some text in a word file with a `[client.name]` variable ...
-
-```
-In TBS you always need a variable base `client` and a variable name `name`.
-
-Then in your controller you need to get the OpenTBS service, load your template and merge the fields (eg. replace the teplate variables).
-```php
-    // get the service
-    $TBS = $this->get('opentbs');
-    // load your template
-    $TBS->LoadTemplate('template.docx');
-    // replace variables
-    $TBS->MergeField('client', array('name' => 'Ford Prefect'));
-    // send the file
-    $TBS->Show(OPENTBS_DOWNLOAD, 'file_name.docx');
-```
-A note for onshow automatic variables:
-You could define your variables within the `onshow` base, (like `onshow.name`), but I would not recommend this practice for it will only work if you use GLOBAL variables.
-
+TODO: create a bundle package for symfony
 
 ### For more information ...
 read the TBS manual at http://www.tinybutstrong.com/manual.php

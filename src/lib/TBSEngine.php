@@ -14,11 +14,9 @@
  * but you must accept and respect the LPGL License version 3.
  */
 
-namespace OpenTBS\lib;
+namespace OfficeTemplateEngine\lib;
 
-// *********************************************
-
-use OpenTBS\Exceptions\OpenTBSException;
+use OfficeTemplateEngine\Exceptions\OfficeTemplateEngineException;
 
 class TBSEngine
 {
@@ -131,7 +129,7 @@ class TBSEngine
                 $options['chr_open']  = substr($Chrs, 0, $Pos);
                 $options['chr_close'] = substr($Chrs, $Pos+1);
             } else {
-                throw new OpenTBSException("with clsTinyButStrong() function, value $Chrs is a bad tag delimitor definition.");
+                throw new OfficeTemplateEngineException("with clsTinyButStrong() function, value $Chrs is a bad tag delimitor definition.");
             }
         }
         return $options;
@@ -2958,7 +2956,7 @@ class TBSEngine
 // Standard alert message provided by TinyButStrong, return False is the message is cancelled.
     function meth_Misc_Alert($Src, $Msg, $NoErrMsg = false, $SrcType = false)
     {
-        throw new OpenTBSException($Msg);
+        throw new OfficeTemplateEngineException($Msg);
         /*$this->ErrCount++;
         if ($this->NoErr || (PHP_SAPI==='cli')) {
             $t = array('','','','','');
