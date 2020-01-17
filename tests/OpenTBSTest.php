@@ -121,5 +121,15 @@ class OpenTBSTest extends TestCase
         $this->expectException(OpenTBSException::class);
         $tbs->LoadTemplate('#ppt/slides/slide10.xml');
     }
+    
+    public function testUnloadTemplate(): void
+    {
+        $tbs = new OpenTBS();
+        $handle = fopen(__DIR__.'/var/testOpenTBS.pptx', 'r');
+        $tbs->LoadTemplate($handle);
+        $tbs->LoadTemplate(false);
+        $handle = fopen(__DIR__.'/var/testOpenTBS.pptx', 'r');
+        $this->assertTrue(true); //todo find something to assert
+    }
 
 }
