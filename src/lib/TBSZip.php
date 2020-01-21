@@ -232,7 +232,7 @@ class TBSZip
 
         $b = $this->readData(46);
 
-        $x = $this->_GetHex($b, 0, 4);
+        $x = $this->getHex($b, 0, 4);
         if ($x!=='h:02014b50') {
             throw new OfficeTemplateEngineException("Signature of Central Directory Header #$idx (file information) expected but not found at position ".$this->_TxtPos(ftell($this->ArchHnd) - 46). '.');
         }
@@ -354,7 +354,7 @@ class TBSZip
 
         $b = $this->readData(30);
 
-        $x = $this->_GetHex($b, 0, 4);
+        $x = $this->getHex($b, 0, 4);
         if ($x!=='h:04034b50') {
             return new OfficeTemplateEngineException("Signature of Local File Header #$idx (data section) expected but not found at position ".$this->_TxtPos(ftell($this->ArchHnd)-30).".");
         }
@@ -404,7 +404,7 @@ class TBSZip
         $desc_ok = ($x['purp'][2+3]=='1');
         if ($desc_ok) {
             $b = $this->readData(12);
-            $s = $this->_GetHex($b, 0, 4);
+            $s = $this->getHex($b, 0, 4);
             $d = 0;
             // the specification says the signature may or may not be present
             if ($s=='h:08074b50') {
@@ -777,12 +777,14 @@ class TBSZip
 
     private function readData(int $len): string
     {
-        if ($len>0) {
-            $x = fread($this->ArchHnd, $len);
-            return $x;
-        } else {
+        if (!($len>0)) {
             return '';
         }
+        $x = fread($this->ArchHnd, $len);
+        if ($x === false) {
+            throw new OfficeTemplateEngineException('Could not read '.$this->ArchHnd);
+        }
+        return $x;
     }
 
     // ----------------
@@ -802,7 +804,7 @@ class TBSZip
         return $z;
     }
 
-    function _GetHex($txt, $pos, $len)
+    private function getHex(string $txt, int $pos, int $len): string
     {
         $x = substr($txt, $pos, $len);
         return 'h:'.bin2hex(strrev($x));
