@@ -244,61 +244,6 @@ class TBSZip
         throw new OfficeTemplateEngineException($Msg);
     }
 
-    function Debug($FileHeaders = false)
-    {
-
-        $this->DisplayError = true;
-
-        if ($FileHeaders) {
-            // Calculations first in order to have error messages before other information
-            $idx = 0;
-            $pos = 0;
-            $pos_stop = $this->CdInfo['p_cd'];
-            $this->_MoveTo($pos);
-            while (($pos<$pos_stop) && ($ok = $this->_ReadFile($idx, false))) {
-                $this->VisFileLst[$idx]['p_this_header (debug_mode only)'] = $pos;
-                $pos = ftell($this->ArchHnd);
-                $idx++;
-            }
-        }
-
-        $nl = "\r\n";
-        echo "<pre>";
-
-        echo "-------------------------------".$nl;
-        echo "End of Central Directory record".$nl;
-        echo "-------------------------------".$nl;
-        print_r($this->DebugArray($this->CdInfo));
-
-        echo $nl;
-        echo "-------------------------".$nl;
-        echo "Central Directory headers".$nl;
-        echo "-------------------------".$nl;
-        print_r($this->DebugArray($this->CdFileLst));
-
-        if ($FileHeaders) {
-            echo $nl;
-            echo "------------------".$nl;
-            echo "Local File headers".$nl;
-            echo "------------------".$nl;
-            print_r($this->DebugArray($this->VisFileLst));
-        }
-
-        echo "</pre>";
-    }
-
-    function DebugArray($arr)
-    {
-        foreach ($arr as $k => $v) {
-            if (is_array($v)) {
-                $arr[$k] = $this->DebugArray($v);
-            } elseif (substr($k, 0, 2)=='p_') {
-                $arr[$k] = $this->_TxtPos($v);
-            }
-        }
-        return $arr;
-    }
-
     function FileExists($NameOrIdx)
     {
         return ($this->FileGetIdx($NameOrIdx)!==false);

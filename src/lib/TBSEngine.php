@@ -144,7 +144,7 @@ class TBSEngine
                 return call_user_func_array(array(&$this->ExtendedMethods[$meth], $meth), $args);
             }
         } else {
-            $this->meth_Misc_Alert('Method not found', '\''.$meth.'\' is neither a native nor an extended method of TinyButStrong.');
+            $this->throwAlert('Method not found', '\''.$meth.'\' is neither a native nor an extended method of TinyButStrong.');
         }
     }
 
@@ -290,7 +290,7 @@ class TBSEngine
         if ($o==='block_alias') {
             return $GLOBALS['_TBS_BlockAlias'];
         }
-        return $this->meth_Misc_Alert('with GetOption() method', 'option \''.$o.'\' is not supported.');
+        return $this->throwAlert('with GetOption() method', 'option \''.$o.'\' is not supported.');
         ;
     }
 
@@ -328,7 +328,7 @@ class TBSEngine
             if (!is_null($File)) {
                 $x = '';
                 if (!$this->f_Misc_GetFile($x, $File, $this->_LastFile, $this->IncludePath)) {
-                    return $this->meth_Misc_Alert('with LoadTemplate() method', 'file \''.$File.'\' is not found or not readable.');
+                    return $this->throwAlert('with LoadTemplate() method', 'file \''.$File.'\' is not found or not readable.');
                 }
                 if ($Charset==='+') {
                     $this->Source .= $x;
@@ -484,7 +484,7 @@ class TBSEngine
                 $FctInfo = $Value;
                 $ErrMsg = false;
                 if (!$this->meth_Misc_UserFctCheck($FctInfo, 'f', $ErrMsg, $ErrMsg, false)) {
-                    return $this->meth_Misc_Alert('with MergeField() method', $ErrMsg);
+                    return $this->throwAlert('with MergeField() method', $ErrMsg);
                 }
                 $FctArg = array('','');
                 $SubStart = false;
@@ -569,7 +569,7 @@ class TBSEngine
                 case self::TBS_INSTALL: // Try to install the plug-in
                     $PlugInId = $Prm2;
                     if (isset($this->_PlugIns[$PlugInId])) {
-                        return $this->meth_Misc_Alert('with PlugIn() method', 'plug-in \''.$PlugInId.'\' is already installed.');
+                        return $this->throwAlert('with PlugIn() method', 'plug-in \''.$PlugInId.'\' is already installed.');
                     } else {
                         $ArgLst = func_get_args();
                         array_shift($ArgLst);
@@ -609,7 +609,7 @@ class TBSEngine
                 }
             }
             if (!isset($this->_piOnCommand[$PlugInId])) {
-                return $this->meth_Misc_Alert('with PlugIn() method', 'plug-in \''.$PlugInId.'\' can\'t run any command because the OnCommand event is not defined or activated.');
+                return $this->throwAlert('with PlugIn() method', 'plug-in \''.$PlugInId.'\' can\'t run any command because the OnCommand event is not defined or activated.');
             }
             $ArgLst = func_get_args();
             if ($p===false) {
@@ -621,7 +621,7 @@ class TBSEngine
             }
             return $Ok;
         }
-        return $this->meth_Misc_Alert('with PlugIn() method', '\''.$Prm1.'\' is an invalid plug-in key, the type of the value is \''.gettype($Prm1).'\'.');
+        return $this->throwAlert('with PlugIn() method', '\''.$Prm1.'\' is an invalid plug-in key, the type of the value is \''.gettype($Prm1).'\'.');
     }
 
 // *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
@@ -667,7 +667,7 @@ class TBSEngine
                 if ($ReadPrm) {
                     self::f_Loc_PrmRead($Txt, $PosX, false, '\'', $this->_ChrOpen, $this->_ChrClose, $Loc, $PosEnd);
                     if ($PosEnd===false) {
-                        $this->meth_Misc_Alert('', 'can\'t found the end of the tag \''.substr($Txt, $Pos, $PosX-$Pos+10).'...\'.');
+                        $this->throwAlert('', 'can\'t found the end of the tag \''.substr($Txt, $Pos, $PosX-$Pos+10).'...\'.');
                         $Pos++;
                     }
                 }
@@ -762,7 +762,7 @@ class TBSEngine
                                 $Pos = $Loc->DelPos;
                             }
                         } else {
-                            $this->meth_Misc_Alert('', 'TBS is not able to merge the field '.$LocSrc.' because the entity targeted by parameter \'att\' cannot be found.');
+                            $this->throwAlert('', 'TBS is not able to merge the field '.$LocSrc.' because the entity targeted by parameter \'att\' cannot be found.');
                         }
                     }
                 }
@@ -808,7 +808,7 @@ class TBSEngine
         }
         $BDef->FDef = &$this->meth_Locator_SectionNewBDef($LocR, $BlockName, $Field, array(), true);
         if ($BDef->FDef->LocNbr==0) {
-            $this->meth_Misc_Alert('Parameter '.$Prm, 'The value \''.$Field0.'\' is unvalide for this parameter.');
+            $this->throwAlert('Parameter '.$Prm, 'The value \''.$Field0.'\' is unvalide for this parameter.');
         }
 
         if ($Type==='H') {
@@ -847,7 +847,7 @@ class TBSEngine
                         $Value = &$Value[$x];
                     } else {
                         if (!isset($Loc->PrmLst['noerr'])) {
-                            $this->meth_Misc_Alert($Loc, 'item \''.$x.'\' is not an existing key in the array.', true);
+                            $this->throwAlert($Loc, 'item \''.$x.'\' is not an existing key in the array.', true);
                         }
                         unset($Value);
                         $Value = '';
@@ -860,7 +860,7 @@ class TBSEngine
                             $x = call_user_func_array(array(&$Value,$x), $ArgLst);
                         } else {
                             if (!isset($Loc->PrmLst['noerr'])) {
-                                $this->meth_Misc_Alert($Loc, '\''.$x.'\' is a method and the current TBS settings do not allow to call methods on automatic fields.', true);
+                                $this->throwAlert($Loc, '\''.$x.'\' is a method and the current TBS settings do not allow to call methods on automatic fields.', true);
                             }
                             $x = '';
                         }
@@ -870,7 +870,7 @@ class TBSEngine
                         $x = $Value->$x; // useful for overloaded property
                     } else {
                         if (!isset($Loc->PrmLst['noerr'])) {
-                            $this->meth_Misc_Alert($Loc, 'item '.$x.'\' is neither a method nor a property in the class \''.get_class($Value).'\'.', true);
+                            $this->throwAlert($Loc, 'item '.$x.'\' is neither a method nor a property in the class \''.get_class($Value).'\'.', true);
                         }
                         unset($Value);
                         $Value = '';
@@ -881,7 +881,7 @@ class TBSEngine
                     $x = '';
                 } else {
                     if (!isset($Loc->PrmLst['noerr'])) {
-                        $this->meth_Misc_Alert($Loc, 'item before \''.$x.'\' is neither an object nor an array. Its type is '.gettype($Value).'.', true);
+                        $this->throwAlert($Loc, 'item before \''.$x.'\' is neither an object nor an array. Its type is '.gettype($Value).'.', true);
                     }
                     unset($Value);
                     $Value = '';
@@ -900,7 +900,7 @@ class TBSEngine
                 if (!$this->meth_Misc_UserFctCheck($Loc->OnFrmInfo, 'f', $ErrMsg, $ErrMsg, true)) {
                     unset($Loc->PrmLst['onformat']);
                     if (!isset($Loc->PrmLst['noerr'])) {
-                        $this->meth_Misc_Alert($Loc, '(parameter onformat) '.$ErrMsg);
+                        $this->throwAlert($Loc, '(parameter onformat) '.$ErrMsg);
                     }
                     $Loc->OnFrmInfo = 'pi'; // Execute the function pi() just to avoid extra error messages
                 }
@@ -1017,7 +1017,7 @@ class TBSEngine
                             $Loc->OpeArg[$i] = array($Loc->FullName,&$CurrVal,&$Loc->PrmLst,&$Txt,$Loc->PosBeg,$Loc->PosEnd,&$Loc);
                             $Loc->PrmLst['_ope'] = $Loc->PrmLst['ope'];
                         } elseif (!isset($Loc->PrmLst['noerr'])) {
-                            $this->meth_Misc_Alert($Loc, 'parameter ope doesn\'t support value \''.$ope.'\'.', true);
+                            $this->throwAlert($Loc, 'parameter ope doesn\'t support value \''.$ope.'\'.', true);
                         }
                     }
                 }
@@ -1233,7 +1233,7 @@ class TBSEngine
                     $this->meth_Locator_PartAndRename($CurrVal, $Loc->PrmLst);
                 } else {
                     if (!isset($Loc->PrmLst['noerr'])) {
-                        $this->meth_Misc_Alert($Loc, 'the file \''.$x.'\' given by parameter file is not found or not readable.', true);
+                        $this->throwAlert($Loc, 'the file \''.$x.'\' given by parameter file is not found or not readable.', true);
                     }
                 }
                 $ConvProtect = false;
@@ -1256,7 +1256,7 @@ class TBSEngine
                 }
                 if ($this->meth_Misc_RunSubscript($CurrVal, $Loc->PrmLst)===false) {
                     if (!isset($Loc->PrmLst['noerr'])) {
-                        $this->meth_Misc_Alert($Loc, 'the file \''.$x.'\' given by parameter script is not found or not readable.', true);
+                        $this->throwAlert($Loc, 'the file \''.$x.'\' given by parameter script is not found or not readable.', true);
                     }
                 }
                 if ($sub) {
@@ -1295,7 +1295,7 @@ class TBSEngine
                         if (isset($Loc->AttBeg)) {
                             $Loc->MagnetId = -3;
                         } else {
-                            $this->meth_Misc_Alert($Loc, 'parameter \'magnet=#\' cannot be processed because the corresponding attribute is not found.', true);
+                            $this->throwAlert($Loc, 'parameter \'magnet=#\' cannot be processed because the corresponding attribute is not found.', true);
                         }
                     } elseif (isset($Loc->PrmLst['mtype'])) {
                         switch ($Loc->PrmLst['mtype']) {
@@ -1450,7 +1450,7 @@ class TBSEngine
                 $PosBeg = $Loc2->PosEnd;
             }
 
-            return $this->meth_Misc_Alert($Loc, 'a least one tag with parameter \'block=end\' is missing.', false, 'in block\'s definition');
+            return $this->throwAlert($Loc, 'a least one tag with parameter \'block=end\' is missing.', false, 'in block\'s definition');
         }
 
         if ($Mode===1) {
@@ -1459,7 +1459,7 @@ class TBSEngine
             $beg = $Loc->PosBeg;
             $end = $Loc->PosEnd;
             if ($this->f_Loc_EnlargeToTag($Txt, $Loc, $Block, false)===false) {
-                return $this->meth_Misc_Alert($Loc, 'at least one tag corresponding to '.$Loc->PrmLst['block'].' is not found. Check opening tags, closing tags and embedding levels.', false, 'in block\'s definition');
+                return $this->throwAlert($Loc, 'at least one tag corresponding to '.$Loc->PrmLst['block'].' is not found. Check opening tags, closing tags and embedding levels.', false, 'in block\'s definition');
             }
             if ($Loc->SubOk || ($Mode===3)) {
                 $Loc->BlockSrc = substr($Txt, $Loc->PosBeg, $Loc->PosEnd-$Loc->PosBeg+1);
@@ -1773,7 +1773,7 @@ class TBSEngine
         }
 
         if (!isset($_TBS_ParallelLst[$ConfId])) {
-            return $this->meth_Misc_Alert("Parallel", "The configuration '$ConfId' is not found.");
+            return $this->throwAlert("Parallel", "The configuration '$ConfId' is not found.");
         }
 
         $conf = $_TBS_ParallelLst[$ConfId];
@@ -1783,12 +1783,12 @@ class TBSEngine
         // Search parent bounds
         $par_o = self::f_Xml_FindTag($Txt, $Parent, true, $ZoneBeg, false, 1, false);
         if ($par_o===false) {
-            return $this->meth_Misc_Alert("Parallel", "The opening tag '$Parent' is not found.");
+            return $this->throwAlert("Parallel", "The opening tag '$Parent' is not found.");
         }
 
         $par_c = self::f_Xml_FindTag($Txt, $Parent, false, $ZoneBeg, true, -1, false);
         if ($par_c===false) {
-            return $this->meth_Misc_Alert("Parallel", "The closing tag '$Parent' is not found.");
+            return $this->throwAlert("Parallel", "The closing tag '$Parent' is not found.");
         }
 
         $SrcPOffset = $par_o->PosEnd + 1;
@@ -1834,7 +1834,7 @@ class TBSEngine
                 } elseif (isset($conf['cols'][$tagR])) {
                     // Column definition that must be merged as a cell
                     if ($mode_column === false) {
-                        return $this->meth_Misc_Alert("Parallel", "There is a column definition ($tagR) after a row (".$Rows[$RowIdx-1]['tag'].").");
+                        return $this->throwAlert("Parallel", "There is a column definition ($tagR) after a row (".$Rows[$RowIdx-1]['tag'].").");
                     }
                     if (isset($RowType['_column'])) {
                         $RowType['_column']++;
@@ -1847,7 +1847,7 @@ class TBSEngine
                     // Search the Row Closing tag
                     $locRE = self::f_Xml_FindTag($SrcP, $tagR, false, $pROe, true, -1, false);
                     if ($locRE===false) {
-                        return $this->meth_Misc_Alert("Parallel", "The row closing tag is not found. (tagR=$tagR, p=$p, pROe=$pROe)");
+                        return $this->throwAlert("Parallel", "The row closing tag is not found. (tagR=$tagR, p=$p, pROe=$pROe)");
                     }
 
                     // Inner source
@@ -1914,10 +1914,10 @@ class TBSEngine
                     'Src' => substr($Txt, $PosBeg, $PosEnd - $PosBeg + 1),
                     );
                 } else {
-                    return $this->meth_Misc_Alert("Parallel", "At row ".$Row['count']." having entity [".$Row['tag']."], the column $RefCellE is missing or is not the last in a set of spanned columns. (The block is defined from column $RefCellB to $RefCellE)");
+                    return $this->throwAlert("Parallel", "At row ".$Row['count']." having entity [".$Row['tag']."], the column $RefCellE is missing or is not the last in a set of spanned columns. (The block is defined from column $RefCellB to $RefCellE)");
                 }
             } else {
-                return $this->meth_Misc_Alert("Parallel", "At row ".$Row['count']." having entity [".$Row['tag']."],the column $RefCellB is missing or is not the first in a set of spanned columns. (The block is defined from column $RefCellB to $RefCellE)");
+                return $this->throwAlert("Parallel", "At row ".$Row['count']." having entity [".$Row['tag']."],the column $RefCellB is missing or is not the first in a set of spanned columns. (The block is defined from column $RefCellB to $RefCellE)");
             }
         }
 
@@ -1940,7 +1940,7 @@ class TBSEngine
             // Find the Cell Closing tag
             $locCE = self::f_Xml_FindTag($SrcR, $tagC, false, $pCOe, true, -1, false);
             if ($locCE===false) {
-                return $this->meth_Misc_Alert("Parallel", "The cell closing tag is not found. (pCOe=$pCOe)");
+                return $this->throwAlert("Parallel", "The cell closing tag is not found. (pCOe=$pCOe)");
             }
             $pCEe = $locCE->PosEnd;
         }
@@ -2039,7 +2039,7 @@ class TBSEngine
                             $Src->OnDataOk = true;
                         } else {
                             $LocR->FullName = $this->_CurrBlock;
-                            $Src->OnDataPrm = $this->meth_Misc_Alert($LocR, '(parameter ondata) '.$ErrMsg, false, 'block');
+                            $Src->OnDataPrm = $this->throwAlert($LocR, '(parameter ondata) '.$ErrMsg, false, 'block');
                         }
                     }
                 }
@@ -2450,14 +2450,14 @@ class TBSEngine
                 } elseif (isset($Loc->PrmLst['noerr'])) {
                     $Pos = $this->meth_Locator_Replace($Txt, $Loc, $x, false);
                 } else {
-                    $this->meth_Misc_Alert($Loc, 'property ObjectRef is neither an object nor an array. Its type is \''.gettype($this->ObjectRef).'\'.', true);
+                    $this->throwAlert($Loc, 'property ObjectRef is neither an object nor an array. Its type is \''.gettype($this->ObjectRef).'\'.', true);
                     $Pos = $Loc->PosEnd + 1;
                 }
             } elseif ($PrefOk && (substr($Loc->SubLst[0], 0, $PrefL)!==$Pref)) {
                 if (isset($Loc->PrmLst['noerr'])) {
                     $Pos = $this->meth_Locator_Replace($Txt, $Loc, $x, false);
                 } else {
-                    $this->meth_Misc_Alert($Loc, 'does not match the allowed prefix.', true);
+                    $this->throwAlert($Loc, 'does not match the allowed prefix.', true);
                     $Pos = $Loc->PosEnd + 1;
                 }
             } elseif (isset($this->VarRef[$Loc->SubLst[0]])) {
@@ -2468,7 +2468,7 @@ class TBSEngine
                 } else {
                     $Pos = $Loc->PosEnd + 1;
                     $msg = (isset($this->VarRef['GLOBALS'])) ? 'VarRef seems refers to $GLOBALS' : 'VarRef seems refers to a custom array of values';
-                    $this->meth_Misc_Alert($Loc, 'the key \''.$Loc->SubLst[0].'\' does not exist or is not set in VarRef. ('.$msg.')', true);
+                    $this->throwAlert($Loc, 'the key \''.$Loc->SubLst[0].'\' does not exist or is not set in VarRef. ('.$msg.')', true);
                 }
             }
         }
@@ -2592,7 +2592,7 @@ class TBSEngine
             $ErrMsg = 'it doesn\'t have any subname.';
         }
         if ($ErrMsg!==false) {
-            $this->meth_Misc_Alert($Loc, $ErrMsg);
+            $this->throwAlert($Loc, $ErrMsg);
             $x = '';
         }
         if ($Loc->PosBeg===false) {
@@ -2725,7 +2725,7 @@ class TBSEngine
                         $data = &$Src->CurrRec[$col];
                     } else {
                         if (!$col_opt) {
-                            $this->meth_Misc_Alert('for merging the automatic sub-block ['.$name.']', 'key \''.$col.'\' is not found in record #'.$Src->RecNum.' of block ['.$BDef->Name.']. This key can become optional if you designate it with parenthesis in the main block, i.e.: sub'.$i.'=('.$col.')');
+                            $this->throwAlert('for merging the automatic sub-block ['.$name.']', 'key \''.$col.'\' is not found in record #'.$Src->RecNum.' of block ['.$BDef->Name.']. This key can become optional if you designate it with parenthesis in the main block, i.e.: sub'.$i.'=('.$col.')');
                         }
                         unset($data);
                         $data = array();
@@ -2828,7 +2828,7 @@ class TBSEngine
                     $FldLen = $LocA->PosEnd - $LocA->PosBeg + 1;
                     if ($LocA->PosBeg2===false) {
                         if ($this->f_Loc_EnlargeToTag($Txt, $LocA, $LocA->PrmLst['block'], false)===false) {
-                            $this->meth_Misc_Alert($LocA, 'at least one tag corresponding to '.$LocA->PrmLst['block'].' is not found. Check opening tags, closing tags and embedding levels.', false, 'in block\'s definition');
+                            $this->throwAlert($LocA, 'at least one tag corresponding to '.$LocA->PrmLst['block'].' is not found. Check opening tags, closing tags and embedding levels.', false, 'in block\'s definition');
                         }
                     } else {
                         $LocA->PosEnd = $LocA->PosEnd2;
@@ -2953,44 +2953,10 @@ class TBSEngine
         }
     }
 
-// Standard alert message provided by TinyButStrong, return False is the message is cancelled.
-    function meth_Misc_Alert($Src, $Msg, $NoErrMsg = false, $SrcType = false)
+
+    public function throwAlert($Src, $Msg, $NoErrMsg = false, $SrcType = false)
     {
         throw new OfficeTemplateEngineException($Msg);
-        /*$this->ErrCount++;
-        if ($this->NoErr || (PHP_SAPI==='cli')) {
-            $t = array('','','','','');
-        } else {
-            $t = array('<br /><b>','</b>','<em>','</em>','<br />');
-            $Msg = htmlentities($Msg);
-        }
-        if (!is_string($Src)) {
-            if ($SrcType===false) {
-                $SrcType='in field';
-            }
-            if (isset($Src->PrmLst['tbstype'])) {
-                $Msg = 'Column \''.$Src->SubName.'\' is expected but missing in the current record.';
-                $Src = 'Parameter \''.$Src->PrmLst['tbstype'].'='.$Src->SubName.'\'';
-                $NoErrMsg = false;
-            } else {
-                $Src = $SrcType.' '.$this->_ChrOpen.$Src->FullName.'...'.$this->_ChrClose;
-            }
-        }
-        $x = $t[0].'TinyButStrong Error'.$t[1].' '.$Src.': '.$Msg;
-        if ($NoErrMsg) {
-            $x = $x.' '.$t[2].'This message can be cancelled using parameter \'noerr\'.'.$t[3];
-        }
-        $x = $x.$t[4]."\n";
-        if ($this->NoErr) {
-            $this->ErrMsg .= $x;
-        } else {
-            if (PHP_SAPI!=='cli') {
-                $x = str_replace($this->_ChrOpen, $this->_ChrProtect, $x);
-            }
-            echo $x;
-        }
-        return false;
-        */
     }
 
     function meth_Misc_Assign($Name, &$ArgLst, $CallingMeth)
@@ -3001,13 +2967,13 @@ class TBSEngine
             if ($CallingMeth===false) {
                 return true;
             }
-            return $this->meth_Misc_Alert('with '.$CallingMeth.'() method', 'key \''.$Name.'\' is not defined in property Assigned.');
+            return $this->throwAlert('with '.$CallingMeth.'() method', 'key \''.$Name.'\' is not defined in property Assigned.');
         }
 
         $a = &$this->Assigned[$Name];
         $meth = (isset($a['type'])) ? $a['type'] : 'MergeBlock';
         if (($CallingMeth!==false) && (strcasecmp($CallingMeth, $meth)!=0)) {
-            return $this->meth_Misc_Alert('with '.$CallingMeth.'() method', 'the assigned key \''.$Name.'\' cannot be used with method '.$CallingMeth.' because it is defined to run with '.$meth.'.');
+            return $this->throwAlert('with '.$CallingMeth.'() method', 'the assigned key \''.$Name.'\' cannot be used with method '.$CallingMeth.' because it is defined to run with '.$meth.'.');
         }
 
         $n = count($a);
@@ -3021,7 +2987,7 @@ class TBSEngine
             if (in_array(strtolower($meth), array('mergeblock','mergefield'))) {
                 call_user_func_array(array(&$this,$meth), $ArgLst);
             } else {
-                return $this->meth_Misc_Alert('The assigned field \''.$Name.'\'. cannot be merged because its type \''.$a[0].'\' is not supported.');
+                throw new OfficeTemplateEngineException('The assigned field \''.$Name.'\'. cannot be merged because its type \''.$a[0].'\' is not supported.');
             }
         }
         if (!isset($a['merged'])) {
@@ -3245,7 +3211,7 @@ class TBSEngine
                 if ($this->meth_Misc_UserFctCheck($Charset, 'f', $ErrMsg, $ErrMsg, false)) {
                     $this->_CharsetFct = true;
                 } else {
-                    $this->meth_Misc_Alert('with charset option', $ErrMsg);
+                    $this->throwAlert('with charset option', $ErrMsg);
                     $Charset = '';
                 }
             }
@@ -3254,7 +3220,7 @@ class TBSEngine
         } elseif ($Charset===false) {
             $this->Protect = false;
         } else {
-            $this->meth_Misc_Alert('with charset option', 'the option value is not a string nor an array.');
+            $this->throwAlert('with charset option', 'the option value is not a string nor an array.');
             $Charset = '';
         }
         $this->Charset = $Charset;
@@ -3283,7 +3249,7 @@ class TBSEngine
             $PiRef = new $PlugInId;
             $PiRef->TBS = &$this;
             if (!method_exists($PiRef, 'OnInstall')) {
-                return $this->meth_Misc_Alert($ErrMsg, 'OnInstall() method is not found.');
+                return $this->throwAlert($ErrMsg, 'OnInstall() method is not found.');
             }
             $FctRef = array(&$PiRef,'OnInstall');
         } else {
@@ -3292,7 +3258,7 @@ class TBSEngine
                 $IsObj = false;
                 $PiRef = true;
             } else {
-                return $this->meth_Misc_Alert($ErrMsg, 'no class named \''.$PlugInId.'\' is found, and no function named \''.$FctRef.'\' is found.');
+                return $this->throwAlert($ErrMsg, 'no class named \''.$PlugInId.'\' is found, and no function named \''.$FctRef.'\' is found.');
             }
         }
 
@@ -3303,7 +3269,7 @@ class TBSEngine
             $EventLst = explode(',', $EventLst);
         }
         if (!is_array($EventLst)) {
-            return $this->meth_Misc_Alert($ErrMsg, 'OnInstall() method does not return an array.');
+            return $this->throwAlert($ErrMsg, 'OnInstall() method does not return an array.');
         }
 
         // Add activated methods
@@ -3323,7 +3289,7 @@ class TBSEngine
 
         // Check the event's name
         if (strpos(',OnCommand,BeforeLoadTemplate,AfterLoadTemplate,BeforeShow,AfterShow,OnData,OnFormat,OnOperation,BeforeMergeBlock,OnMergeSection,OnMergeGroup,AfterMergeBlock,OnSpecialVar,OnMergeField,OnCacheField,', ','.$Event.',')===false) {
-            return $this->meth_Misc_Alert('with plug-in \''.$PlugInId.'\'', 'The plug-in event named \''.$Event.'\' is not supported by TinyButStrong (case-sensitive). This event may come from the OnInstall() method.');
+            return $this->throwAlert('with plug-in \''.$PlugInId.'\'', 'The plug-in event named \''.$Event.'\' is not supported by TinyButStrong (case-sensitive). This event may come from the OnInstall() method.');
         }
 
         $PropName = '_pi'.$Event;
@@ -3345,13 +3311,13 @@ class TBSEngine
                 $NewRef = $Event;
             }
             if (!method_exists($PiRef, $NewRef)) {
-                return $this->meth_Misc_Alert('with plug-in \''.$PlugInId.'\'', 'The plug-in event named \''.$Event.'\' is declared but its corresponding method \''.$NewRef.'\' is found.');
+                return $this->throwAlert('with plug-in \''.$PlugInId.'\'', 'The plug-in event named \''.$Event.'\' is declared but its corresponding method \''.$NewRef.'\' is found.');
             }
             $FctRef = array(&$PiRef, $NewRef);
         } else {
             $FctRef = ($NewRef==='') ? 'tbspi_'.$PlugInId.'_'.$Event : $NewRef;
             if (!function_exists($FctRef)) {
-                return $this->meth_Misc_Alert('with plug-in \''.$PlugInId.'\'', 'The expected function \''.$FctRef.'\' is not found.');
+                return $this->throwAlert('with plug-in \''.$PlugInId.'\'', 'The expected function \''.$FctRef.'\' is not found.');
             }
         }
 

@@ -1,33 +1,98 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$Version\\.$#"
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsAutoLoad\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsConvBr\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$DebugLst\\.$#"
-			count: 8
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsAutoUncompress\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsConvertApostrophes\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsSpacePreserve\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsClearWriter\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsClearMsWord\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsDeleteObsoleteChartData\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsMsExcelConsistent\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsMsExcelExplicitRef\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsClearMsPowerpoint\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsGarbageCollector\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsMsExcelCompatibility\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$Version\\.$#"
+			count: 2
 			path: src/lib/OpenTBSPlugin.php
 
 		-
 			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ExtInfo\\.$#"
-			count: 14
+			count: 12
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsSystemCredits\\.$#"
-			count: 3
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsSubFileLst\\.$#"
+			count: 2
 			path: src/lib/OpenTBSPlugin.php
 
 		-
 			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ExtEquiv\\.$#"
-			count: 28
+			count: 26
 			path: src/lib/OpenTBSPlugin.php
 
 		-
 			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsStoreLst\\.$#"
-			count: 16
+			count: 14
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsCurrFile\\.$#"
+			count: 13
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -57,7 +122,7 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ExtType\\.$#"
-			count: 13
+			count: 11
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -68,11 +133,6 @@ parameters:
 		-
 			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$PrevVals\\.$#"
 			count: 3
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TBS\\.$#"
-			count: 21
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -223,16 +283,6 @@ parameters:
 		-
 			message: "#^Method OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:TbsApplyOptim\\(\\) should return bool but returns null\\.$#"
 			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ReplInfo\\.$#"
-			count: 3
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$AddInfo\\.$#"
-			count: 2
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -932,11 +982,6 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property object\\:\\:\\$Prm\\.$#"
-			count: 1
-			path: src/lib/TBSEngine.php
-
-		-
-			message: "#^Method OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:meth_Misc_Alert\\(\\) invoked with 1 parameter, 2\\-4 required\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 

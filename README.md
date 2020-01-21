@@ -14,9 +14,21 @@ credits go to Skrol29 and the TinyButStrong team. http://www.tinybutstrong.com/
 
 This project is a heavy wip. The first objective is to increase the code coverage as much as possible, before refractoring the code, and then maybe had features or edit the template syntax.
 
+### Installation
+
+```php
+composer require kharhamel/office-template-engine
+```
+
+If you use symfony, a bundle is available:
+
+```php
+composer require kharhamel/office-template-engine-bundle
+```
+
 ### How to use
 
-This project try to keep the same api than OpenTBS for the moment. Everything you can see in its doc shouold be applicable here.
+This project try to keep the same api than OpenTBS for the moment. Everything you can see in its doc should be applicable here.
 
 ###Symfony integration
 

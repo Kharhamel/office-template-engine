@@ -24,8 +24,19 @@ use OfficeTemplateEngine\Exceptions\OfficeTemplateEngineException;
  */
 class OpenTBSPlugin extends TBSZip
 {
+    /**
+     * @var boolean
+     */
+    private $TbsSystemCredits;
+    /**
+     * @var TBSEngine
+     */
+    public $TBS;
 
-    function OnInstall()
+    /**
+     * @return string[]
+     */
+    public function onInstall(): array
     {
         $TBS =& $this->TBS;
 
@@ -69,13 +80,11 @@ class OpenTBSPlugin extends TBSZip
             $TBS->OtbsMsExcelCompatibility = true;
         }
         $this->Version = '1.9.6';
-        $this->DebugLst = false; // deactivate the debug mode
         $this->ExtInfo = false;
-        $TBS->TbsZip = &$this; // a shortcut
-        return array('BeforeLoadTemplate','BeforeShow', 'OnCommand', 'OnOperation', 'OnCacheField');
+        return ['BeforeLoadTemplate','BeforeShow', 'OnCommand', 'OnOperation', 'OnCacheField'];
     }
 
-    function BeforeLoadTemplate(&$File, &$Charset)
+    public function beforeLoadTemplate(&$File, &$Charset)
     {
 
         $TBS =& $this->TBS;
@@ -153,9 +162,8 @@ class OpenTBSPlugin extends TBSZip
     {
 
         $TBS =& $this->TBS;
-
         if ($this->ArchFile==='') {
-            return $this->raiseError('Command Show() cannot be processed because no archive is opened.');
+            throw new OfficeTemplateEngineException('Command Show() cannot be processed because no archive is opened.');
         }
 
         if ($TBS->_Mode!=0) {
@@ -169,11 +177,6 @@ class OpenTBSPlugin extends TBSZip
         $this->TbsStorePark(); // Save the current loaded subfile if any
 
         $TBS->Plugin(-4); // deactivate other plugins
-
-        $Debug = (($Render & OPENTBS_DEBUG_XML)==OPENTBS_DEBUG_XML);
-        if ($Debug) {
-            $this->DebugLst = array();
-        }
 
         $TbsShow = (($Render & OPENTBS_DEBUG_AVOIDAUTOFIELDS)!=OPENTBS_DEBUG_AVOIDAUTOFIELDS);
 
@@ -211,22 +214,19 @@ class OpenTBSPlugin extends TBSZip
             if ($explicitRef && (!isset($this->MsExcel_KeepRelative[$idx]))) {
                 $this->MsExcel_ConvertToExplicit($TBS->Source);
             }
-            if ($Debug) {
-                $this->DebugLst[$this->TbsGetFileName($idx)] = $TBS->Source;
-            }
             $this->FileReplace($idx, $TBS->Source, TBSZip::TBSZIP_STRING, $TBS->OtbsAutoUncompress);
         }
         $TBS->Plugin(-10); // reactivate other plugins
         $this->TbsCurrIdx = false;
 
         if ($this->OpenXmlCTypes!==false) {
-            $this->OpenXML_CTypesCommit($Debug);    // Commit special OpenXML features if any
+            $this->OpenXML_CTypesCommit();    // Commit special OpenXML features if any
         }
         if ($this->OpenDocManif!==false) {
-            $this->OpenDoc_ManifestCommit($Debug);  // Commit special OpenDocument features if any
+            $this->OpenDoc_ManifestCommit();  // Commit special OpenDocument features if any
         }
         if ($this->OpenXmlRid!==false) {
-            $this->OpenXML_Rels_CommitNewRids($Debug); // Must be done also after the loop because some Rid can be added with [onshow]
+            $this->OpenXML_Rels_CommitNewRids(); // Must be done also after the loop because some Rid can be added with [onshow]
         }
         
         if ($TBS->OtbsGarbageCollector) {
@@ -234,16 +234,7 @@ class OpenTBSPlugin extends TBSZip
                 $this->OpenMXL_GarbageCollector();
             }
         }
-
-        if (($TBS->ErrCount>0) && (!$TBS->NoErr) && (!$Debug)) {
-            $TBS->meth_Misc_Alert('Show() Method', 'The output is cancelled by the OpenTBS plugin because at least one error has occured.');
-            exit;
-        }
-
-        if ($Debug) {
-            // Do the debug even if other options are used
-            $this->TbsDebug_Merge(true, false);
-        } elseif (($Render & TBSEngine::TBS_OUTPUT)==TBSEngine::TBS_OUTPUT) { // notice that TBSEngine::TBS_OUTPUT = OPENTBS_DOWNLOAD
+        if (($Render & TBSEngine::TBS_OUTPUT)==TBSEngine::TBS_OUTPUT) { // notice that TBSEngine::TBS_OUTPUT = OPENTBS_DOWNLOAD
             // download
             $ContentType = (isset($this->ExtInfo['ctype'])) ? $this->ExtInfo['ctype'] : '';
             $this->Flush($Render, $File, $ContentType); // $Render is used because it can contain options OPENTBS_DOWNLOAD and OPENTBS_NOHEADER.
@@ -336,19 +327,6 @@ class OpenTBSPlugin extends TBSZip
 
     function OnCommand($Cmd, $x1 = null, $x2 = null, $x3 = null, $x4 = null, $x5 = null)
     {
-
-        if ($Cmd==OPENTBS_INFO) {
-            // Display debug information
-            echo "<strong>OpenTBS plugin Information</strong><br>\r\n";
-            return $this->Debug();
-        } elseif (($Cmd==OPENTBS_DEBUG_INFO) || ($Cmd==OPENTBS_DEBUG_CHART_LIST)) {
-            if (is_null($x1)) {
-                $x1 = true;
-            }
-            $this->TbsDebug_Info($x1);
-            return true;
-        }
-        
         // Check that a template is loaded
         if ($this->ExtInfo===false) {
             $this->raiseError("Cannot execute the plug-in commande because no template is loaded.");
@@ -365,7 +343,7 @@ class OpenTBSPlugin extends TBSZip
             if (is_string($TBS->OtbsSubFileLst)) {
                 $f = '#'.$TBS->OtbsSubFileLst;
                 $h = '';
-                $this->BeforeLoadTemplate($f, $h);
+                $this->beforeLoadTemplate($f, $h);
             }
             return true;
         } elseif ($Cmd==OPENTBS_SELECT_FILE) {
@@ -412,17 +390,6 @@ class OpenTBSPlugin extends TBSZip
             }
         } elseif ($Cmd==OPENTBS_DEBUG_XML_SHOW) {
             $this->TBS->Show(OPENTBS_DEBUG_XML);
-        } elseif ($Cmd==OPENTBS_DEBUG_XML_CURRENT) {
-            $this->TbsStorePark();
-            $this->DebugLst = array();
-            foreach ($this->TbsStoreLst as $idx => $park) {
-                $this->DebugLst[$this->TbsGetFileName($idx)] = $park['src'];
-            }
-            $this->TbsDebug_Merge(true, true);
-
-            if (is_null($x1) || $x1) {
-                exit();
-            }
         } elseif ($Cmd==OPENTBS_FORCE_DOCTYPE) {
             return $this->Ext_PrepareInfo($x1);
         } elseif ($Cmd==OPENTBS_DELETE_ELEMENTS) {
@@ -979,149 +946,6 @@ class OpenTBSPlugin extends TBSZip
             }
         } else {
             return null;
-        }
-    }
-    
-    /**
-     * Display the header of the debug mode (only once)
-     */
-    function TbsDebug_Init(&$nl, &$sep, &$bull, $type)
-    {
-
-        static $DebugInit = false;
-
-        if ($DebugInit) {
-            return;
-        }
-        $DebugInit = true;
-
-        $nl = "\n";
-        $sep = str_repeat('-', 30);
-        $bull = $nl.'  - ';
-
-
-        if (!headers_sent()) {
-            header('Content-Type: text/plain; charset="UTF-8"');
-        }
-
-        echo "* OPENTBS DEBUG MODE: if the star, (*) on the left before the word OPENTBS, is not the very first character of this page, then your
-merged Document will be corrupted when you use the OPENTBS_DOWNLOAD option. If there is a PHP error message, then you have to fix it.
-If they are blank spaces, line beaks, or other unexpected characters, then you have to check your code in order to avoid them.";
-        echo $nl;
-        echo $nl.$sep.$nl.'INFORMATION'.$nl.$sep;
-        echo $nl.'* Debug command: '.$type;
-        echo $nl.'* OpenTBS version: '.$this->Version;
-        echo $nl.'* TinyButStrong version: '.$this->TBS->Version;
-        echo $nl.'* PHP version: '.PHP_VERSION;
-        echo $nl.'* Zlib enabled: '.($this->Meth8Ok) ? 'YES' : 'NO (it should be enabled)';
-        echo $nl.'* Opened document: '.(($this->ArchFile==='') ? '(none)' : $this->ArchFile);
-        echo $nl.'* Activated features for document type: '.(($this->ExtInfo===false) ? '(none)' : $this->ExtType.'/'.$this->ExtEquiv);
-    }
-
-    function TbsDebug_Info($Exit)
-    {
-
-        $this->TbsDebug_Init($nl, $sep, $bull, 'OPENTBS_DEBUG_INFO');
-
-        if ($this->ExtInfo !== false) {
-            switch ($this->ExtEquiv) {
-                case 'docx':
-                    $this->MsWord_DocDebug($nl, $sep, $bull);
-                    break;
-                case 'xlsx':
-                    $this->MsExcel_SheetDebug($nl, $sep, $bull);
-                    break;
-                case 'pptx':
-                    $this->MsPowerpoint_SlideDebug($nl, $sep, $bull);
-                    break;
-                case 'ods':
-                    $this->OpenDoc_SheetSlides_Debug(true, $nl, $sep, $bull);
-                    break;
-                case 'odp':
-                    $this->OpenDoc_SheetSlides_Debug(false, $nl, $sep, $bull);
-                    break;
-            }
-
-            switch ($this->ExtType) {
-                case 'openxml':
-                    $this->OpenXML_ChartDebug($nl, $sep, $bull);
-                    break;
-                case 'odf':
-                    $this->OpenDoc_ChartDebug($nl, $sep, $bull);
-                    break;
-            }
-        }
-
-        if ($Exit) {
-            exit;
-        }
-    }
-
-    function TbsDebug_Merge($XmlFormat = true, $Current)
-    {
-    // display modified and added files
-
-        $this->TbsDebug_Init($nl, $sep, $bull, ($Current ? 'OPENTBS_DEBUG_XML_CURRENT' :'OPENTBS_DEBUG_XML_SHOW'));
-
-        // scann files for collecting information
-        $mod_lst = ''; // id of modified files
-        $del_lst = ''; // id of deleted  files
-        $add_lst = ''; // id of added    files
-
-        // files marked as replaced in TbsZip
-        $idx_lst = array_keys($this->ReplInfo);
-        foreach ($idx_lst as $idx) {
-            $name = $this->TbsGetFileName($idx);
-            if ($this->ReplInfo[$idx]===false) {
-                $del_lst .= $bull.$name;
-            } else {
-                $mod_lst .= $bull.$name;
-            }
-        }
-
-        // files marked as modified in the Park
-        $idx_lst = array_keys($this->TbsStoreLst);
-        foreach ($idx_lst as $idx) {
-            if (!isset($this->ReplInfo[$idx])) {
-                $mod_lst .= $bull.$this->TbsGetFileName($idx);
-            }
-        }
-
-        // files marked as added in TbsZip
-        $idx_lst = array_keys($this->AddInfo);
-        foreach ($idx_lst as $idx) {
-            $name = $this->AddInfo[$idx]['name'];
-            $add_lst .= $bull.$name;
-        }
-
-        if ($mod_lst==='') {
-            $mod_lst = ' none';
-        }
-        if ($del_lst==='') {
-            $del_lst = ' none';
-        }
-        if ($add_lst==='') {
-            $add_lst = ' none';
-        }
-
-        echo $nl.'* Deleted files in the archive:'.$del_lst;
-        echo $nl.'* Added files in the archive:'.$add_lst;
-        echo $nl.'* Modified files in the archive:'.$mod_lst;
-        echo $nl;
-
-        // display contents merged with OpenTBS
-        foreach ($this->DebugLst as $name => $src) {
-            $x = trim($src);
-            $info = '';
-            $xml = ((strlen($x)>0) && $x[0]==='<');
-            if ($XmlFormat && $xml) {
-                $info = ' (XML reformated for debuging only)';
-                $src = $this->XmlFormat($src);
-            }
-            echo $nl.$sep;
-            echo $nl.'File merged with OpenTBS'.$info.': '.$name;
-            echo $nl.$sep;
-            echo $nl.$src;
         }
     }
 
@@ -2799,7 +2623,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
     }
 
     // Save the changes in the rels files (works only for images for now)
-    function OpenXML_Rels_CommitNewRids($Debug)
+    function OpenXML_Rels_CommitNewRids()
     {
 
         foreach ($this->OpenXmlRid as $doc => $o) {
@@ -2824,11 +2648,6 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
                     $this->FileAdd($o->FicPath, $o->FicTxt);
                 } else {
                     $this->FileReplace($o->FicIdx, $o->FicTxt);
-                }
-
-                // debug mode
-                if ($Debug) {
-                    $this->DebugLst[$o->FicPath] = $o->FicTxt;
                 }
                 
                 $this->OpenXmlRid[$doc]->RidNew = array(); // Erase the Rid done because there can be another commit
@@ -2882,7 +2701,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $this->OpenXmlCTypes['PartName'][$PartName] = false;
     }
     
-    function OpenXML_CTypesCommit($Debug)
+    function OpenXML_CTypesCommit()
     {
 
         $file = '[Content_Types].xml';
@@ -2921,7 +2740,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         if ($x!=='') {
             $p = strpos($Txt, '</Types>'); // search position for insertion
             if ($p===false) {
-                return $this->raiseError("(OpenXML) closing tag </Types> not found in subfile ".$file);
+                throw new OfficeTemplateEngineException("(OpenXML) closing tag </Types> not found in subfile ".$file);
             }
             $Txt = substr_replace($Txt, $x, $p, 0);
             $ok = true;
@@ -2929,11 +2748,6 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 
 
         if ($ok) {
-            // debug mode
-            if ($Debug) {
-                $this->DebugLst[$file] = $Txt;
-            }
-
             if ($idx===false) {
                 $this->FileAdd($file, $Txt);
             } else {
@@ -5043,7 +4857,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
         $this->OpenDocManif[$Path] = $Type;
     }
 
-    function OpenDoc_ManifestCommit($Debug)
+    function OpenDoc_ManifestCommit()
     {
 
         // Retrieve the content of the manifest
@@ -5085,10 +4899,6 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 
         // Save changes (no need to save it in the park because this fct is called after merging)
         $this->FileReplace($idx, $Txt);
-
-        if ($Debug) {
-            $this->DebugLst[$name] = $Txt;
-        }
     }
 
     function OpenDoc_ChangeCellType(&$Txt, &$Loc, $Ope, $IsMerging, &$Value)
