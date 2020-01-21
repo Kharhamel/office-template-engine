@@ -32,6 +32,18 @@ class OpenTBSPlugin extends TBSZip
      * @var TBSEngine
      */
     public $TBS;
+    /**
+     * @var array|bool
+     */
+    private $ExtInfo;
+    /**
+     * @var string|false
+     */
+    private $ExtType;
+    /**
+     * @var bool|string
+     */
+    private $ExtEquiv;
 
     /**
      * @return string[]
@@ -96,7 +108,7 @@ class OpenTBSPlugin extends TBSZip
             // Close the current template if any
             @$this->close();
             // Save memory space
-            $this->TbsInitArchive();
+            $this->tbsInitArchive();
             return false;
         }
         
@@ -121,7 +133,7 @@ class OpenTBSPlugin extends TBSZip
                     return false;
                 }
             }
-            $this->TbsInitArchive(); // Initialize other archive informations
+            $this->tbsInitArchive(); // Initialize other archive informations
             if ($TBS->OtbsAutoLoad && ($this->ExtInfo!==false) && ($SubFileLst===false)) {
                 // auto load files from the archive
                 $SubFileLst = $this->ExtInfo['load'];
@@ -208,7 +220,7 @@ class OpenTBSPlugin extends TBSZip
             if ($TbsShow && $onshow) {
                 $TBS->Show(TBSEngine::TBS_NOTHING);
             }
-            if ($this->ExtEquiv == 'docx') {
+            if ($this->ExtEquiv === 'docx') {
                 $this->MsWord_RenumDocPr($TBS->Source);
             }
             if ($explicitRef && (!isset($this->MsExcel_KeepRelative[$idx]))) {
@@ -237,14 +249,14 @@ class OpenTBSPlugin extends TBSZip
         if (($Render & TBSEngine::TBS_OUTPUT)==TBSEngine::TBS_OUTPUT) { // notice that TBSEngine::TBS_OUTPUT = OPENTBS_DOWNLOAD
             // download
             $ContentType = (isset($this->ExtInfo['ctype'])) ? $this->ExtInfo['ctype'] : '';
-            $this->Flush($Render, $File, $ContentType); // $Render is used because it can contain options OPENTBS_DOWNLOAD and OPENTBS_NOHEADER.
+            $this->flush($Render, $File, $ContentType); // $Render is used because it can contain options OPENTBS_DOWNLOAD and OPENTBS_NOHEADER.
             $Render -= TBSEngine::TBS_OUTPUT; //prevent TBS from an extra output.
         } elseif (($Render & OPENTBS_FILE)==OPENTBS_FILE) {
             // to file
-            $this->Flush(TBSZip::TBSZIP_FILE, $File);
+            $this->flush(TBSZip::TBSZIP_FILE, $File);
         } elseif (($Render & OPENTBS_STRING)==OPENTBS_STRING) {
             // to string
-            $this->Flush(TBSZip::TBSZIP_STRING);
+            $this->flush(TBSZip::TBSZIP_STRING);
             $TBS->Source = $this->OutputSrc;
             $this->OutputSrc = '';
         }
@@ -325,8 +337,12 @@ class OpenTBSPlugin extends TBSZip
         }
     }
 
-    function OnCommand($Cmd, $x1 = null, $x2 = null, $x3 = null, $x4 = null, $x5 = null)
+    function OnCommand(string $Cmd, $x1 = null)
     {
+        $x2 = null;
+        $x3 = null;
+        $x4 = null;
+        $x5 = null;
         // Check that a template is loaded
         if ($this->ExtInfo===false) {
             $this->raiseError("Cannot execute the plug-in commande because no template is loaded.");
@@ -335,7 +351,7 @@ class OpenTBSPlugin extends TBSZip
         
         if ($Cmd==OPENTBS_RESET) {
             // Reset all mergings
-            $this->ArchCancelModif();
+            $this->archCancelModif();
             $this->TbsStoreLst = array();
             $TBS =& $this->TBS;
             $TBS->Source = '';
@@ -391,7 +407,7 @@ class OpenTBSPlugin extends TBSZip
         } elseif ($Cmd==OPENTBS_DEBUG_XML_SHOW) {
             $this->TBS->Show(OPENTBS_DEBUG_XML);
         } elseif ($Cmd==OPENTBS_FORCE_DOCTYPE) {
-            return $this->Ext_PrepareInfo($x1);
+            return $this->extPrepareInfo($x1);
         } elseif ($Cmd==OPENTBS_DELETE_ELEMENTS) {
             if (is_string($x1)) {
                 $x1 = explode(',', $x1);
@@ -651,7 +667,7 @@ class OpenTBSPlugin extends TBSZip
     }
 
     // Initialize template information
-    function TbsInitArchive()
+    public function tbsInitArchive(): void
     {
 
         $TBS =& $this->TBS;
@@ -691,7 +707,7 @@ class OpenTBSPlugin extends TBSZip
         $this->MsWord_HeaderFooter = false;
         $this->MsWord_DocPrId = 0;
 
-        $this->Ext_PrepareInfo(); // Set extension information
+        $this->extPrepareInfo(); // Set extension information
     }
 
     /**
@@ -1384,7 +1400,7 @@ class OpenTBSPlugin extends TBSZip
 
         // actually add the picture inside the archive
         if ($this->FileGetIdxAdd($InternalPath)===false) {
-            $this->FileAdd($InternalPath, $ExternalPath, TBSZip::TBSZIP_FILE, true);
+            $this->fileAdd($InternalPath, $ExternalPath, TBSZip::TBSZIP_FILE, true);
         }
 
         // preparation for others file in the archive
@@ -1780,7 +1796,7 @@ class OpenTBSPlugin extends TBSZip
      *  rpl_with: (optional) to be used with 'rpl_what',  Can be a string or an array.
      * User can define his own Extension Information, they are taken in acount if saved int the global variable $_OPENTBS_AutoExt.
      */
-    function Ext_PrepareInfo($Ext = false)
+    public function extPrepareInfo($Ext = false)
     {
 
         $this->ExtEquiv = false;
@@ -2645,7 +2661,7 @@ class OpenTBSPlugin extends TBSZip
 
                 // save
                 if ($o->FicType==1) {
-                    $this->FileAdd($o->FicPath, $o->FicTxt);
+                    $this->fileAdd($o->FicPath, $o->FicTxt);
                 } else {
                     $this->FileReplace($o->FicIdx, $o->FicTxt);
                 }
@@ -2749,7 +2765,7 @@ class OpenTBSPlugin extends TBSZip
 
         if ($ok) {
             if ($idx===false) {
-                $this->FileAdd($file, $Txt);
+                $this->fileAdd($file, $Txt);
             } else {
                 $this->FileReplace($idx, $Txt);
             }
