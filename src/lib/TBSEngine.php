@@ -305,12 +305,18 @@ class TBSEngine
     }
 
 // Public methods
+
+    /**
+     * @param string|resource|null|bool $File
+     * @param string|bool|array $Charset
+     * @return bool|void
+     */
     public function LoadTemplate($File, $Charset = '')
     {
         if ($File==='') {
-            $this->meth_Misc_Charset($Charset);
-            return true;
+            throw new OfficeTemplateEngineException('File path is empty');
         }
+        
         $Ok = true;
         if ($this->_PlugIns_Ok) {
             if (isset($this->_piBeforeLoadTemplate) || isset($this->_piAfterLoadTemplate)) {

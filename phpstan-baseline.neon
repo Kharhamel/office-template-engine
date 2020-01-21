@@ -381,21 +381,6 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\{array\\} \\$TagLst List of tag names to delete\\.\\)\\: Unexpected token \"\\{\", expected type at offset 134$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\{boolean\\} \\$OnlyInner Set to true to keep the content inside the element\\. Set to false to delete the entire element\\. Default is false\\.\\)\\: Unexpected token \"\\{\", expected type at offset 193$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\{string\\} \\$Txt The text content to search into\\.\\)\\: Unexpected token \"\\{\", expected type at offset 73$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
 			message: "#^PHPDoc tag @param has invalid value \\(\\{mixed\\}  \\$SubFile \\: the name or the index of the sub\\-file\\. Use value false to get the current sub\\-file\\.\\)\\: Unexpected token \"\\{\", expected type at offset 116$#"
 			count: 1
 			path: src/lib/OpenTBSPlugin.php
@@ -492,21 +477,6 @@ parameters:
 
 		-
 			message: "#^PHPDoc tag @return has invalid value \\(\\{array\\} The list of the slides, of false if an error occurs\\.\\)\\: Unexpected token \"\\{\", expected type at offset 153$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Variable \\$superfluous_len might not be defined\\.$#"
-			count: 3
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Variable \\$superfluous might not be defined\\.$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Variable \\$p_first_att might not be defined\\.$#"
 			count: 1
 			path: src/lib/OpenTBSPlugin.php
 

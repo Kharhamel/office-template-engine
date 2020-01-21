@@ -16,7 +16,9 @@
 
 namespace OfficeTemplateEngine\lib;
 
+use OfficeTemplateEngine\lib\Cleaners\MsWordCleaner;
 use OfficeTemplateEngine\Exceptions\OfficeTemplateEngineException;
+use OfficeTemplateEngine\lib\Cleaners\MsPowerpointCleaner;
 
 /**
  * Main class which is a TinyButStrong plug-in.
@@ -147,11 +149,11 @@ class OpenTBSPlugin extends TBSZip
         // Change the Charset if a new archive is opended, or if LoadTemplate is called explicitely for that
         if (($FilePath!=='') || ($File==='')) {
             if ($Charset===OPENTBS_ALREADY_XML) {
-                $TBS->LoadTemplate('', false);                       // Define the function for string conversion
+                $TBS->meth_Misc_Charset(false); // Define the function for string conversion
             } elseif ($Charset===OPENTBS_ALREADY_UTF8) {
-                $TBS->LoadTemplate('', array(&$this,'ConvXmlOnly')); // Define the function for string conversion
+                $TBS->meth_Misc_Charset(array(&$this,'ConvXmlOnly')); // Define the function for string conversion
             } else {
-                $TBS->LoadTemplate('', array(&$this,'ConvXmlUtf8')); // Define the function for string conversion
+                $TBS->meth_Misc_Charset(array(&$this,'ConvXmlUtf8'));// Define the function for string conversion
             }
         }
 
@@ -415,7 +417,7 @@ class OpenTBSPlugin extends TBSZip
             if (is_null($x2)) {
                 $x2 = false; // OnlyInner
             }
-            return $this->XML_DeleteElements($this->TBS->Source, $x1, $x2);
+            return XML_DeleteElements($this->TBS->Source, $x1, $x2);
         } elseif ($Cmd==OPENTBS_SELECT_MAIN) {
             if (($this->ExtInfo!==false) && isset($this->ExtInfo['main'])) {
                 $this->TbsLoadSubFileAsTemplate($this->ExtInfo['main']);
@@ -761,15 +763,17 @@ class OpenTBSPlugin extends TBSZip
                                     $this->OpenDoc_MsExcelCompatibility($TBS->Source);
                                 }
                                 if ($e==='docx') {
+                                    $cleaner = new MsWordCleaner();
                                     if ($TBS->OtbsSpacePreserve) {
-                                        $this->MsWord_CleanSpacePreserve($TBS->Source);
+                                        $cleaner->cleanSpacePreserve($TBS->Source);
                                     }
                                     if ($TBS->OtbsClearMsWord) {
-                                        $this->MsWord_Clean($TBS->Source);
+                                        $TBS->Source = $cleaner->clean($TBS->Source);
                                     }
                                 }
                                 if (($e==='pptx') && $TBS->OtbsClearMsPowerpoint) {
-                                    $this->MsPowerpoint_Clean($TBS->Source);
+                                    $cleaner = new MsPowerpointCleaner();
+                                    $TBS->Source = $cleaner->clean($TBS->Source);
                                 }
                                 if (($e==='xlsx') && $TBS->OtbsMsExcelConsistent) {
                                     $this->MsExcel_DeleteFormulaResults($TBS->Source);
@@ -1602,7 +1606,7 @@ class OpenTBSPlugin extends TBSZip
                     // Delete inner text of the comments to be sure that contents is deleted
                     // we only empty the comment elements in case some comments are referenced in other special part of the document
                     $Txt = $this->TbsStoreGet($idx, "Delete Comments");
-                    $nbr = $nbr + $this->XML_DeleteElements($Txt, $CommTags, $Inner);
+                    $nbr = $nbr + XML_DeleteElements($Txt, $CommTags, $Inner);
                     $this->TbsStorePut($idx, $Txt);
                 }
             }
@@ -1616,7 +1620,7 @@ class OpenTBSPlugin extends TBSZip
             }
             // Delete Comment locators
             $Txt = $this->TbsStoreGet($idx, "Delete Comments");
-            $nbr2 = $this->XML_DeleteElements($Txt, $MainTags);
+            $nbr2 = XML_DeleteElements($Txt, $MainTags);
             $this->TbsStorePut($idx, $Txt);
             if ($CommFiles===false) {
                 $nbr = $nbr2;
@@ -2021,48 +2025,8 @@ class OpenTBSPlugin extends TBSZip
             return false;
         }
     }
-
-    function XML_FoundTagStart($Txt, $Tag, $PosBeg)
-    {
-    // Found the next tag of the asked type. (Not specific to MsWord, works for any XML)
-    // Tag must be prefixed with '<' or '</'.
-        $len = strlen($Tag);
-        $p = $PosBeg;
-        while ($p!==false) {
-            $p = strpos($Txt, $Tag, $p);
-            if ($p===false) {
-                return false;
-            }
-            $x = substr($Txt, $p+$len, 1);
-            if (($x===' ') || ($x==='/') || ($x==='>')) {
-                return $p;
-            } else {
-                $p = $p+$len;
-            }
-        }
-        return false;
-    }
     
-    /**
-     * Delete all tags of the types given in the list.
-     * @param {string} $Txt The text content to search into.
-     * @param {array} $TagLst List of tag names to delete.
-     * @param {boolean} $OnlyInner Set to true to keep the content inside the element. Set to false to delete the entire element. Default is false.
-     */
-    function XML_DeleteElements(&$Txt, $TagLst, $OnlyInner = false)
-    {
-        $nb = 0;
-        $Content = !$OnlyInner;
-        foreach ($TagLst as $tag) {
-            $p = 0;
-            while ($x = TBSXmlLoc::FindElement($Txt, $tag, $p)) {
-                $x->Delete($Content);
-                $p = $x->PosBeg;
-                $nb++;
-            }
-        }
-        return $nb;
-    }
+
 
     /**
      * Delete all column elements  according to their position.
@@ -3287,7 +3251,7 @@ class OpenTBSPlugin extends TBSZip
         }
 
         // Unlink the data sheet by deleting references
-        $this->XML_DeleteElements($Txt, array('c:f'));
+        XML_DeleteElements($Txt, array('c:f'));
     }
 
     /**
@@ -3676,7 +3640,7 @@ class OpenTBSPlugin extends TBSZip
             }
             $x_len0 = $c_p - $p;
             $x = substr($Txt, $p, $x_len0);
-            $this->XML_DeleteElements($x, array('v'));
+            XML_DeleteElements($x, array('v'));
             $Txt = substr_replace($Txt, $x, $p, $x_len0);
             $p = $p + strlen($x);
         }
@@ -4144,38 +4108,6 @@ class OpenTBSPlugin extends TBSZip
         return $RefLst;
     }
 
-    // Clean tags in an Ms Powerpoint slide
-    function MsPowerpoint_Clean(&$Txt)
-    {
-
-        $this->MsPowerpoint_CleanRpr($Txt, 'a:rPr');
-        $Txt = str_replace('<a:rPr/>', '', $Txt);
-
-        $this->MsPowerpoint_CleanRpr($Txt, 'a:endParaRPr');
-        $Txt = str_replace('<a:endParaRPr/>', '', $Txt); // do not delete, can change layout
-
-        // Join split elements
-        $Txt = str_replace('</a:t><a:t>', '', $Txt);
-        $Txt = str_replace('</a:t></a:r><a:r><a:t>', '', $Txt); // this join TBS split tags
-
-        // Delete empty elements
-        // An <a:r> must contain at least one <a:t>. An empty <a:t> may exist after several merges or an OpenTBS cleans.
-        $Txt = str_replace('<a:r><a:t></a:t></a:r>', '', $Txt);
-    }
-
-    function MsPowerpoint_CleanRpr(&$Txt, $elem)
-    {
-        $p = 0;
-        while ($x = TBSXmlLoc::FindStartTag($Txt, $elem, $p)) {
-            $x->DeleteAtt('noProof');
-            $x->DeleteAtt('lang');
-            $x->DeleteAtt('err');
-            $x->DeleteAtt('smtClean');
-            $x->DeleteAtt('dirty');
-            $p = $x->PosEnd;
-        }
-    }
-
     /**
      * Search a string in all slides of the Presentation.
      */
@@ -4326,217 +4258,6 @@ class OpenTBSPlugin extends TBSZip
             }
         }
         return false;
-    }
-    
-    // Cleaning tags in MsWord
-    function MsWord_Clean(&$Txt)
-    {
-        $Txt = str_replace('<w:lastRenderedPageBreak/>', '', $Txt); // faster
-        //$this->MsWord_CleanFallbacks($Txt);
-        $this->XML_DeleteElements($Txt, array('w:proofErr', 'w:noProof', 'w:lang', 'w:lastRenderedPageBreak'));
-        $this->MsWord_CleanSystemBookmarks($Txt);
-        $this->MsWord_CleanRsID($Txt);
-        $this->MsWord_CleanDuplicatedLayout($Txt);
-    }
-    
-    /**
-     * <mc:Fallback> entities may contains duplicated TBS fields and this may corrupt the merging.
-     * This function delete such entities if they seems to contain TBS fields. This make the DOCX content less compatible with previous Word versions.
-     * https://wiki.openoffice.org/wiki/OOXML/Markup_Compatibility_and_Extensibility
-     */
-    function MsWord_CleanFallbacks(&$Txt)
-    {
-        
-        $p = 0;
-        $nb = 0;
-        while (($loc = TBSXmlLoc::FindElement($Txt, 'mc:Fallback', $p))!==false) {
-            if (strpos($loc->GetSrc(), $this->TBS->_ChrOpen) !== false) {
-                $loc->Delete();
-                $nb++;
-            }
-            $p = $loc->PosEnd;
-        }
-    }
-    
-    function MsWord_CleanSystemBookmarks(&$Txt)
-    {
-    // Delete GoBack hidden bookmarks that appear since Office 2010. Example: <w:bookmarkStart w:id="0" w:name="_GoBack"/><w:bookmarkEnd w:id="0"/>
-
-        $x = ' w:name="_GoBack"/><w:bookmarkEnd ';
-        $x_len = strlen($x);
-
-        $b = '<w:bookmarkStart ';
-        $b_len = strlen($b);
-
-        $nbr_del = 0;
-
-        $p = 0;
-        while (($p=strpos($Txt, $x, $p))!==false) {
-            $pe = strpos($Txt, '>', $p + $x_len);
-            if ($pe===false) {
-                return false;
-            }
-            $pb = strrpos(substr($Txt, 0, $p), '<');
-            if ($pb===false) {
-                return false;
-            }
-            if (substr($Txt, $pb, $b_len)===$b) {
-                $Txt = substr_replace($Txt, '', $pb, $pe - $pb + 1);
-                $p = $pb;
-                $nbr_del++;
-            } else {
-                $p = $pe +1;
-            }
-        }
-
-        return $nbr_del;
-    }
-
-    function MsWord_CleanRsID(&$Txt)
-    {
-    /* Delete XML attributes relative to log of user modifications. Returns the number of deleted attributes.
-    In order to insert such information, MsWord does split TBS tags with XML elements.
-    After such attributes are deleted, we can concatenate duplicated XML elements. */
-
-        $rs_lst = array('w:rsidR', 'w:rsidRPr');
-
-        $nbr_del = 0;
-        foreach ($rs_lst as $rs) {
-            $rs_att = ' '.$rs.'="';
-            $rs_len = strlen($rs_att);
-
-            $p = 0;
-            while ($p!==false) {
-                // search the attribute
-                $ok = false;
-                $p = strpos($Txt, $rs_att, $p);
-                if ($p!==false) {
-                    // attribute found, now seach tag bounds
-                    $po = strpos($Txt, '<', $p);
-                    $pc = strpos($Txt, '>', $p);
-                    if (($pc!==false) && ($po!==false) && ($pc<$po)) { // means that the attribute is actually inside a tag
-                        $p2 = strpos($Txt, '"', $p+$rs_len); // position of the delimiter that closes the attribute's value
-                        if (($p2!==false) && ($p2<$pc)) {
-                            // delete the attribute
-                            $Txt = substr_replace($Txt, '', $p, $p2 -$p +1);
-                            $ok = true;
-                            $nbr_del++;
-                        }
-                    }
-                    if (!$ok) {
-                        $p = $p + $rs_len;
-                    }
-                }
-            }
-        }
-
-        // delete empty tags
-        $Txt = str_replace('<w:rPr></w:rPr>', '', $Txt);
-        $Txt = str_replace('<w:pPr></w:pPr>', '', $Txt);
-
-        return $nbr_del;
-    }
-
-    /**
-     * MsWord cut the source of the text when a modification is done. This is splitting TBS tags.
-     * This function repare the split text by searching and delete duplicated layout.
-     * Return the number of deleted dublicates.
-     */
-    function MsWord_CleanDuplicatedLayout(&$Txt)
-    {
-
-        $wro = '<w:r';
-        $wro_len = strlen($wro);
-
-        $wrc = '</w:r';
-        $wrc_len = strlen($wrc);
-
-        $wto = '<w:t';
-        $wto_len = strlen($wto);
-
-        $wtc = '</w:t';
-        $wtc_len = strlen($wtc);
-
-        $preserve = 'xml:space="preserve"';
-
-        $nbr = 0;
-        $wro_p = 0;
-        while (($wro_p=$this->XML_FoundTagStart($Txt, $wro, $wro_p))!==false) { // next <w:r> tag
-            $wto_p = $this->XML_FoundTagStart($Txt, $wto, $wro_p); // next <w:t> tag
-            if ($wto_p===false) {
-                return false; // error in the structure of the <w:r> element
-            }
-            $first = true;
-            $last_att = '';
-            $first_att = '';
-            do {
-                $ok = false;
-                $wtc_p = $this->XML_FoundTagStart($Txt, $wtc, $wto_p); // next </w:t> tag
-                if ($wtc_p===false) {
-                    return false;
-                }
-                $wrc_p = $this->XML_FoundTagStart($Txt, $wrc, $wro_p); // next </w:r> tag (only to check inclusion)
-                if ($wrc_p===false) {
-                    return false;
-                }
-                if (($wto_p<$wrc_p) && ($wtc_p<$wrc_p)) { // if the <w:t> is actually included in the <w:r> element
-                    if ($first) {
-                        // text that is concatenated and can be simplified
-                        $superfluous = '</w:t></w:r>'.substr($Txt, $wro_p, ($wto_p+$wto_len)-$wro_p); // without the last symbol, like: '</w:t></w:r><w:r>....<w:t'
-                        $superfluous = str_replace('<w:tab/>', '', $superfluous); // tabs must not be deleted between parts => they nt be in the superfluous string
-                        $superfluous_len = strlen($superfluous);
-                        $first = false;
-                        $p_first_att = $wto_p+$wto_len;
-                        $p =  strpos($Txt, '>', $wto_p);
-                        if ($p!==false) {
-                            $first_att = substr($Txt, $p_first_att, $p-$p_first_att);
-                        }
-                    }
-                    // if the <w:r> layout is the same than the next <w:r>, then we join them
-                    $p_att = $wtc_p + $superfluous_len;
-                    $x = substr($Txt, $p_att, 1); // must be ' ' or '>' if the string is the superfluous AND the <w:t> tag has or not attributes
-                    if ((($x===' ') || ($x==='>')) && (substr($Txt, $wtc_p, $superfluous_len)===$superfluous)) {
-                        $p_end = strpos($Txt, '>', $wtc_p+$superfluous_len); //
-                        if ($p_end===false) {
-                            return false; // error in the structure of the <w:t> tag
-                        }
-                        $last_att = substr($Txt, $p_att, $p_end-$p_att);
-                        $Txt = substr_replace($Txt, '', $wtc_p, $p_end-$wtc_p+1); // delete superfluous part + <w:t> attributes
-                        $nbr++;
-                        $ok = true;
-                    }
-                }
-            } while ($ok);
-
-            // Recover the 'preserve' attribute if the last join element was having it. We check also the first one because the attribute must not be twice.
-            if (($last_att!=='') && (strpos($first_att, $preserve)===false)  && (strpos($last_att, $preserve)!==false)) {
-                $Txt = substr_replace($Txt, ' '.$preserve, $p_first_att, 0);
-            }
-
-            $wro_p = $wro_p + $wro_len;
-        }
-
-        return $nbr; // number of replacements
-    }
-
-    /**
-     * Prevent from the problem of missing spaces when calling ->MsWord_CleanRsID() or under certain merging circumstances.
-     * Replace attribute xml:space="preserve" used in <w:t>, with the same attribute in <w:document>.
-     * This trick works for MsWord 2007, 2010 but is undocumented. It may be desabled by default in a next version.
-     * LibreOffice does ignore this attribute in both <w:t> and <w:document>.
-     */
-    function MsWord_CleanSpacePreserve(&$Txt)
-    {
-        $XmlLoc = TBSXmlLoc::FindStartTag($Txt, 'w:document', 0);
-        if ($XmlLoc===false) {
-            return;
-        }
-        if ($XmlLoc->GetAttLazy('xml:space') === 'preserve') {
-            return;
-        }
-        
-        $Txt = str_replace(' xml:space="preserve"', '', $Txt); // not mendatory but cleanner and save space
-        $XmlLoc->ReplaceAtt('xml:space', 'preserve', true);
     }
 
     /**
