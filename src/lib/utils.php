@@ -134,18 +134,3 @@ function getHex(string $txt, int $pos, int $len): string
     $x = substr($txt, $pos, $len);
     return 'h:'.bin2hex(strrev($x));
 }
-
-/**
- * @param resource $handle
- */
-function readData(int $len, $handle): string
-{
-    if (!($len>0)) {
-        return '';
-    }
-    $x = fread($handle, $len);
-    if ($x === false) {
-        throw new OfficeTemplateEngineException('Could not read from the handle');
-    }
-    return $x;
-}

@@ -12,19 +12,19 @@ class TempArchive
     /**
      * @var bool
      */
-    private $ArchIsNew;
+    private $isNew;
     /**
      * @var bool
      */
-    private $ArchIsStream;
+    private $isStream;
     /**
-     * @var resource|string
+     * @var string|null
      */
-    public $ArchFile;
+    public $fileName;
     /**
-     * @var bool|resource
+     * @var resource|null
      */
-    public $ArchHnd;
+    public $handle;
     /**
      * @var bool|int
      */
@@ -67,42 +67,46 @@ class TempArchive
     }
 
     //todo unused?
-    public function createNew($ArchName = 'new.zip')
+    public function createNew(string $ArchName = 'new.zip')
     {
         // Create a new virtual empty archive, the name will be the default name when the archive is flushed.
         $this->close(); // note that $this->ArchHnd is set to false here
-        $this->ArchFile = $ArchName;
-        $this->ArchIsNew = true;
+        $this->fileName = $ArchName;
+        $this->isNew = true;
         $bin = 'PK'.chr(05).chr(06).str_repeat(chr(0), 18);
         $this->CdEndPos = strlen($bin) - 4;
         $this->CdInfo = array('disk_num_curr'=>0, 'disk_num_cd'=>0, 'file_nbr_curr'=>0, 'file_nbr_tot'=>0, 'l_cd'=>0, 'p_cd'=>0, 'l_comm'=>0, 'v_comm'=>'', 'bin'=>$bin);
         $this->CdPos = $this->CdInfo['p_cd'];
     }
-    
+
+    /**
+     * @param resource|string $ArchFile
+     */
     public function open($ArchFile, $UseIncludePath = false): void
     {
-        $this->ArchIsNew = false;
-        $this->ArchIsStream = (is_resource($ArchFile) && (get_resource_type($ArchFile)=='stream'));
-        if ($this->ArchIsStream) {
-            $this->ArchFile = 'from_stream.zip';
-            $this->ArchHnd = $ArchFile;
+        $this->close();
+        $this->isNew = false;
+        $this->isStream = (is_resource($ArchFile) && (get_resource_type($ArchFile)=='stream'));
+        if ($this->isStream) {
+            $this->fileName = 'from_stream.zip';
+            $this->handle = $ArchFile;
         } else {
             // open the file
-            $this->ArchFile = $ArchFile;
-            $this->ArchHnd = @fopen($ArchFile, 'rb', $UseIncludePath); //todo cleaner solution
+            $this->fileName = $ArchFile;
+            $this->handle = @fopen($ArchFile, 'rb', $UseIncludePath); //todo cleaner solution
         }
-        if (!$this->ArchHnd) {
+        if (!$this->handle) {
             throw new OfficeTemplateEngineException('Could not init the archive');
         }
         $this->centralDirRead();
-        if (!$this->ArchFile) {
+        if (!$this->fileName) {
             throw new OfficeTemplateEngineException('No filename');
         }
     }
 
     public function isStream(): bool
     {
-        return $this->ArchIsStream;
+        return $this->isStream;
     }
     
     private function centralDirRead(): void
@@ -112,7 +116,7 @@ class TempArchive
         $this->moveTo($cd_pos, SEEK_END);
         $b = $this->readData(4);
         if ($b===$cd_info) {
-            $this->CdEndPos = ftell($this->ArchHnd) - 4;
+            $this->CdEndPos = ftell($this->handle) - 4;
         } else {
             $p = $this->findCDEnd($cd_info);
             if ($p===false) {
@@ -144,12 +148,19 @@ class TempArchive
 
     public function readData(int $len): string
     {
-        return readData($len, $this->ArchHnd);
+        if (!($len>0)) {
+            return '';
+        }
+        $x = fread($this->handle, $len);
+        if ($x === false) {
+            throw new OfficeTemplateEngineException('Could not read from the handle');
+        }
+        return $x;
     }
 
-    public function moveTo($pos, $relative = SEEK_SET)
+    public function moveTo($pos, $relative = SEEK_SET): void
     {
-        fseek($this->ArchHnd, $pos, $relative);
+        fseek($this->handle, $pos, $relative);
     }
 
     /**
@@ -162,7 +173,7 @@ class TempArchive
     {
         $nbr = 1;
         $p = false;
-        $pos = ftell($this->ArchHnd) - 4 - 256;
+        $pos = ftell($this->handle) - 4 - 256;
         while (($p===false) && ($nbr<256)) {
             if ($pos<=0) {
                 $pos = 0;
@@ -204,7 +215,7 @@ class TempArchive
 
         $x = getHex($b, 0, 4);
         if ($x!=='h:02014b50') {
-            throw new OfficeTemplateEngineException("Signature of Central Directory Header #$idx (file information) expected but not found at position ".txtPos(ftell($this->ArchHnd) - 46). '.');
+            throw new OfficeTemplateEngineException("Signature of Central Directory Header #$idx (file information) expected but not found at position ".txtPos(ftell($this->handle) - 46). '.');
         }
 
         $x = array();
@@ -235,11 +246,11 @@ class TempArchive
 
     public function close(): void
     {
-        if (isset($this->ArchHnd) && ($this->ArchHnd!==false)) {
-            fclose($this->ArchHnd);
+        if (isset($this->handle) && ($this->handle!==false)) {
+            fclose($this->handle);
         }
-        $this->ArchFile = '';
-        $this->ArchHnd = false;
+        $this->fileName = null;
+        $this->handle = null;
         $this->CdInfo = [];
         $this->CdFileLst->empty();
         $this->VisFileLst = array();
@@ -255,7 +266,7 @@ class TempArchive
         $this->AddInfo = array();
     }
     
-    public function _ReadFile($idx, $ReadData)
+    public function readFile($idx, $ReadData)
     {
         // read the file header (and maybe the data ) in the archive, assuming the cursor in at a new file position
 
@@ -263,7 +274,7 @@ class TempArchive
 
         $x = getHex($b, 0, 4);
         if ($x!=='h:04034b50') {
-            return new OfficeTemplateEngineException("Signature of Local File Header #$idx (data section) expected but not found at position ".txtPos(ftell($this->ArchHnd)-30).".");
+            return new OfficeTemplateEngineException("Signature of Local File Header #$idx (data section) expected but not found at position ".txtPos(ftell($this->handle)-30).".");
         }
 
         $x = array();
@@ -339,17 +350,17 @@ class TempArchive
         }
     }
 
-    public function _EstimateNewArchSize($Optim = true)
+    public function estimateNewArchSize($Optim = true)
     {
         // Return the size of the new archive, or false if it cannot be calculated (because of external file that must be compressed before to be insered)
 
-        if ($this->ArchIsNew) {
+        if ($this->isNew) {
             $Len = strlen($this->CdInfo['bin']);
-        } elseif ($this->ArchIsStream) {
-            $x = fstat($this->ArchHnd);
+        } elseif ($this->isStream) {
+            $x = fstat($this->handle);
             $Len = $x['size'];
         } else {
-            $Len = filesize($this->ArchFile);
+            $Len = filesize($this->fileName);
         }
 
         // files to replace or delete
@@ -363,7 +374,7 @@ class TempArchive
                         return false; // if $Optimization is set to true, then we d'ont rewind to read information
                     }
                     $this->moveTo($Info['p_loc']);
-                    $this->_ReadFile($i, false);
+                    $this->readFile($i, false);
                 }
                 $Vis =& $this->VisFileLst[$i];
                 $Len += -strlen($Vis['bin']) -strlen($Info['bin']) - $Info['l_data_c'];
@@ -394,10 +405,10 @@ class TempArchive
 
     public function editFileByExt(string $Ext): void
     {
-        $this->ArchFile = str_replace('.zip', '.'.$Ext, $this->ArchFile);
+        $this->fileName = str_replace('.zip', '.'.$Ext, $this->fileName);
     }
     
-    public function FileRead($NameOrIdx, $Uncompress = true)
+    public function fileRead($NameOrIdx, $Uncompress = true)
     {
         $this->LastReadComp = false; // means the file is not found
         $this->LastReadIdx = false;
@@ -412,7 +423,7 @@ class TempArchive
 
         $this->LastReadIdx = $idx; // Can be usefull to get the idx
 
-        $Data = $this->_ReadFile($idx, true);
+        $Data = $this->readFile($idx, true);
 
         // Manage uncompression
         $Comp = 1; // means the contents stays compressed
@@ -436,12 +447,12 @@ class TempArchive
         return $Data;
     }
 
-    public function FileGetState($NameOrIdx)
+    public function fileGetState($NameOrIdx)
     {
 
         $idx = $this->CdFileLst->fileGetIdx($NameOrIdx);
         if ($idx===false) {
-            $idx = $this->FileGetIdxAdd($NameOrIdx);
+            $idx = $this->fileGetIdxAdd($NameOrIdx);
             if ($idx===false) {
                 return false;
             } else {
@@ -458,7 +469,7 @@ class TempArchive
         }
     }
     
-    public function FileCancelModif($NameOrIdx, $ReplacedAndDeleted = true)
+    public function fileCancelModif($NameOrIdx, $ReplacedAndDeleted = true): int
     {
         // cancel added, modified or deleted modifications on a file in the archive
         // return the number of cancels
@@ -479,7 +490,7 @@ class TempArchive
         }
 
         // added files
-        $idx = $this->FileGetIdxAdd($NameOrIdx);
+        $idx = $this->fileGetIdxAdd($NameOrIdx);
         if ($idx!==false) {
             unset($this->AddInfo[$idx]);
             $nbr++;
@@ -488,7 +499,7 @@ class TempArchive
         return $nbr;
     }
     
-    public function FileReplace($NameOrIdx, $Data, $DataType = TBSZip::TBSZIP_STRING, $Compress = true)
+    public function fileReplace($NameOrIdx, $Data, $DataType = TBSZip::TBSZIP_STRING, $Compress = true)
     {
         // Store replacement information.
 
@@ -506,10 +517,7 @@ class TempArchive
         } else {
             // file to replace
             $Diff = - $this->CdFileLst->getPropertyFromId($idx, 'l_data_c');
-            $Ref = $this->_DataCreateNewRef($Data, $DataType, $Compress, $Diff, $NameOrIdx);
-            if ($Ref===false) {
-                return false;
-            }
+            $Ref = $this->dataCreateNewRef($Data, $DataType, $Compress, $Diff, $NameOrIdx);
             $this->ReplInfo[$idx] = $Ref;
             $Result = $Ref['res'];
         }
@@ -519,7 +527,7 @@ class TempArchive
         return $Result;
     }
     
-    private function _DataCreateNewRef($Data, $DataType, $Compress, $Diff, $NameOrIdx)
+    private function dataCreateNewRef($Data, $DataType, $Compress, $Diff, $NameOrIdx): array
     {
 
         if (is_array($Compress)) {
@@ -528,7 +536,7 @@ class TempArchive
             $len_u = $Compress['len_u'];
             $crc32 = $Compress['crc32'];
             $Compress = false;
-        } elseif ($Compress and ($this->Meth8Ok)) {
+        } elseif ($Compress && ($this->Meth8Ok)) {
             $result = 1;
             $meth = 8;
             $len_u = false; // means unknown
@@ -577,21 +585,18 @@ class TempArchive
     public function fileAdd($Name, $Data, $DataType = TBSZip::TBSZIP_STRING, $Compress = true)
     {
         if ($Data===false) {
-            return $this->FileCancelModif($Name, false); // Cancel a previously added file
+            return $this->fileCancelModif($Name, false); // Cancel a previously added file
         }
 
         // Save information for adding a new file into the archive
         $Diff = 30 + 46 + 2*strlen($Name); // size of the header + cd info
-        $Ref = $this->_DataCreateNewRef($Data, $DataType, $Compress, $Diff, $Name);
-        if ($Ref===false) {
-            return false;
-        }
+        $Ref = $this->dataCreateNewRef($Data, $DataType, $Compress, $Diff, $Name);
         $Ref['name'] = $Name;
         $this->AddInfo[] = $Ref;
         return $Ref['res'];
     }
     
-    public function FileGetIdxAdd($Name)
+    public function fileGetIdxAdd($Name)
     {
         // Check if a file name exists in the list of file to add, and return its index
         if (!is_string($Name)) {

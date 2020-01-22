@@ -78,17 +78,17 @@ class TBSZip
 
     function FileGetIdxAdd($Name)
     {
-        return $this->archive->FileGetIdxAdd($Name);
+        return $this->archive->fileGetIdxAdd($Name);
     }
 
     function FileRead($NameOrIdx, $Uncompress = true)
     {
-        return $this->archive->FileRead($NameOrIdx, $Uncompress);
+        return $this->archive->fileRead($NameOrIdx, $Uncompress);
     }
 
     function FileReplace($NameOrIdx, $Data, $DataType = self::TBSZIP_STRING, $Compress = true)
     {
-        return $this->archive->FileReplace($NameOrIdx, $Data, $DataType, $Compress);
+        return $this->archive->fileReplace($NameOrIdx, $Data, $DataType, $Compress);
     }
 
     /**
@@ -97,13 +97,13 @@ class TBSZip
      */
     function FileGetState($NameOrIdx)
     {
-        return $this->archive->FileGetState($NameOrIdx);
+        return $this->archive->fileGetState($NameOrIdx);
     }
     
     public function flush($Render = self::TBSZIP_DOWNLOAD, $File = '', $ContentType = ''): bool
     {
 
-        if (($File!=='') && ($this->archive->ArchFile===$File) && ($Render==self::TBSZIP_FILE)) {
+        if (($File!=='') && ($this->archive->fileName===$File) && ($Render==self::TBSZIP_FILE)) {
             $this->raiseError('Method Flush() cannot overwrite the current opened archive: \''.$File.'\''); // this makes corrupted zip archives without PHP error.
             return false;
         }
@@ -129,7 +129,7 @@ class TBSZip
             $this->OutputFromArch($ArchPos, $ReplPos);
             // get current file information
             if (!isset($this->archive->VisFileLst[$ReplIdx])) {
-                $this->archive->_ReadFile($ReplIdx, false);
+                $this->archive->readFile($ReplIdx, false);
             }
             $FileInfo =& $this->archive->VisFileLst[$ReplIdx];
             $b1 = $FileInfo['bin'];
@@ -179,7 +179,7 @@ class TBSZip
         }
 
         // Ouput all the zipped files that remain before the Central Directory listing
-        if ($this->archive->ArchHnd!==false) {
+        if ($this->archive->handle!==false) {
             $this->OutputFromArch($ArchPos, $this->archive->CdPos); // ArchHnd is false if CreateNew() has been called
         }
         $ArchPos = $this->archive->CdPos;
@@ -226,7 +226,7 @@ class TBSZip
         $DeltaCdLen =  $DeltaCdLen + strlen($b2) - $old_cd_len;
 
         // Output until "end of central directory record"
-        if ($this->archive->ArchHnd!==false) {
+        if ($this->archive->handle!==false) {
             $this->OutputFromArch($ArchPos, $this->archive->CdEndPos); // ArchHnd is false if CreateNew() has been called
         }
 
@@ -273,7 +273,7 @@ class TBSZip
         if (($Render & self::TBSZIP_FILE)==self::TBSZIP_FILE) {
             $this->OutputMode = self::TBSZIP_FILE;
             if (''.$File=='') {
-                $File = basename($this->archive->ArchFile).'.zip';
+                $File = basename($this->archive->fileName).'.zip';
             }
             $this->OutputHandle = @fopen($File, 'w');
             if ($this->OutputHandle===false) {
@@ -286,7 +286,7 @@ class TBSZip
             $this->OutputMode = self::TBSZIP_DOWNLOAD;
             // Output the file
             if (''.$File=='') {
-                $File = basename($this->archive->ArchFile);
+                $File = basename($this->archive->fileName);
             }
             if (($Render & self::TBSZIP_NOHEADER)==self::TBSZIP_NOHEADER) {
             } else {
@@ -300,7 +300,7 @@ class TBSZip
                 header('Cache-Control: public');
                 header('Content-Description: File Transfer');
                 header('Content-Transfer-Encoding: binary');
-                $Len = $this->archive->_EstimateNewArchSize();
+                $Len = $this->archive->estimateNewArchSize();
                 if ($Len!==false) {
                     header('Content-Length: '.$Len);
                 }

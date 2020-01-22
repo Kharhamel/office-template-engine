@@ -137,7 +137,7 @@ class OpenTBSPlugin extends TBSZip
                 $TBS->OtbsConvBr = $this->ExtInfo['br'];
             }
             $TBS->OtbsSubFileLst = $SubFileLst;
-        } elseif ($this->archive->ArchFile==='') {
+        } elseif ($this->archive->fileName==='') {
             $this->raiseError('Cannot read file(s) "'.$SubFileLst.'" because no archive is opened.');
         }
 
@@ -161,7 +161,7 @@ class OpenTBSPlugin extends TBSZip
         }
 
         if ($FilePath!=='') {
-            $TBS->_LastFile = $this->archive->ArchFile;
+            $TBS->_LastFile = $this->archive->fileName;
         }
 
         return false; // default LoadTemplate() process is not executed
@@ -171,7 +171,7 @@ class OpenTBSPlugin extends TBSZip
     {
 
         $TBS =& $this->TBS;
-        if ($this->archive->ArchFile==='') {
+        if ($this->archive->fileName==='') {
             throw new OfficeTemplateEngineException('Command Show() cannot be processed because no archive is opened.');
         }
 
@@ -377,7 +377,7 @@ class OpenTBSPlugin extends TBSZip
         } elseif ($Cmd==OPENTBS_DELETEFILE) {
             // Delete an existing file in the archive
             $Name = (is_null($x1)) ? false : $x1;
-            $this->archive->FileCancelModif($Name, false);    // cancel added files
+            $this->archive->fileCancelModif($Name, false);    // cancel added files
             return $this->FileReplace($Name, false); // mark the file as to be deleted
         } elseif ($Cmd==OPENTBS_FILEEXISTS) {
             return $this->FileExists($x1);
@@ -726,7 +726,7 @@ class OpenTBSPlugin extends TBSZip
         foreach ($SubFileLst as $SubFile) {
             $idx = $this->FileGetIdx($SubFile);
             if ($idx===false) {
-                throw new OfficeTemplateEngineException('Cannot load "'.$SubFile.'". The file is not found in the archive "'.$this->archive->ArchFile.'".');
+                throw new OfficeTemplateEngineException('Cannot load "'.$SubFile.'". The file is not found in the archive "'.$this->archive->fileName.'".');
             } elseif ($idx!==$this->TbsCurrIdx) {
                 // Save the current loaded subfile if any
                 $this->TbsStorePark();
@@ -1806,7 +1806,7 @@ class OpenTBSPlugin extends TBSZip
             if ($this->archive->isStream()) {
                 $Ext = '';
             } else {
-                $Ext = basename($this->archive->ArchFile);
+                $Ext = basename($this->archive->fileName);
                 $p = strrpos($Ext, '.');
                 $Ext = ($p===false) ? '' : strtolower(substr($Ext, $p + 1));
             }
