@@ -1,38 +1,83 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsAutoLoad\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsConvBr\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsAutoUncompress\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsConvertApostrophes\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsSpacePreserve\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsClearWriter\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsClearMsWord\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsDeleteObsoleteChartData\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsMsExcelConsistent\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsMsExcelExplicitRef\\.$#"
+			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsClearMsPowerpoint\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsGarbageCollector\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsMsExcelCompatibility\\.$#"
+			count: 2
+			path: src/lib/OpenTBSPlugin.php
+
+		-
 			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$Version\\.$#"
-			count: 3
+			count: 2
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$DebugLst\\.$#"
-			count: 8
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsSubFileLst\\.$#"
+			count: 2
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ExtInfo\\.$#"
-			count: 14
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsSystemCredits\\.$#"
-			count: 3
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ExtEquiv\\.$#"
-			count: 28
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsStoreLst\\.$#"
-			count: 16
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsCurrIdx\\.$#"
-			count: 18
+			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsCurrFile\\.$#"
+			count: 13
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -56,23 +101,23 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ExtType\\.$#"
-			count: 13
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OutputSrc\\.$#"
-			count: 2
-			path: src/lib/OpenTBSPlugin.php
-
-		-
 			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$PrevVals\\.$#"
 			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TBS\\.$#"
-			count: 21
+			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
+			count: 7
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Ternary operator condition is always false\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with null will always evaluate to false\\.$#"
+			count: 1
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -93,6 +138,11 @@ parameters:
 		-
 			message: "#^Undefined variable\\: \\$str$#"
 			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 2
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -147,7 +197,7 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlCharts\\.$#"
-			count: 6
+			count: 5
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -186,11 +236,6 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$LastReadComp\\.$#"
-			count: 2
-			path: src/lib/OpenTBSPlugin.php
-
-		-
 			message: "#^Variable \\$MergeAutoFields might not be defined\\.$#"
 			count: 2
 			path: src/lib/OpenTBSPlugin.php
@@ -226,13 +271,8 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$ReplInfo\\.$#"
-			count: 3
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$AddInfo\\.$#"
-			count: 2
+			message: "#^Strict comparison using \\=\\=\\= between int and false will always evaluate to false\\.$#"
+			count: 1
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -331,21 +371,6 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\{array\\} \\$TagLst List of tag names to delete\\.\\)\\: Unexpected token \"\\{\", expected type at offset 134$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\{boolean\\} \\$OnlyInner Set to true to keep the content inside the element\\. Set to false to delete the entire element\\. Default is false\\.\\)\\: Unexpected token \"\\{\", expected type at offset 193$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\{string\\} \\$Txt The text content to search into\\.\\)\\: Unexpected token \"\\{\", expected type at offset 73$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
 			message: "#^PHPDoc tag @param has invalid value \\(\\{mixed\\}  \\$SubFile \\: the name or the index of the sub\\-file\\. Use value false to get the current sub\\-file\\.\\)\\: Unexpected token \"\\{\", expected type at offset 116$#"
 			count: 1
 			path: src/lib/OpenTBSPlugin.php
@@ -391,6 +416,11 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with bool\\|string will always evaluate to false\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
 			message: "#^PHPDoc tag @param has invalid value \\(\\$DocPath      Full path of the sub\\-file in the archive\\)\\: Unexpected token \"\\$DocPath\", expected type at offset 360$#"
 			count: 1
 			path: src/lib/OpenTBSPlugin.php
@@ -408,6 +438,11 @@ parameters:
 		-
 			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlMap\\.$#"
 			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Parameter \\#3 \\$ReturnAttLst of method OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:OpenXML_Rels_DeleteRel\\(\\) expects bool\\|string, array\\<int, string\\> given\\.$#"
+			count: 1
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -441,17 +476,7 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Variable \\$superfluous_len might not be defined\\.$#"
-			count: 3
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Variable \\$superfluous might not be defined\\.$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Variable \\$p_first_att might not be defined\\.$#"
+			message: "#^Expression \"\\$this\\-\\>MsWord_DocPrId\" on a separate line does not do anything\\.$#"
 			count: 1
 			path: src/lib/OpenTBSPlugin.php
 
@@ -467,6 +492,11 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property object\\:\\:\\$PrmPos\\.$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: src/lib/OpenTBSPlugin.php
 
@@ -646,6 +676,56 @@ parameters:
 			path: src/lib/TBSDataSource.php
 
 		-
+			message: "#^Strict comparison using \\=\\=\\= between mixed and 'turbo_block' will always evaluate to false\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between mixed and 'charset' will always evaluate to false\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between mixed and 'chr_open' will always evaluate to false\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between mixed and 'chr_close' will always evaluate to false\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between mixed and 'tpl_frms' will always evaluate to false\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between mixed and 'include_path' will always evaluate to false\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between mixed and 'render' will always evaluate to false\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between mixed and 'methods_allowed' will always evaluate to false\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between mixed and 'parallel_conf' will always evaluate to false\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between mixed and 'block_alias' will always evaluate to false\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
 			message: "#^Variable \\$PosSep might not be defined\\.$#"
 			count: 2
 			path: src/lib/TBSEngine.php
@@ -703,6 +783,11 @@ parameters:
 		-
 			message: "#^Access to an undefined property object\\:\\:\\$PosEnd\\.$#"
 			count: 10
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Parameter \\#3 \\$iFirst of static method OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:f_Loc_Sort\\(\\) expects bool, int given\\.$#"
+			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
@@ -881,6 +966,11 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
+			message: "#^Negated boolean expression is always true\\.$#"
+			count: 2
+			path: src/lib/TBSEngine.php
+
+		-
 			message: "#^Variable \\$piOMG might not be defined\\.$#"
 			count: 3
 			path: src/lib/TBSEngine.php
@@ -911,6 +1001,11 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 4
+			path: src/lib/TBSEngine.php
+
+		-
 			message: "#^Access to an undefined property object\\:\\:\\$SubNbr\\.$#"
 			count: 2
 			path: src/lib/TBSEngine.php
@@ -936,7 +1031,12 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Method OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:meth_Misc_Alert\\(\\) invoked with 1 parameter, 2\\-4 required\\.$#"
+			message: "#^Left side of && is always false\\.$#"
+			count: 1
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: src/lib/TBSEngine.php
 
@@ -1006,42 +1106,7 @@ parameters:
 			path: src/lib/TBSXmlLoc.php
 
 		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$LastReadComp\\.$#"
-			count: 2
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$LastReadIdx\\.$#"
-			count: 2
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$ReplInfo\\.$#"
-			count: 8
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$ReplByPos\\.$#"
-			count: 5
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$AddInfo\\.$#"
-			count: 11
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Variable \\$Data might not be defined\\.$#"
-			count: 1
-			path: src/lib/TBSZip.php
-
-		-
 			message: "#^PHPDoc tag @return has invalid value \\(\\{string\\} 'u'\\=unchanged, 'm'\\=modified, 'd'\\=deleted, 'a'\\=added, false\\=unknown\\)\\: Unexpected token \"\\{\", expected type at offset 56$#"
-			count: 1
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property \\$this\\(OfficeTemplateEngine\\\\lib\\\\TBSZip\\)\\:\\:\\$ReplByPos\\.$#"
 			count: 1
 			path: src/lib/TBSZip.php
 
@@ -1051,17 +1116,37 @@ parameters:
 			path: src/lib/TBSZip.php
 
 		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$OutputMode\\.$#"
-			count: 6
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$OutputHandle\\.$#"
+			message: "#^Property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$OutputMode \\(string\\) does not accept int\\.$#"
 			count: 3
 			path: src/lib/TBSZip.php
 
 		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSZip\\:\\:\\$OutputSrc\\.$#"
+			message: "#^Strict comparison using \\=\\=\\= between string and 1 will always evaluate to false\\.$#"
+			count: 1
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between string and 32 will always evaluate to false\\.$#"
+			count: 1
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between string and 8 will always evaluate to false\\.$#"
+			count: 2
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Parameter \\#1 \\$input of function str_pad expects string, \\(float\\|int\\) given\\.$#"
+			count: 3
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Parameter \\#1 \\$input of function str_pad expects string, int given\\.$#"
 			count: 2
 			path: src/lib/TBSZip.php
 

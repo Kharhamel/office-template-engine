@@ -3,6 +3,10 @@
 /**
  * Constants to drive the plugin.
  */
+
+use OfficeTemplateEngine\Exceptions\OfficeTemplateEngineException;
+use OfficeTemplateEngine\lib\TBSXmlLoc;
+
 define('OPENTBS_DOWNLOAD', 1);   // download (default) = TBS_OUTPUT
 define('OPENTBS_NOHEADER', 4);   // option to use with DOWNLOAD: no header is sent
 define('OPENTBS_FILE', 8);       // output to file   = TBSZIP_FILE
@@ -66,4 +70,67 @@ function CheckArgList(string $Str): array
         }
     }
     return [$Str, $ArgLst];
+}
+
+/**
+ * Delete all tags of the types given in the list.
+ * @param string $Txt The text content to search into.
+ * @param array $TagLst List of tag names to delete.
+ * @param boolean $OnlyInner Set to true to keep the content inside the element. Set to false to delete the entire element. Default is false.
+ */
+function XML_DeleteElements(&$Txt, $TagLst, $OnlyInner = false): int
+{
+    $nb = 0;
+    $Content = !$OnlyInner;
+    foreach ($TagLst as $tag) {
+        $p = 0;
+        while ($x = TBSXmlLoc::FindElement($Txt, $tag, $p)) {
+            $x->Delete($Content);
+            $p = $x->PosBeg;
+            $nb++;
+        }
+    }
+    return $nb;
+}
+
+function txtPos($pos)
+{
+    // Return the human readable position in both decimal and hexa
+    return $pos." (h:".dechex($pos).")";
+}
+
+function getBin(string $txt, int $pos, int $len): string
+{
+    $x = substr($txt, $pos, $len);
+    $z = '';
+    for ($i=0; $i<$len; $i++) {
+        $asc = ord($x[$i]);
+        if (isset($x[$i])) {
+            for ($j=0; $j<8; $j++) {
+                $z .= ($asc & pow(2, $j)) ? '1' : '0';
+            }
+        } else {
+            $z .= '00000000';
+        }
+    }
+    return 'b:'.$z;
+}
+
+function getDec(string $txt, int $pos, int $len): int
+{
+    $x = substr($txt, $pos, $len);
+    $z = 0;
+    for ($i=0; $i<$len; $i++) {
+        $asc = ord($x[$i]);
+        if ($asc>0) {
+            $z = $z + $asc*pow(256, $i);
+        }
+    }
+    return $z;
+}
+
+function getHex(string $txt, int $pos, int $len): string
+{
+    $x = substr($txt, $pos, $len);
+    return 'h:'.bin2hex(strrev($x));
 }
