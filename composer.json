@@ -16,8 +16,8 @@
         ]
     },
     "scripts": {
-        "phpstan": "vendor/bin/phpstan analyse --level 4 --configuration phpstan.neon src/ tests/",
-        "editBaseline": "vendor/bin/phpstan analyse --level 4 --configuration phpstan.neon --error-format baselineNeon src/ tests/ > phpstan-baseline.neon",
+        "phpstan": "vendor/bin/phpstan analyse --level 5 --configuration phpstan.neon src/ tests/",
+        "editBaseline": "vendor/bin/phpstan analyse --level 5 --configuration phpstan.neon --error-format baselineNeon src/ tests/ > phpstan-baseline.neon",
         "csfix": "phpcbf",
         "cscheck": "phpcs"
     },

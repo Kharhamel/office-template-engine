@@ -46,6 +46,8 @@ class OpenTBSPlugin extends TBSZip
      * @var bool|string
      */
     private $ExtEquiv;
+    private $TbsCurrIdx;
+    private $TbsStoreLst;
 
     /**
      * @return string[]
@@ -627,14 +629,14 @@ class OpenTBSPlugin extends TBSZip
                         $res[] = $this->ExtInfo['main'];
                     }
                 case 'xlsx':
-                    $FileName = $this->CdFileLst[$this->TbsCurrIdx];
+                    $FileName = $this->CdFileLst->get($this->TbsCurrIdx);
                     if ($this->MsExcel_SheetIsIt($FileName)) {
                         $res[] = $FileName;
                     }
                     break;
                 case 'pptx':
                     // Headers and footers are in the selected sheet or slide.
-                    $FileName = $this->CdFileLst[$this->TbsCurrIdx];
+                    $FileName = $this->CdFileLst->get($this->TbsCurrIdx);
                     if ($this->MsPowerpoint_SlideIsIt($FileName)) {
                         $res[] = $FileName;
                     }
@@ -940,8 +942,8 @@ class OpenTBSPlugin extends TBSZip
 
     function TbsGetFileName($idx)
     {
-        if (isset($this->CdFileLst[$idx])) {
-            return $this->CdFileLst[$idx]['v_name'];
+        if ($this->CdFileLst->has($idx)) {
+            return $this->CdFileLst->get($idx)['v_name'];
         } else {
             return '(id='.$idx.')';
         }
@@ -2878,7 +2880,7 @@ class OpenTBSPlugin extends TBSZip
 
         $this->OpenXmlCharts = array();
 
-        foreach ($this->CdFileByName as $f => $i) {
+        foreach ($this->CdFileLst->getByNameList() as $f => $i) {
             // Note : some of liste files are style or color files, not chart.
             if (strpos($f, '/charts/')!==false) {
                 $x = explode('/', $f);
@@ -2891,58 +2893,6 @@ class OpenTBSPlugin extends TBSZip
                     }
                 }
             }
-        }
-    }
-
-    function OpenXML_ChartDebug($nl, $sep, $bull)
-    {
-
-        if ($this->OpenXmlCharts===false) {
-            $this->OpenXML_ChartInit();
-        }
-
-        echo $nl;
-        echo $nl."Charts technically stored in the document:";
-        echo $nl."------------------------------------------";
-
-        // list of supported charts
-        $nbr = 0;
-        foreach ($this->OpenXmlCharts as $key => $info) {
-            $ok = true;
-            if (!isset($info['series_nbr'])) {
-                $txt = $this->FileRead($info['idx'], true);
-                $info['series_nbr'] = substr_count($txt, '<c:ser>');
-                $ok = (strpos($txt, '<c:chart>')!==false);
-            }
-            if ($ok) {
-                $nbr++;
-                echo $bull."name: '".$key."' , number of series: ".$info['series_nbr'];
-            }
-        }
-
-        if ($this->TbsCurrIdx===false) {
-            echo $bull."(unable to scann more because no subfile is loaded)";
-        } else {
-            $x = ' ProgID="MSGraph.Chart.';
-            $x_len = strlen($x);
-            $p = 0;
-            $txt = $this->TBS->Source;
-            while (($p=strpos($txt, $x, $p))!==false) {
-                // check that the text is inside an xml tag
-                $p = $p + $x_len;
-                $p1 = strpos($txt, '>', $p);
-                $p2 = strpos($txt, '<', $p);
-                if (($p1!==false) && ($p2!==false) && ($p1<$p2)) {
-                    $nbr++;
-                    $p1 = strpos($txt, '"', $p);
-                    $z = substr($txt, $p, $p1-$p);
-                    echo $bull."1 chart created using MsChart version ".$z." (series can't be merged with OpenTBS)";
-                }
-            }
-        }
-
-        if ($nbr==0) {
-            echo $bull."(none)";
         }
     }
 
@@ -3172,7 +3122,7 @@ class OpenTBSPlugin extends TBSZip
             return false;
         }
 
-        $file = $this->CdFileLst[$idx]['v_name'];
+        $file = $this->CdFileLst->get($idx)['v_name'];
         $relative = (substr_count($file, '/')==1) ? '' : '../';
         $o = $this->OpenXML_Rels_GetObj($file, $relative.'charts/');
 
@@ -3429,7 +3379,7 @@ class OpenTBSPlugin extends TBSZip
         // List all Pictures and Rels files
         $pictures = array();
         $rels = array();
-        foreach ($this->CdFileLst as $idx => $f) {
+        foreach ($this->CdFileLst->getList() as $idx => $f) {
             $n = $f['v_name'];
             if (substr($n, 0, $pic_path_len)==$pic_path) {
                 $short = basename($pic_path).'/'.basename($n);

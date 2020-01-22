@@ -76,18 +76,8 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsStoreLst\\.$#"
-			count: 14
-			path: src/lib/OpenTBSPlugin.php
-
-		-
 			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsCurrFile\\.$#"
 			count: 13
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$TbsCurrIdx\\.$#"
-			count: 18
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -207,7 +197,7 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlCharts\\.$#"
-			count: 6
+			count: 5
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -448,6 +438,11 @@ parameters:
 		-
 			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlMap\\.$#"
 			count: 3
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Parameter \\#3 \\$ReturnAttLst of method OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:OpenXML_Rels_DeleteRel\\(\\) expects bool\\|string, array\\<int, string\\> given\\.$#"
+			count: 1
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -788,6 +783,11 @@ parameters:
 		-
 			message: "#^Access to an undefined property object\\:\\:\\$PosEnd\\.$#"
 			count: 10
+			path: src/lib/TBSEngine.php
+
+		-
+			message: "#^Parameter \\#3 \\$iFirst of static method OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:f_Loc_Sort\\(\\) expects bool, int given\\.$#"
+			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
@@ -1143,5 +1143,15 @@ parameters:
 		-
 			message: "#^Result of && is always false\\.$#"
 			count: 1
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Parameter \\#1 \\$input of function str_pad expects string, \\(float\\|int\\) given\\.$#"
+			count: 3
+			path: src/lib/TBSZip.php
+
+		-
+			message: "#^Parameter \\#1 \\$input of function str_pad expects string, int given\\.$#"
+			count: 2
 			path: src/lib/TBSZip.php
 
