@@ -110,7 +110,7 @@ class OpenTBSPlugin extends TBSZip
 
         if ($File === false) {
             // Close the current template if any
-            @$this->close();
+            $this->archive->close();
             // Save memory space
             $this->tbsInitArchive();
             return false;
@@ -129,14 +129,7 @@ class OpenTBSPlugin extends TBSZip
 
         // Open the archive
         if ($FilePath!=='') {
-            $ok = @$this->open($FilePath);  // Open the archive
-            if (!$ok) {
-                if ($this->ArchHnd===false) {
-                    return $this->raiseError("The template '".$this->ArchFile."' cannot be found.");
-                } else {
-                    return false;
-                }
-            }
+            $this->archive->open($FilePath);  // Open the archive
             $this->tbsInitArchive(); // Initialize other archive informations
             if ($TBS->OtbsAutoLoad && ($this->ExtInfo!==false) && ($SubFileLst===false)) {
                 // auto load files from the archive
@@ -144,7 +137,7 @@ class OpenTBSPlugin extends TBSZip
                 $TBS->OtbsConvBr = $this->ExtInfo['br'];
             }
             $TBS->OtbsSubFileLst = $SubFileLst;
-        } elseif ($this->ArchFile==='') {
+        } elseif ($this->archive->ArchFile==='') {
             $this->raiseError('Cannot read file(s) "'.$SubFileLst.'" because no archive is opened.');
         }
 
@@ -168,7 +161,7 @@ class OpenTBSPlugin extends TBSZip
         }
 
         if ($FilePath!=='') {
-            $TBS->_LastFile = $this->ArchFile;
+            $TBS->_LastFile = $this->archive->ArchFile;
         }
 
         return false; // default LoadTemplate() process is not executed
@@ -178,7 +171,7 @@ class OpenTBSPlugin extends TBSZip
     {
 
         $TBS =& $this->TBS;
-        if ($this->ArchFile==='') {
+        if ($this->archive->ArchFile==='') {
             throw new OfficeTemplateEngineException('Command Show() cannot be processed because no archive is opened.');
         }
 
@@ -266,7 +259,7 @@ class OpenTBSPlugin extends TBSZip
         }
 
         if (($Render & TBSEngine::TBS_EXIT)==TBSEngine::TBS_EXIT) {
-            $this->close();
+            $this->archive->close();
             exit;
         }
 
@@ -355,7 +348,7 @@ class OpenTBSPlugin extends TBSZip
         
         if ($Cmd==OPENTBS_RESET) {
             // Reset all mergings
-            $this->archCancelModif();
+            $this->archive->archCancelModif();
             $this->TbsStoreLst = array();
             $TBS =& $this->TBS;
             $TBS->Source = '';
@@ -384,7 +377,7 @@ class OpenTBSPlugin extends TBSZip
         } elseif ($Cmd==OPENTBS_DELETEFILE) {
             // Delete an existing file in the archive
             $Name = (is_null($x1)) ? false : $x1;
-            $this->FileCancelModif($Name, false);    // cancel added files
+            $this->archive->FileCancelModif($Name, false);    // cancel added files
             return $this->FileReplace($Name, false); // mark the file as to be deleted
         } elseif ($Cmd==OPENTBS_FILEEXISTS) {
             return $this->FileExists($x1);
@@ -629,14 +622,14 @@ class OpenTBSPlugin extends TBSZip
                         $res[] = $this->ExtInfo['main'];
                     }
                 case 'xlsx':
-                    $FileName = $this->CdFileLst->get($this->TbsCurrIdx);
+                    $FileName = $this->archive->CdFileLst->get($this->TbsCurrIdx);
                     if ($this->MsExcel_SheetIsIt($FileName)) {
                         $res[] = $FileName;
                     }
                     break;
                 case 'pptx':
                     // Headers and footers are in the selected sheet or slide.
-                    $FileName = $this->CdFileLst->get($this->TbsCurrIdx);
+                    $FileName = $this->archive->CdFileLst->get($this->TbsCurrIdx);
                     if ($this->MsPowerpoint_SlideIsIt($FileName)) {
                         $res[] = $FileName;
                     }
@@ -733,7 +726,7 @@ class OpenTBSPlugin extends TBSZip
         foreach ($SubFileLst as $SubFile) {
             $idx = $this->FileGetIdx($SubFile);
             if ($idx===false) {
-                $ok = $this->raiseError('Cannot load "'.$SubFile.'". The file is not found in the archive "'.$this->ArchFile.'".');
+                throw new OfficeTemplateEngineException('Cannot load "'.$SubFile.'". The file is not found in the archive "'.$this->archive->ArchFile.'".');
             } elseif ($idx!==$this->TbsCurrIdx) {
                 // Save the current loaded subfile if any
                 $this->TbsStorePark();
@@ -942,8 +935,8 @@ class OpenTBSPlugin extends TBSZip
 
     function TbsGetFileName($idx)
     {
-        if ($this->CdFileLst->has($idx)) {
-            return $this->CdFileLst->get($idx)['v_name'];
+        if ($this->archive->CdFileLst->has($idx)) {
+            return $this->archive->CdFileLst->get($idx)['v_name'];
         } else {
             return '(id='.$idx.')';
         }
@@ -1810,17 +1803,17 @@ class OpenTBSPlugin extends TBSZip
     
         if ($Ext===false) {
             // Get the extension of the current archive
-            if ($this->ArchIsStream) {
+            if ($this->archive->isStream()) {
                 $Ext = '';
             } else {
-                $Ext = basename($this->ArchFile);
+                $Ext = basename($this->archive->ArchFile);
                 $p = strrpos($Ext, '.');
                 $Ext = ($p===false) ? '' : strtolower(substr($Ext, $p + 1));
             }
             $Frm = $this->Ext_DeductFormat($Ext, true);
             // Rename the name of the phantom file if it is a stream
-            if ($this->ArchIsStream && (strlen($Ext)>2)) {
-                $this->ArchFile = str_replace('.zip', '.'.$Ext, $this->ArchFile);
+            if ($this->archive->isStream() && (strlen($Ext)>2)) {
+                $this->archive->editFileByExt($Ext);
             }
         } else {
             // The extension is forced
@@ -2880,7 +2873,7 @@ class OpenTBSPlugin extends TBSZip
 
         $this->OpenXmlCharts = array();
 
-        foreach ($this->CdFileLst->getByNameList() as $f => $i) {
+        foreach ($this->archive->CdFileLst->getByNameList() as $f => $i) {
             // Note : some of liste files are style or color files, not chart.
             if (strpos($f, '/charts/')!==false) {
                 $x = explode('/', $f);
@@ -3122,7 +3115,7 @@ class OpenTBSPlugin extends TBSZip
             return false;
         }
 
-        $file = $this->CdFileLst->get($idx)['v_name'];
+        $file = $this->archive->CdFileLst->get($idx)['v_name'];
         $relative = (substr_count($file, '/')==1) ? '' : '../';
         $o = $this->OpenXML_Rels_GetObj($file, $relative.'charts/');
 
@@ -3379,7 +3372,7 @@ class OpenTBSPlugin extends TBSZip
         // List all Pictures and Rels files
         $pictures = array();
         $rels = array();
-        foreach ($this->CdFileLst->getList() as $idx => $f) {
+        foreach ($this->archive->CdFileLst->getList() as $idx => $f) {
             $n = $f['v_name'];
             if (substr($n, 0, $pic_path_len)==$pic_path) {
                 $short = basename($pic_path).'/'.basename($n);

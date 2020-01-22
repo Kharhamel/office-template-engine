@@ -1106,11 +1106,6 @@ parameters:
 			path: src/lib/TBSXmlLoc.php
 
 		-
-			message: "#^Variable \\$Data might not be defined\\.$#"
-			count: 1
-			path: src/lib/TBSZip.php
-
-		-
 			message: "#^PHPDoc tag @return has invalid value \\(\\{string\\} 'u'\\=unchanged, 'm'\\=modified, 'd'\\=deleted, 'a'\\=added, false\\=unknown\\)\\: Unexpected token \"\\{\", expected type at offset 56$#"
 			count: 1
 			path: src/lib/TBSZip.php
