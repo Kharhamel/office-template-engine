@@ -312,7 +312,7 @@ class TempArchive
             }
         }
 
-        $Data = null;
+        $Data = '';
         if ($ReadData) {
             $Data = $this->readData($len);
         } else {
@@ -408,7 +408,7 @@ class TempArchive
         $this->fileName = str_replace('.zip', '.'.$Ext, $this->fileName);
     }
     
-    public function fileRead($NameOrIdx, $Uncompress = true)
+    public function fileRead($NameOrIdx, $Uncompress = true): string
     {
         $this->LastReadComp = false; // means the file is not found
         $this->LastReadIdx = false;

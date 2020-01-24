@@ -134,3 +134,53 @@ function getHex(string $txt, int $pos, int $len): string
     $x = substr($txt, $pos, $len);
     return 'h:'.bin2hex(strrev($x));
 }
+
+function XmlFormat(string $Txt): string
+{
+    // format an XML source the be nicely aligned
+
+    // delete line breaks
+    $Txt = str_replace("\r", '', $Txt);
+    $Txt = str_replace("\n", '', $Txt);
+
+    // init values
+    $p = 0;
+    $lev = 0;
+    $Res = '';
+
+    $to = true;
+    while ($to!==false) {
+        $to = strpos($Txt, '<', $p);
+        if ($to!==false) {
+            $tc = strpos($Txt, '>', $to);
+            if ($to===false) {
+                $to = false; // anomaly
+            } else {
+                // get text between the tags
+                $x = trim(substr($Txt, $p, $to-$p), ' ');
+                if ($x!=='') {
+                    $Res .= "\n".str_repeat(' ', max($lev, 0)).$x;
+                }
+                // get the tag
+                $x = substr($Txt, $to, $tc-$to+1);
+                if ($Txt[$to+1]==='/') {
+                    $lev--;
+                }
+                $Res .= "\n".str_repeat(' ', max($lev, 0)).$x;
+                // change the level
+                if (($Txt[$to+1]!=='?') && ($Txt[$to+1]!=='/') && ($Txt[$tc-1]!=='/')) {
+                    $lev++;
+                }
+                // next position
+                $p = $tc + 1;
+            }
+        }
+    }
+
+    $Res = substr($Res, 1); // delete the first line break
+    if ($p<strlen($Txt)) {
+        $Res .= trim(substr($Txt, $p), ' '); // complete the end
+    }
+
+    return $Res;
+}

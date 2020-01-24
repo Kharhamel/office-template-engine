@@ -72,6 +72,7 @@ class TBSEngine
      * @var array
      */
     private $_UserFctLst;
+    public $OtbsCurrFile;
 
     function __construct($Options = null, $VarPrefix = '', $FctPrefix = '')
     {
