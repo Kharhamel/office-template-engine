@@ -20,9 +20,12 @@ use OfficeTemplateEngine\lib\Cleaners\MsWordCleaner;
 use OfficeTemplateEngine\Exceptions\OfficeTemplateEngineException;
 use OfficeTemplateEngine\lib\Cleaners\MsPowerpointCleaner;
 use OfficeTemplateEngine\lib\FileHelpers\PathFinder;
+use OfficeTemplateEngine\lib\FileHelpers\TempArchive;
 use OfficeTemplateEngine\lib\PicturesManipulation\PictureFinder;
 use OfficeTemplateEngine\lib\PicturesManipulation\PicturePreparer;
 use OfficeTemplateEngine\lib\PicturesManipulation\PicVariable;
+use OfficeTemplateEngine\lib\RelsManipulation\RelsDataCollection;
+use OfficeTemplateEngine\lib\RelsManipulation\RelsDataFinder;
 
 /**
  * Main class which is a TinyButStrong plug-in.
@@ -52,6 +55,10 @@ class OpenTBSPlugin extends TBSZip
     private $ExtEquiv;
     private $TbsCurrIdx;
     private $TbsStoreLst;
+    /**
+     * @var RelsDataCollection[]
+     */
+    private $OpenXmlRid;
 
     public function __construct()
     {
@@ -243,7 +250,7 @@ class OpenTBSPlugin extends TBSZip
         if ($this->OpenDocManif!==false) {
             $this->OpenDoc_ManifestCommit();  // Commit special OpenDocument features if any
         }
-        if ($this->OpenXmlRid!==false) {
+        if ($this->OpenXmlRid!==[]) {
             $this->OpenXML_Rels_CommitNewRids(); // Must be done also after the loop because some Rid can be added with [onshow]
         }
         
@@ -702,7 +709,7 @@ class OpenTBSPlugin extends TBSZip
         $this->OpenDoc_SheetSlides = false;
         $this->OpenDoc_Styles = false;
 
-        $this->OpenXmlRid = false;
+        $this->OpenXmlRid = [];
         $this->OpenXmlCTypes = false;
         $this->OpenXmlCharts = false;
         $this->OpenXmlSharedStr = false;
@@ -2341,7 +2348,7 @@ class OpenTBSPlugin extends TBSZip
     {
         // $this->OpenXML_CTypesPrepareExt($InternalPicPath, '');
         $TargetDir = $this->OpenXML_GetMediaRelativeToCurrent();
-        $o = $this->OpenXML_Rels_GetObj($this->TBS->OtbsCurrFile, $TargetDir);
+        $o = RelsDataFinder::createDataCollectionObject($this->TBS->OtbsCurrFile, $TargetDir, $this->OpenXmlRid, $this->archive);
         if (isset($o->TargetLst[$Rid])) {
             $x = $o->TargetLst[$Rid]; // relative path
             return PathFinder::getAbsolutePath($x, $this->TBS->OtbsCurrFile);
@@ -2418,88 +2425,6 @@ class OpenTBSPlugin extends TBSZip
         }
     }
 
-    /**
-     * Return an object that represents the informations of an .rels file, but for optimization, targets are scanned only for asked directories.
-     * The result is stored in a cache so that a second call will not compute again.
-     * The function stores Rids of files existing in a the $TargetPrefix directory of the archive (image, ...).
-     * @param $DocPath      Full path of the sub-file in the archive
-     * @param $TargetPrefix Prefix of the 'Target' attribute. For example $TargetPrefix='../drawings/'
-     */
-    function OpenXML_Rels_GetObj($DocPath, $TargetPrefix)
-    {
-
-        if ($this->OpenXmlRid===false) {
-            $this->OpenXmlRid = array();
-        }
-
-        // Create the object if it does not exist yet
-        if (!isset($this->OpenXmlRid[$DocPath])) {
-            $o = (object) null;
-            $o->RidLst = array();    // Current Rids in the template ($Target=>$Rid)
-            $o->TargetLst = array(); // Current Targets in the template ($Rid=>$Target)
-            $o->RidNew = array();    // New Rids to add at the end of the merge
-            $o->DirLst = array();    // Processed target dir
-            $o->ChartLst = false;    // Chart list, computed in another method
-
-            $o->FicPath = PathFinder::relsGetPath($DocPath);
-
-            $FicIdx = $this->FileGetIdx($o->FicPath);
-            if ($FicIdx===false) {
-                $o->FicType = 1;
-                $Txt = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>';
-            } else {
-                $o->FicIdx = $FicIdx;
-                $o->FicType = 0;
-                $Txt = $this->FileRead($FicIdx, true);
-            }
-            $o->FicTxt = $Txt;
-            $o->ParentIdx = $this->FileGetIdx($DocPath);
-
-            $this->OpenXmlRid[$DocPath] = &$o;
-        } else {
-            $o = &$this->OpenXmlRid[$DocPath];
-            $Txt = &$o->FicTxt;
-        }
-
-        // Feed the Rid and Target lists for the asked directory
-        if (!isset($o->DirLst[$TargetPrefix])) {
-            $o->DirLst[$TargetPrefix] = true;
-
-            // read existing Rid in the file
-            $zTarget = ' Target="'.$TargetPrefix;
-            $zId  = ' Id="';
-            $p = -1;
-            while (($p = strpos($Txt, $zTarget, $p+1))!==false) {
-                // Get the target name
-                $p1 = $p + strlen($zTarget);
-                $p2 = strpos($Txt, '"', $p1);
-                if ($p2===false) {
-                    throw new OfficeTemplateEngineException("(OpenXML) end of attribute Target not found in position ".$p1." of sub-file ".$o->FicPath);
-                }
-                $TargetEnd = substr($Txt, $p1, $p2 -$p1);
-                $Target = $TargetPrefix.$TargetEnd;
-                // Get the Id
-                $p1 = strrpos(substr($Txt, 0, $p), '<');
-                if ($p1===false) {
-                    throw new OfficeTemplateEngineException("(OpenXML) beginning of tag not found in position ".$p." of sub-file ".$o->FicPath);
-                }
-                $p1 = strpos($Txt, $zId, $p1);
-                if ($p1!==false) {
-                    $p1 = $p1 + strlen($zId);
-                    $p2 = strpos($Txt, '"', $p1);
-                    if ($p2===false) {
-                        throw new OfficeTemplateEngineException("(OpenXML) end of attribute Id not found in position ".$p1." of sub-file ".$o->FicPath);
-                    }
-                    $Rid = substr($Txt, $p1, $p2 - $p1);
-                    $o->RidLst[$Target] = $Rid;
-                    $o->TargetLst[$Rid] = $Target;
-                }
-            }
-        }
-
-        return $o;
-    }
-
     /*
     * Add a new Rid in the file in the Rels file. Return the Rid.
     * Rels files are attached to XML files and are listing, and gives all rids and their corresponding targets used in the XML file.
@@ -2507,7 +2432,7 @@ class OpenTBSPlugin extends TBSZip
     function OpenXML_Rels_AddNewRid($DocPath, $TargetDir, $FileName)
     {
 
-        $o = $this->OpenXML_Rels_GetObj($DocPath, $TargetDir);
+        $o = RelsDataFinder::createDataCollectionObject($DocPath, $TargetDir, $this->OpenXmlRid, $this->archive);
 
         $Target = $TargetDir.$FileName;
 
@@ -2534,7 +2459,7 @@ class OpenTBSPlugin extends TBSZip
                 // search position for insertion
                 $p = strpos($o->FicTxt, '</Relationships>');
                 if ($p===false) {
-                    return $this->raiseError("(OpenXML) closing tag </Relationships> not found in subfile ".$o->FicPath);
+                    throw new OfficeTemplateEngineException("(OpenXML) closing tag </Relationships> not found in subfile ".$o->FicPath);
                 }
 
                 // build the string to insert
@@ -3045,7 +2970,7 @@ class OpenTBSPlugin extends TBSZip
 
         $file = $this->archive->CdFileLst->get($idx)['v_name'];
         $relative = (substr_count($file, '/')==1) ? '' : '../';
-        $o = $this->OpenXML_Rels_GetObj($file, $relative.'charts/');
+        $o = RelsDataFinder::createDataCollectionObject($file, $relative.'charts/', $this->OpenXmlRid, $this->archive);
 
         if ($o->ChartLst===false) {
             if ($Txt===false) {
@@ -3919,7 +3844,7 @@ class OpenTBSPlugin extends TBSZip
 
         $dir = '../drawings/';
         $dir_len = strlen($dir);
-        $o = $this->OpenXML_Rels_GetObj($this->TBS->OtbsCurrFile, $dir);
+        $o = RelsDataFinder::createDataCollectionObject($this->TBS->OtbsCurrFile, $dir, $this->OpenXmlRid, $this->archive);
         foreach ($o->TargetLst as $t) {
             if ((substr($t, 0, $dir_len)===$dir) && (substr($t, -4)==='.xml')) {
                 $lst[] = 'xl/drawings/'.substr($t, $dir_len);
@@ -3950,7 +3875,7 @@ class OpenTBSPlugin extends TBSZip
         $PresFile = 'ppt/presentation.xml';
 
         $prefix = ($Master) ? 'slideMasters/' : 'slides/';
-        $o = $this->OpenXML_Rels_GetObj('ppt/presentation.xml', $prefix);
+        $o = RelsDataFinder::createDataCollectionObject('ppt/presentation.xml', $prefix, $this->OpenXmlRid, $this->archive);
 
         $Txt = $this->FileRead($PresFile);
         if ($Txt===false) {
@@ -4327,7 +4252,7 @@ class OpenTBSPlugin extends TBSZip
 
         $places = array('header', 'footer');
         $files = array();
-        $rels = $this->OpenXML_Rels_GetObj('word/document.xml', '');
+        $rels = RelsDataFinder::createDataCollectionObject('word/document.xml', '', $this->OpenXmlRid, $this->archive);
         
         foreach ($places as $place) {
             $p = 0;

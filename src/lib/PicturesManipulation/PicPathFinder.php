@@ -5,8 +5,8 @@ namespace OfficeTemplateEngine\lib\PicturesManipulation;
 
 use OfficeTemplateEngine\Exceptions\PicturesManipulationException;
 use OfficeTemplateEngine\lib\FileHelpers\PathFinder;
-use OfficeTemplateEngine\lib\FileHelpers\RelsDataFinder;
 use OfficeTemplateEngine\lib\FileHelpers\TempArchive;
+use OfficeTemplateEngine\lib\RelsManipulation\RelsDataFinder;
 
 class PicPathFinder
 {
@@ -27,7 +27,7 @@ class PicPathFinder
     {
         // $this->OpenXML_CTypesPrepareExt($InternalPicPath, '');
         $TargetDir = $this->OpenXML_GetMediaRelativeToCurrent($otbsCurrFile);
-        $o = RelsDataFinder::OpenXML_Rels_GetObj($otbsCurrFile, $TargetDir, $OpenXmlRid, $this->archive);
+        $o = RelsDataFinder::createDataCollectionObject($otbsCurrFile, $TargetDir, $OpenXmlRid, $this->archive);
         if (isset($o->TargetLst[$Rid])) {
             $x = $o->TargetLst[$Rid]; // relative path
             return PathFinder::getAbsolutePath($x, $otbsCurrFile);
