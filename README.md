@@ -30,10 +30,6 @@ composer require kharhamel/office-template-engine-bundle
 
 This project try to keep the same api than OpenTBS for the moment. Everything you can see in its doc should be applicable here.
 
-###Symfony integration
-
-TODO: create a bundle package for symfony
-
 ### For more information ...
 read the TBS manual at http://www.tinybutstrong.com/manual.php
 

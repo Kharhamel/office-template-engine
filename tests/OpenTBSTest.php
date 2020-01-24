@@ -4,6 +4,7 @@
 namespace OfficeTemplateEngine;
 
 use OfficeTemplateEngine\Exceptions\OfficeTemplateEngineException;
+use OfficeTemplateEngine\Exceptions\PicturesManipulationException;
 use OfficeTemplateEngine\Services\OpenTBS;
 use PHPUnit\Framework\TestCase;
 use ZipArchive;
