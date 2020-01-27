@@ -17,6 +17,7 @@
 namespace OfficeTemplateEngine\lib;
 
 use OfficeTemplateEngine\Exceptions\OfficeTemplateEngineException;
+use OfficeTemplateEngine\lib\Locator\LocatorConfiguration;
 use OfficeTemplateEngine\lib\PicturesManipulation\PicVariable;
 
 class TBSEngine
@@ -150,7 +151,12 @@ class TBSEngine
         }
     }
 
-    function SetOption($o, $v = false, $d = false)
+    /**
+     * @param array|string $o
+     * @param mixed $v
+     * @param mixed $d
+     */
+    public function SetOption($o, $v = false, $d = false)
     {
         if (!is_array($o)) {
             $o = array($o=>$v);
@@ -223,7 +229,7 @@ class TBSEngine
         }
     }
 
-    function GetOption($o)
+    public function GetOption(string $o)
     {
         if ($o==='all') {
             $x = explode(',', 'var_prefix,fct_prefix,noerr,auto_merge,onload,onshow,att_delim,protect,turbo_block,charset,chr_open,chr_close,tpl_frms,block_alias,parallel_conf,include_path,render');
@@ -292,7 +298,7 @@ class TBSEngine
         if ($o==='block_alias') {
             return $GLOBALS['_TBS_BlockAlias'];
         }
-        return $this->throwAlert('with GetOption() method', 'option \''.$o.'\' is not supported.');
+        throw new OfficeTemplateEngineException("option $o is not supported.");
     }
 
     public function ResetVarRef($ToGlobal)
@@ -489,16 +495,14 @@ class TBSEngine
             if ($FctCheck) {
                 $FctInfo = $Value;
                 $ErrMsg = false;
-                if (!$this->meth_Misc_UserFctCheck($FctInfo, 'f', $ErrMsg, $ErrMsg, false)) {
-                    return $this->throwAlert('with MergeField() method', $ErrMsg);
-                }
+                $this->meth_Misc_UserFctCheck($FctInfo, 'f', $ErrMsg, $ErrMsg, false);
                 $FctArg = array('','');
                 $SubStart = false;
                 $FctCheck = false;
             }
             while ($Loc = $this->meth_Locator_FindTbs($this->Source, $Name, $PosBeg, '.')) {
                 if ($Prm) {
-                    $Loc->PrmLst = new PicVariable(array_merge($DefaultPrm, $Loc->PrmLst));
+                    $Loc->PrmLst = new PicVariable(array_merge($DefaultPrm, (array) $Loc->PrmLst));
                 }
                 // Apply user function
                 if ($IsUserFct) {
@@ -632,7 +636,7 @@ class TBSEngine
 
 // *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 
-    function meth_Locator_FindTbs(&$Txt, $Name, $Pos, $ChrSub)
+    function meth_Locator_FindTbs(&$Txt, $Name, $Pos, $ChrSub): ?TBSLocator
     {
     // Find a TBS Locator
 
@@ -643,13 +647,13 @@ class TBSEngine
         do {
             // Search for the opening char
             if ($Pos>$PosMax) {
-                return false;
+                return null;
             }
             $Pos = strpos($Txt, $Start, $Pos);
 
             // If found => next chars are analyzed
             if ($Pos===false) {
-                return false;
+                return null;
             } else {
                 $Loc = new TBSLocator();
                 $ReadPrm = false;
@@ -702,6 +706,9 @@ class TBSEngine
         return $Loc;
     }
 
+    /**
+     * @param TBSLocator|null $LocR
+     */
     function &meth_Locator_SectionNewBDef(&$LocR, $BlockName, $Txt, $PrmLst, $Cache)
     {
 
@@ -837,7 +844,7 @@ class TBSEngine
         }
     }
 
-    function meth_Locator_Replace(&$Txt, &$Loc, &$Value, $SubStart)
+    function meth_Locator_Replace(string &$Txt, TBSLocator $Loc, &$Value, $SubStart)
     {
     // This function enables to merge a locator with a text and returns the position just after the replaced block
     // This position can be useful because we don't know in advance how $Value will be replaced.
@@ -903,12 +910,12 @@ class TBSEngine
                 $Loc->OnFrmInfo = $Loc->PrmLst['onformat'];
                 $Loc->OnFrmArg = array($Loc->FullName,'',&$Loc->PrmLst,&$this);
                 $ErrMsg = false;
-                if (!$this->meth_Misc_UserFctCheck($Loc->OnFrmInfo, 'f', $ErrMsg, $ErrMsg, true)) {
+                try {
+                    $this->meth_Misc_UserFctCheck($Loc->OnFrmInfo, 'f', $ErrMsg, $ErrMsg, true);
+                } catch (OfficeTemplateEngineException $e) {
                     unset($Loc->PrmLst['onformat']);
-                    if (!isset($Loc->PrmLst['noerr'])) {
-                        $this->throwAlert($Loc, '(parameter onformat) '.$ErrMsg);
-                    }
                     $Loc->OnFrmInfo = 'pi'; // Execute the function pi() just to avoid extra error messages
+                    throw $e;
                 }
             } else {
                 $Loc->OnFrmArg[3] = &$this; // bugs.php.net/51174
@@ -927,7 +934,7 @@ class TBSEngine
 
         if ($Loc->FirstMerge) {
             if (isset($Loc->PrmLst['frm'])) {
-                $Loc->ConvMode = 0; // Frm
+                $Loc->configuration->ConvMode = LocatorConfiguration::FORMAT_MODE; // Frm
                 $Loc->ConvProtect = false;
             } else {
                 // Analyze parameter 'strconv'
@@ -960,9 +967,9 @@ class TBSEngine
                 foreach ($OpeLst as $i => $ope) {
                     if ($ope==='list') {
                         $Loc->OpeAct[$i] = 1;
-                        $Loc->OpePrm[$i] = (isset($Loc->PrmLst['valsep'])) ? $Loc->PrmLst['valsep'] : ',';
-                        if (($Loc->ConvMode===1) && $Loc->ConvStr) {
-                            $Loc->ConvMode = -1; // special mode for item list conversion
+                        $Loc->OpePrm[$i] = $Loc->PrmLst['valsep'] ?? ',';
+                        if (($Loc->configuration->ConvMode===LocatorConfiguration::NORMAL_MODE) && $Loc->ConvStr) {
+                            $Loc->configuration->ConvMode = LocatorConfiguration::ITEM_CONVERSION_MODE;
                         }
                     } elseif ($ope==='minv') {
                         $Loc->OpeAct[$i] = 11;
@@ -982,12 +989,12 @@ class TBSEngine
                     } else {
                         $x = substr($ope, 0, 4);
                         if ($x==='max:') {
-                            $Loc->OpeAct[$i] = (isset($Loc->PrmLst['maxhtml'])) ? 2 : 3;
+                            $Loc->OpeAct[$i] = isset($Loc->PrmLst['maxhtml']) ? 2 : 3;
                             if (isset($Loc->PrmLst['maxutf8'])) {
                                 $Loc->OpeUtf8 = true;
                             }
                             $Loc->OpePrm[$i] = intval(trim(substr($ope, 4)));
-                            $Loc->OpeEnd = (isset($Loc->PrmLst['maxend'])) ? $Loc->PrmLst['maxend'] : '...';
+                            $Loc->OpeEnd = $Loc->PrmLst['maxend'] ?? '...';
                             if ($Loc->OpePrm[$i]<=0) {
                                 $Loc->Ope = false;
                             }
@@ -1057,7 +1064,7 @@ class TBSEngine
                         }
                         break;
                     case 1:
-                        if ($Loc->ConvMode===-1) {
+                        if ($Loc->configuration->ConvMode===LocatorConfiguration::ITEM_CONVERSION_MODE) {
                             if (is_array($CurrVal)) {
                                 foreach ($CurrVal as $k => $v) {
                                     $v = $this->meth_Misc_ToStr($v);
@@ -1103,25 +1110,26 @@ class TBSEngine
                     case 8:
                         $CurrVal = ('0'+$CurrVal) / $Loc->OpePrm[$i];
                         break;
-                    case 9; case 10:
-                            if ($ope===9) {
-                                $CurrVal = (in_array($this->meth_Misc_ToStr($CurrVal), $Loc->OpeMOK)) ? ' ' : '';
-                            } else {
-                                $CurrVal = (in_array($this->meth_Misc_ToStr($CurrVal), $Loc->OpeMKO)) ? '' : ' ';
-                            } // no break here
-                        case 11:
-                            if ($this->meth_Misc_ToStr($CurrVal)==='') {
-                                if ($Loc->MagnetId===0) {
-                                    $Loc->MagnetId = $Loc->MSave;
-                                }
-                            } else {
-                                if ($Loc->MagnetId!==0) {
-                                    $Loc->MSave = $Loc->MagnetId;
-                                    $Loc->MagnetId = 0;
-                                }
-                                $CurrVal = '';
+                    case 9:
+                    case 10:
+                        if ($ope===9) {
+                            $CurrVal = (in_array($this->meth_Misc_ToStr($CurrVal), $Loc->OpeMOK)) ? ' ' : '';
+                        } else {
+                            $CurrVal = (in_array($this->meth_Misc_ToStr($CurrVal), $Loc->OpeMKO)) ? '' : ' ';
+                        } // no break here
+                    case 11:
+                        if ($this->meth_Misc_ToStr($CurrVal)==='') {
+                            if ($Loc->MagnetId===0) {
+                                $Loc->MagnetId = $Loc->MSave;
                             }
-                    break;
+                        } else {
+                            if ($Loc->MagnetId!==0) {
+                                $Loc->MSave = $Loc->MagnetId;
+                                $Loc->MagnetId = 0;
+                            }
+                            $CurrVal = '';
+                        }
+                        break;
                     case 12:
                         if ($this->meth_Misc_ToStr($CurrVal)===$Loc->OpePrm[$i]) {
                             $CurrVal = '';
@@ -1150,22 +1158,22 @@ class TBSEngine
         }
 
         // String conversion or format
-        if ($Loc->ConvMode===1) { // Usual string conversion
+        if ($Loc->configuration->ConvMode===LocatorConfiguration::NORMAL_MODE) { // Usual string conversion
             $CurrVal = $this->meth_Misc_ToStr($CurrVal);
             if ($Loc->ConvStr) {
                 $this->meth_Conv_Str($CurrVal, $Loc->ConvBr);
             }
-        } elseif ($Loc->ConvMode===0) { // Format
+        } elseif ($Loc->configuration->ConvMode===LocatorConfiguration::FORMAT_MODE) { // Format
             $CurrVal = $this->meth_Misc_Format($CurrVal, $Loc->PrmLst);
-        } elseif ($Loc->ConvMode===2) { // Special string conversion
+        } elseif ($Loc->configuration->ConvMode===LocatorConfiguration::STRING_CONVERSION) { // Special string conversion
             $CurrVal = $this->meth_Misc_ToStr($CurrVal);
             if ($Loc->ConvStr) {
                 $this->meth_Conv_Str($CurrVal, $Loc->ConvBr);
             }
-            if ($Loc->ConvEsc) {
+            if ($Loc->configuration->ConvEsc) {
                 $CurrVal = str_replace('\'', '\'\'', $CurrVal);
             }
-            if ($Loc->ConvWS) {
+            if ($Loc->configuration->ConvWS) {
                 $check = '  ';
                 $nbsp = '&nbsp;';
                 do {
@@ -1175,14 +1183,14 @@ class TBSEngine
                     }
                 } while ($pos!==false);
             }
-            if ($Loc->ConvJS) {
+            if ($Loc->configuration->ConvJS) {
                 $CurrVal = addslashes($CurrVal); // apply to ('), ("), (\) and (null)
                 $CurrVal = str_replace(array("\n","\r","\t"), array('\n','\r','\t'), $CurrVal);
             }
-            if ($Loc->ConvUrl) {
+            if ($Loc->configuration->ConvUrl) {
                 $CurrVal = urlencode($CurrVal);
             }
-            if ($Loc->ConvUtf8) {
+            if ($Loc->configuration->ConvUtf8) {
                 $CurrVal = utf8_encode($CurrVal);
             }
         }
@@ -1456,7 +1464,7 @@ class TBSEngine
                 $PosBeg = $Loc2->PosEnd;
             }
 
-            return $this->throwAlert($Loc, 'a least one tag with parameter \'block=end\' is missing.', false, 'in block\'s definition');
+            throw new OfficeTemplateEngineException('a least one tag with parameter \'block=end\' is missing in block\'s definition');
         }
 
         if ($Mode===1) {
@@ -1465,7 +1473,7 @@ class TBSEngine
             $beg = $Loc->PosBeg;
             $end = $Loc->PosEnd;
             if ($this->f_Loc_EnlargeToTag($Txt, $Loc, $Block, false)===false) {
-                return $this->throwAlert($Loc, 'at least one tag corresponding to '.$Loc->PrmLst['block'].' is not found. Check opening tags, closing tags and embedding levels.', false, 'in block\'s definition');
+                throw new OfficeTemplateEngineException('at least one tag corresponding to '.$Loc->PrmLst['block'].' is not found. Check opening tags, closing tags and embedding levels in block\'s definition');
             }
             if ($Loc->SubOk || ($Mode===3)) {
                 $Loc->BlockSrc = substr($Txt, $Loc->PosBeg, $Loc->PosEnd-$Loc->PosBeg+1);
@@ -1539,7 +1547,7 @@ class TBSEngine
         }
     }
 
-    function meth_Locator_FindBlockLst(&$Txt, $BlockName, $Pos, $SpePrm)
+    function meth_Locator_FindBlockLst(&$Txt, $BlockName, $Pos, $SpePrm): TBSLocator
     {
     // Return a locator object covering all block definitions, even if there is no block definition found.
 
@@ -2041,12 +2049,8 @@ class TBSEngine
                         $Src->OnDataPrm = false;
                     } else {
                         $ErrMsg = false;
-                        if ($this->meth_Misc_UserFctCheck($Src->OnDataPrmRef, 'f', $ErrMsg, $ErrMsg, true)) {
-                            $Src->OnDataOk = true;
-                        } else {
-                            $LocR->FullName = $this->_CurrBlock;
-                            $Src->OnDataPrm = $this->throwAlert($LocR, '(parameter ondata) '.$ErrMsg, false, 'block');
-                        }
+                        $this->meth_Misc_UserFctCheck($Src->OnDataPrmRef, 'f', $ErrMsg, $ErrMsg, true);
+                        $Src->OnDataOk = true;
                     }
                 }
                 // Dynamic query
@@ -2614,7 +2618,7 @@ class TBSEngine
         $SubStart = ($CurrRec===false) ? false : 0;
         do {
             $Loc = $this->meth_Locator_FindTbs($Txt, $this->_CurrBlock, $Pos, '.');
-            if ($Loc!==false) {
+            if ($Loc!==null) {
                 if (($PosMax!==false) && ($Loc->PosEnd>$PosMax)) {
                     return;
                 }
@@ -2628,7 +2632,7 @@ class TBSEngine
                 }
                 $Pos = $NewEnd;
             }
-        } while ($Loc!==false);
+        } while ($Loc!==null);
     }
 
     function meth_Merge_SectionNormal(&$BDef, &$Src)
@@ -3038,13 +3042,13 @@ class TBSEngine
         }
     }
 
-    function meth_Misc_UserFctCheck(&$FctInfo, $FctCat, &$FctObj, &$ErrMsg, $FctCheck = false)
+    function meth_Misc_UserFctCheck(&$FctInfo, $FctCat, &$FctObj, &$ErrMsg, $FctCheck = false): void
     {
 
         $FctId = $FctCat.':'.$FctInfo;
         if (isset($this->_UserFctLst[$FctId])) {
             $FctInfo = $this->_UserFctLst[$FctId];
-            return true;
+            return;
         }
 
         // Check and put in cache
@@ -3073,24 +3077,20 @@ class TBSEngine
                             $ObjRef = call_user_func_array($f, $ArgLst);
                         }
                     } elseif ($i===$iMax0) {
-                        $ErrMsg = 'Expression \''.$FctStr.'\' is invalid because \''.$x.'\' is not a method in the class \''.get_class($ObjRef).'\'.';
-                        return false;
+                        throw new OfficeTemplateEngineException('Expression \''.$FctStr.'\' is invalid because \''.$x.'\' is not a method in the class \''.get_class($ObjRef).'\'.');
                     } elseif (isset($ObjRef->$x)) {
                         $ObjRef = &$ObjRef->$x;
                     } else {
-                        $ErrMsg = 'Expression \''.$FctStr.'\' is invalid because sub-item \''.$x.'\' is neither a method nor a property in the class \''.get_class($ObjRef).'\'.';
-                        return false;
+                        throw new OfficeTemplateEngineException('Expression \''.$FctStr.'\' is invalid because sub-item \''.$x.'\' is neither a method nor a property in the class \''.get_class($ObjRef).'\'.');
                     }
                 } elseif (($i<$iMax0) && is_array($ObjRef)) {
                     if (isset($ObjRef[$x])) {
                         $ObjRef = &$ObjRef[$x];
                     } else {
-                        $ErrMsg = 'Expression \''.$FctStr.'\' is invalid because sub-item \''.$x.'\' is not a existing key in the array.';
-                        return false;
+                        throw new OfficeTemplateEngineException('Expression \''.$FctStr.'\' is invalid because sub-item \''.$x.'\' is not a existing key in the array.');
                     }
                 } else {
-                    $ErrMsg = 'Expression \''.$FctStr.'\' is invalid because '.(($i===0)?'property ObjectRef':'sub-item \''.$x.'\'').' is not an object'.(($i<$iMax)?' or an array.':'.');
-                    return false;
+                    throw new OfficeTemplateEngineException('Expression \''.$FctStr.'\' is invalid because '.(($i===0)?'property ObjectRef':'sub-item \''.$x.'\'').' is not an object'.(($i<$iMax)?' or an array.':'.'));
                 }
             }
             // Referencing last item
@@ -3101,8 +3101,7 @@ class TBSEngine
                     if (method_exists($ObjRef, $FctName)) {
                         $FctInfo[$act] = array(&$ObjRef,$FctName);
                     } else {
-                        $ErrMsg = 'Expression \''.$FctStr.'\' is invalid because method '.$FctName.' is not found.';
-                        return false;
+                        throw new OfficeTemplateEngineException('Expression \''.$FctStr.'\' is invalid because method '.$FctName.' is not found.');
                     }
                 }
                 $FctInfo['type'] = 4;
@@ -3117,12 +3116,10 @@ class TBSEngine
 
             if ($IsObj && method_exists($FctObj, 'tbsdb_open') && (!method_exists($FctObj, '+'))) { // '+' avoid a bug in PHP 5
                 if (!method_exists($FctObj, 'tbsdb_fetch')) {
-                    $ErrMsg = 'the expected method \'tbsdb_fetch\' is not found for the class '.$Cls.'.';
-                    return false;
+                    throw new OfficeTemplateEngineException('the expected method \'tbsdb_fetch\' is not found for the class '.$Cls.'.');
                 }
                 if (!method_exists($FctObj, 'tbsdb_close')) {
-                    $ErrMsg = 'the expected method \'tbsdb_close\' is not found for the class '.$Cls.'.';
-                    return false;
+                    throw new OfficeTemplateEngineException('the expected method \'tbsdb_close\' is not found for the class '.$Cls.'.');
                 }
                 $FctInfo = array('type'=>5);
             } else {
@@ -3164,8 +3161,7 @@ class TBSEngine
                             }
                         }
                         if ($err) {
-                            $ErrMsg = 'Data source Id \''.$FctStr.'\' is unsupported because function \''.$FctName.'\' is not found.';
-                            return false;
+                            throw new OfficeTemplateEngineException('Data source Id \''.$FctStr.'\' is unsupported because function \''.$FctName.'\' is not found.');
                         }
                     }
                 }
@@ -3174,20 +3170,18 @@ class TBSEngine
             }
         } else {
             if ($FctCheck && ($this->FctPrefix!=='') && (strncmp($this->FctPrefix, $FctStr, strlen($this->FctPrefix))!==0)) {
-                $ErrMsg = 'user function \''.$FctStr.'\' does not match the allowed prefix.';
-                return false;
-            } elseif (!function_exists($FctStr)) {
+                throw new OfficeTemplateEngineException('user function \''.$FctStr.'\' does not match the allowed prefix.');
+            }
+            if (!function_exists($FctStr)) {
                 $x = explode('.', $FctStr);
                 if (count($x)==2) {
                     if (class_exists($x[0])) {
                         $FctInfo = $x;
                     } else {
-                        $ErrMsg = 'user function \''.$FctStr.'\' is not correct because \''.$x[0].'\' is not a class name.';
-                        return false;
+                        throw new OfficeTemplateEngineException('user function \''.$FctStr.'\' is not correct because \''.$x[0].'\' is not a class name.');
                     }
                 } else {
-                    $ErrMsg = 'user function \''.$FctStr.'\' is not found.';
-                    return false;
+                    throw new OfficeTemplateEngineException('user function \''.$FctStr.'\' is not found.');
                 }
             }
         }
@@ -3195,7 +3189,6 @@ class TBSEngine
         if ($Save) {
             $this->_UserFctLst[$FctId] = $FctInfo;
         }
-        return true;
     }
 
     function meth_Misc_RunSubscript(&$CurrVal, $CurrPrm)
@@ -3214,12 +3207,8 @@ class TBSEngine
             if (($Charset!=='') && ($Charset[0]==='=')) {
                 $ErrMsg = false;
                 $Charset = substr($Charset, 1);
-                if ($this->meth_Misc_UserFctCheck($Charset, 'f', $ErrMsg, $ErrMsg, false)) {
-                    $this->_CharsetFct = true;
-                } else {
-                    $this->throwAlert('with charset option', $ErrMsg);
-                    $Charset = '';
-                }
+                $this->meth_Misc_UserFctCheck($Charset, 'f', $ErrMsg, $ErrMsg, false);
+                $this->_CharsetFct = true;
             }
         } elseif (is_array($Charset)) {
             $this->_CharsetFct = true;
@@ -3760,16 +3749,9 @@ class TBSEngine
         return $FormatLst[$FrmStr];
     }
 
-    static function f_Misc_ConvSpe(&$Loc)
+    static function f_Misc_ConvSpe(TBSLocator $Loc): void
     {
-        if ($Loc->ConvMode!==2) {
-            $Loc->ConvMode = 2;
-            $Loc->ConvEsc = false;
-            $Loc->ConvWS = false;
-            $Loc->ConvJS = false;
-            $Loc->ConvUrl = false;
-            $Loc->ConvUtf8 = false;
-        }
+        $Loc->configuration->confSpe();
     }
 
 
@@ -4838,7 +4820,7 @@ class TBSEngine
  * To ignore encapsulation and opengin/closing just set $LevelStop=false.
  * $Opening is used only when $LevelStop=false.
  */
-    static function f_Xml_FindTag(&$Txt, $Tag, $Opening, $PosBeg, $Forward, $LevelStop, $WithPrm, $WithPos = false)
+    static function f_Xml_FindTag(string &$Txt, $Tag, $Opening, int $PosBeg, bool $Forward, $LevelStop, $WithPrm, $WithPos = false)
     {
 
         if ($Tag==='_') { // New line
@@ -4948,7 +4930,7 @@ class TBSEngine
         }
     }
 
-    static function f_Xml_FindNewLine(&$Txt, $PosBeg, $Forward, $IsRef)
+    static function f_Xml_FindNewLine(string &$Txt, int $PosBeg, bool $Forward, bool $IsRef): int
     {
 
         $p = $PosBeg;

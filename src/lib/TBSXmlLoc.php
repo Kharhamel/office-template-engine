@@ -12,25 +12,30 @@ namespace OfficeTemplateEngine\lib;
 class TBSXmlLoc
 {
 
-    var $PosBeg;
-    var $PosEnd;
-    var $SelfClosing;
-    var $Txt;
-    var $Name = '';
+    public $PosBeg;
+    public $PosEnd;
+    public $SelfClosing;
+    public $Txt;
+    public $Name = '';
 
-    var $pST_PosEnd = false; // start tag: position of the end
-    var $pST_Src = false;    // start tag: source
-    var $pET_PosBeg = false; // end tag: position of the beginning
+    public $pST_PosEnd = false; // start tag: position of the end
+    public $pST_Src = false;    // start tag: source
+    public $pET_PosBeg = false; // end tag: position of the beginning
 
-    var $Parent = false; // parent object
+    public $Parent = false; // parent object
 
     // For relative mode
-    var $rel_Txt = false;
-    var $rel_PosBeg = false;
-    var $rel_Len = false;
+    public $rel_Txt = false;
+    public $rel_PosBeg = false;
+    public $rel_Len = false;
 
+    /**
+     * @var bool
+     */
+    private $pST_PosBeg;
+    
     // Create an instance with the given parameters
-    function __construct(&$Txt, $Name, $PosBeg, $SelfClosing = null, $Parent = false)
+    public function __construct(string &$Txt, string $Name, int $PosBeg, $SelfClosing = null, $Parent = false)
     {
 
         $this->PosEnd = strpos($Txt, '>', $PosBeg);
@@ -46,10 +51,14 @@ class TBSXmlLoc
         $this->Parent = $Parent;
     }
 
-    // Return an array of (val_pos, val_len, very_sart, very_len) of the attribute. Return false if the attribute is not found.
-    // Positions are relative to $this->PosBeg.
-    // This method is lazy because it assumes the attribute is separated by a space and its value is delimited by double-quote.
-    function _GetAttValPos($Att)
+   
+    /**
+     * Return an array of (val_pos, val_len, very_sart, very_len) of the attribute. Return false if the attribute is not found.
+     * Positions are relative to $this->PosBeg.
+     * This method is lazy because it assumes the attribute is separated by a space and its value is delimited by double-quote.
+     * @return array|bool
+     */
+    private function getAttValPos(string $Att)
     {
         if ($this->pST_Src===false) {
             $this->pST_Src = substr($this->Txt, $this->PosBeg, $this->pST_PosEnd - $this->PosBeg + 1);
@@ -67,7 +76,7 @@ class TBSXmlLoc
     }
 
     // Update positions when attributes of the start tag has been upated.
-    function _ApplyDiffFromStart($Diff)
+    private function applyDiffFromStart($Diff): void
     {
         $this->pST_PosEnd += $Diff;
         $this->pST_Src = false;
@@ -78,7 +87,7 @@ class TBSXmlLoc
     }
 
     // Update all positions.
-    function _ApplyDiffToAll($Diff)
+    private function applyDiffToAll($Diff): void
     {
         $this->PosBeg += $Diff;
         $this->PosEnd += $Diff;
@@ -89,19 +98,19 @@ class TBSXmlLoc
     }
 
     // Return true is the ending position is a self-closing.
-    function _SelfClosing($PosEnd)
+    private function _SelfClosing($PosEnd)
     {
         return (substr($this->Txt, $PosEnd-1, 1)=='/');
     }
 
     // Return the outer len of the locator.
-    function GetLen()
+    public function GetLen()
     {
         return $this->PosEnd - $this->PosBeg + 1;
     }
 
     // Return the outer source of the locator.
-    function GetSrc()
+    public function GetSrc()
     {
         return substr($this->Txt, $this->PosBeg, $this->GetLen());
     }
@@ -109,7 +118,7 @@ class TBSXmlLoc
     // Replace the source of the locator in the TXT contents.
     // Update the locator's ending position.
     // Too complicated to update other information, given that it can be deleted.
-    function ReplaceSrc($new)
+    public function ReplaceSrc($new)
     {
         $len = $this->GetLen(); // avoid PHP error : Strict Standards: Only variables should be passed by reference
         $this->Txt = substr_replace($this->Txt, $new, $this->PosBeg, $len);
@@ -130,7 +139,7 @@ class TBSXmlLoc
 
     // Return the start of the inner content, or false if it's a self-closing tag
     // Return false if SelfClosing.
-    function GetInnerStart()
+    public function GetInnerStart()
     {
         return ($this->pST_PosEnd===false) ? false : $this->pST_PosEnd + 1;
     }
@@ -184,12 +193,14 @@ class TBSXmlLoc
             }
         }
     }
-
-    // Get an attribute's value. Or false if the attribute is not found.
-    // It's a lazy way because the attribute is searched with the patern {attribute="value" }
-    function GetAttLazy($Att)
+    
+    /**
+     * Get an attribute's value. Or false if the attribute is not found.
+     * It's a lazy way because the attribute is searched with the patern {attribute="value" }
+     */
+    public function GetAttLazy(string $Att)
     {
-        $z = $this->_GetAttValPos($Att);
+        $z = $this->getAttValPos($Att);
         if ($z===false) {
             return false;
         }
@@ -201,7 +212,7 @@ class TBSXmlLoc
 
         $Value = ''.$Value;
 
-        $z = $this->_GetAttValPos($Att);
+        $z = $this->getAttValPos($Att);
         if ($z===false) {
             if ($AddIfMissing) {
                 // Add the attribute
@@ -219,7 +230,7 @@ class TBSXmlLoc
         $this->Txt = substr_replace($this->Txt, $Value, $this->PosBeg + $z[0], $z[1]);
 
         // update info
-        $this->_ApplyDiffFromStart(strlen($Value) - $z[1]);
+        $this->applyDiffFromStart(strlen($Value) - $z[1]);
 
         return true;
     }
@@ -241,12 +252,12 @@ class TBSXmlLoc
      */
     function DeleteAtt($Att)
     {
-        $z = $this->_GetAttValPos($Att);
+        $z = $this->getAttValPos($Att);
         if ($z===false) {
             return false;
         }
         $this->Txt = substr_replace($this->Txt, '', $this->PosBeg + $z[2], $z[3]);
-        $this->_ApplyDiffFromStart(- $z[3]);
+        $this->applyDiffFromStart(- $z[3]);
         return true;
     }
 
@@ -267,7 +278,7 @@ class TBSXmlLoc
     // Find the ending tag of the object
     // Use $Encaps=true if the element can be self encapsulated (like <div>).
     // Return true if the end is funf
-    function FindEndTag($Encaps = false)
+    function FindEndTag($Encaps = false): bool
     {
         if (is_null($this->SelfClosing)) {
             $pe = $this->PosEnd;
@@ -311,7 +322,7 @@ class TBSXmlLoc
         $src = $this->GetSrc();
         $this->Txt = &$src;
         // Change positions
-        $this->_ApplyDiffToAll(-$this->PosBeg);
+        $this->applyDiffToAll(-$this->PosBeg);
     }
 
     // To use after switchToRelative(): save modificatin to the normal contents and update positions.
@@ -323,7 +334,7 @@ class TBSXmlLoc
         $x = false;
         $this->rel_Txt = &$x;
         $this->Txt = substr_replace($this->Txt, $src, $this->rel_PosBeg, $this->rel_Len);
-        $this->_ApplyDiffToAll(+$this->rel_PosBeg);
+        $this->applyDiffToAll(+$this->rel_PosBeg);
         $this->rel_PosBeg = false;
         $this->rel_Len = false;
     }
@@ -404,7 +415,7 @@ class TBSXmlLoc
     // Search an element in the TXT contents which has the asked attribute, and return an object if it is found.
     // Note that the element found has an unknown name until FindEndTag() is called.
     // The given attribute can be with or without a specific value. Example: 'visible' or 'visible="1"'
-    static function FindStartTagHavingAtt(&$Txt, $Att, $PosBeg, $Forward = true)
+    static function FindStartTagHavingAtt(string &$Txt, $Att, int $PosBeg, $Forward = true)
     {
 
         $p = $PosBeg - (($Forward) ? 1 : -1);
@@ -435,16 +446,16 @@ class TBSXmlLoc
         return new TBSXmlLoc($Txt, '', $p);
     }
 
-    static function FindElementHavingAtt(&$Txt, $Att, $PosBeg, $Forward = true)
+
+    public static function FindElementHavingAtt(string &$Txt, $Att, int $PosBeg, bool $Forward = true): ?TBSXmlLoc
     {
 
         $XmlLoc = self::FindStartTagHavingAtt($Txt, $Att, $PosBeg, $Forward);
         if ($XmlLoc===false) {
-            return false;
+            return null;
         }
 
         $XmlLoc->FindEndTag();
-
         return $XmlLoc;
     }
 }

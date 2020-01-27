@@ -60,6 +60,15 @@ class OpenTBSPlugin extends TBSZip
      * @var RelsDataCollection[]
      */
     private $OpenXmlRid;
+    private $OtbsSheetSlidesDelete;
+    private $OtbsSheetSlidesVisible;
+    private $OpenXmlSlideLst;
+    private $MsWord_DocPrId;
+    private $MsWord_HeaderFooter;
+    private $OpenDoc_SheetSlides;
+    private $OpenDoc_SheetSlides_FileId;
+    private $LastReadNotStored;
+    private $OpenDocManif;
 
     public function __construct()
     {
@@ -283,7 +292,7 @@ class OpenTBSPlugin extends TBSZip
         return false; // cancel the default Show() process
     }
 
-    function OnCacheField($BlockName, &$Loc, &$Txt, $PrmProc)
+    function OnCacheField($BlockName, TBSLocator $Loc, &$Txt, $PrmProc)
     {
 
         if ($Loc->PrmLst->ope) {
@@ -291,7 +300,8 @@ class OpenTBSPlugin extends TBSZip
 
             // Prepare to change picture
             if (in_array('changepic', $ope_lst)) {
-                $this->TbsPicPrepare($Txt, $Loc, true); // add parameter "att" which will be processed just after this event, when the field is cached
+                // add parameter "att" which will be processed just after this event, when the field is cached
+                PicturePreparer::picPrepare($Txt, $Loc, true, $this->archive, $this->OpenXmlRid, $this->ExtType, $this->ExtInfo, $this->TBS->OtbsCurrFile);
             } elseif (in_array('mergecell', $ope_lst)) {
                 $this->TbsPrepareMergeCell($Txt, $Loc);
             }
@@ -321,7 +331,7 @@ class OpenTBSPlugin extends TBSZip
             // for compatibility
             $this->TbsPicAdd($Value, $PrmLst, $Txt, $Loc, 'ope=addpic');
         } elseif ($ope==='changepic') {
-            $this->TbsPicPrepare($Txt, $Loc, false);
+            PicturePreparer::picPrepare($Txt, $Loc, false, $this->archive, $this->OpenXmlRid, $this->ExtType, $this->ExtInfo, $this->TBS->OtbsCurrFile);
             $this->TbsPicAdd($Value, $PrmLst, $Txt, $Loc, 'ope=changepic');
         } elseif ($ope==='delcol') {
             $this->TbsDeleteColumns($Txt, $Value, $PrmLst, $PosBeg, $PosEnd);
@@ -1012,12 +1022,6 @@ class OpenTBSPlugin extends TBSZip
         $x = str_replace("\r", '', $x);
         $x = str_replace("\n", '', $x);
         $x = str_replace('<br />', $z, $x);
-    }
-
-    // Found the relevant attribute for the image source, and then add parameter 'att' to the TBS locator.
-    function TbsPicPrepare(&$Txt, &$Loc, $IsCaching)
-    {
-        PicturePreparer::TbsPicPrepare($Txt, $Loc, $IsCaching, $this->archive, $this->OpenXmlRid, $this->ExtType, $this->ExtInfo, $this->TBS->OtbsCurrFile);
     }
 
     
@@ -2014,7 +2018,7 @@ class OpenTBSPlugin extends TBSZip
         }
         
         // On both OpenXML and ODF, the item must be unique.
-        if ($loc===false) {
+        if (!$loc) {
             $p = strpos($Txt, '</'.$Parent.'>');
             if ($p===false) {
                 return $p;
@@ -2221,7 +2225,7 @@ class OpenTBSPlugin extends TBSZip
         foreach ($this->OpenXmlCTypes['PartName'] as $part => $val) {
             if ($val===false) {
                 $loc = TBSXmlLoc::FindElementHavingAtt($Txt, 'PartName="'.$part.'"', 0);
-                if ($loc!==false) {
+                if ($loc) {
                     $loc->ReplaceSrc('');
                     $ok = true;
                 }
@@ -3502,7 +3506,7 @@ class OpenTBSPlugin extends TBSZip
         // Delete in workbook.xml
         if ($rid!=false) {
             $loc = TBSXmlLoc::FindElementHavingAtt($WkbTxt, 'r:id="'.$rid.'"', 0);
-            if ($loc!==false) {
+            if ($loc) {
                 $loc->ReplaceSrc('');
             }
         }
@@ -3634,10 +3638,10 @@ class OpenTBSPlugin extends TBSZip
     }
 
     // Actually delete slides in the Presentation
-    function MsPowerpoint_SlideDelete()
+    public function MsPowerpoint_SlideDelete(): void
     {
 
-        if ((count($this->OtbsSheetSlidesDelete)==0) && (count($this->OtbsSheetSlidesVisible)==0)) {
+        if (!count($this->OtbsSheetSlidesDelete) && !count($this->OtbsSheetSlidesVisible)) {
             return;
         }
 
@@ -3659,12 +3663,12 @@ class OpenTBSPlugin extends TBSZip
             $ref = 'i:'.($i+1);
             if (isset($this->OtbsSheetSlidesDelete[$ref]) && $this->OtbsSheetSlidesDelete[$ref]) {
                 // the rid may be used several time in the fiel. i.e.: in <p:sldIdLst><p:sldIdLst>, but also in <p:custShow><p:sldLst>
-                while (($x = TBSXmlLoc::FindElementHavingAtt($xml_txt, 'r:id="'.$s['rid'].'"', 0))!==false) {
+                while ($x = TBSXmlLoc::FindElementHavingAtt($xml_txt, 'r:id="'.$s['rid'].'"', 0)) {
                     $x->ReplaceSrc(''); // delete the element
                 }
 
                 $x = TBSXmlLoc::FindElementHavingAtt($rel_txt, 'Id="'.$s['rid'].'"', 0);
-                if ($x!==false) {
+                if ($x) {
                     $x->ReplaceSrc(''); // delete the element
                 }
 
@@ -3693,7 +3697,7 @@ class OpenTBSPlugin extends TBSZip
             $z = 'Target="slides/'.$f.'"';
             if (strpos($txt, $z)) {
                 if ($first_kept===false) {
-                    return $this->raiseError("(Slide Delete and Display) : no slide left to replace the default slide in 'viewProps.xml.rels'.");
+                    throw new OfficeTemplateEngineException("(Slide Delete and Display) : no slide left to replace the default slide in 'viewProps.xml.rels'.");
                 }
                 $ok = true;
                 $txt = str_replace($z, 'Target="slides/'.$first_kept.'"', $txt);
@@ -3714,7 +3718,7 @@ class OpenTBSPlugin extends TBSZip
     /**
      * Return true if the file name is a slide.
      */
-    function MsPowerpoint_SlideIsIt($FileName)
+    function MsPowerpoint_SlideIsIt($FileName): bool
     {
         $this->MsPowerpoint_InitSlideLst();
         foreach ($this->OpenXmlSlideLst as $i => $s) {
@@ -4034,7 +4038,7 @@ class OpenTBSPlugin extends TBSZip
         }
     }
     
-    function OpenDoc_ManifestChange($Path, $Type)
+    public function OpenDoc_ManifestChange($Path, $Type): void
     {
     // Set $Type=false in order to mark the the manifest entry to be deleted.
     // Video and sound files are not to be registered in the manifest since the contents is not saved in the document.
@@ -4045,7 +4049,7 @@ class OpenTBSPlugin extends TBSZip
         }
 
         // We try to found the type of image
-        if (($Type==='') && (substr($Path, 0, 9)==='Pictures/')) {
+        if (($Type==='') && (strpos($Path, 'Pictures/') === 0)) {
             $ext = basename($Path);
             $p = strrpos($ext, '.');
             if ($p!==false) {
@@ -4059,7 +4063,7 @@ class OpenTBSPlugin extends TBSZip
         $this->OpenDocManif[$Path] = $Type;
     }
 
-    function OpenDoc_ManifestCommit()
+    public function OpenDoc_ManifestCommit(): void
     {
 
         // Retrieve the content of the manifest
@@ -4071,7 +4075,7 @@ class OpenTBSPlugin extends TBSZip
 
         $Txt = $this->TbsStoreGet($idx, 'OpenDocumentFormat');
         if ($Txt===false) {
-            return false;
+            return;
         }
 
         // Perform all changes
@@ -4201,7 +4205,7 @@ class OpenTBSPlugin extends TBSZip
         }
     }
 
-    function OpenDoc_SheetSlides_Init($sheet, $force = false)
+    public function OpenDoc_SheetSlides_Init($sheet, $force = false): void
     {
 
         if (($this->OpenDoc_SheetSlides!==false) && (!$force)) {
@@ -4216,14 +4220,14 @@ class OpenTBSPlugin extends TBSZip
         }
         $Txt = $this->TbsStoreGet($idx, 'Sheet/Slide Info');
         if ($Txt===false) {
-            return false;
+            return;
         }
         if ($this->LastReadNotStored) {
             $this->TbsStorePut($idx, $Txt);
         }
         $this->OpenDoc_SheetSlides_FileId = $idx;
 
-        $tag = ($sheet) ? 'table:table' : 'draw:page';
+        $tag = $sheet ? 'table:table' : 'draw:page';
 
         // scann sheet/slide list
         $p = 0;
@@ -4236,10 +4240,10 @@ class OpenTBSPlugin extends TBSZip
     }
 
     // Actally delete hide or display Sheets and Slides in a ODS or ODP
-    function OpenDoc_SheetSlides_DeleteAndDisplay($sheet)
+    public function OpenDoc_SheetSlides_DeleteAndDisplay($sheet)
     {
 
-        if ((count($this->OtbsSheetSlidesDelete)==0) && (count($this->OtbsSheetSlidesVisible)==0)) {
+        if (!count($this->OtbsSheetSlidesDelete) && !count($this->OtbsSheetSlidesVisible)) {
             return;
         }
 
@@ -4280,14 +4284,11 @@ class OpenTBSPlugin extends TBSZip
                     return; // XML error
                 }
                 $Txt = substr_replace($Txt, '', $loc->PosBeg, $p + $tag_close_len - $loc->PosBeg);
-                unset($this->OtbsSheetSlidesDelete[$name]);
-                unset($this->OtbsSheetSlidesDelete[$id]);
-                unset($this->OtbsSheetSlidesVisible[$name]);
-                unset($this->OtbsSheetSlidesVisible[$id]);
+                unset($this->OtbsSheetSlidesDelete[$name], $this->OtbsSheetSlidesDelete[$id], $this->OtbsSheetSlidesVisible[$name], $this->OtbsSheetSlidesVisible[$id]);
             } elseif (isset($this->OtbsSheetSlidesVisible[$name]) || isset($this->OtbsSheetSlidesVisible[$id])) {
                 // Hide or dispay the sheet
-                $visible = (isset($this->OtbsSheetSlidesVisible[$name])) ? $this->OtbsSheetSlidesVisible[$name] : $this->OtbsSheetSlidesVisible[$id];
-                $visible = ($visible) ? $yes_display : $not_display;
+                $visible = $this->OtbsSheetSlidesVisible[$name] ?? $this->OtbsSheetSlidesVisible[$id];
+                $visible = $visible ? $yes_display : $not_display;
                 if (isset($loc->PrmLst[$att_style])) {
                     $style = $loc->PrmLst[$att_style];
                     $new = $style.'_tbs_'.$visible;
@@ -4298,8 +4299,7 @@ class OpenTBSPlugin extends TBSZip
                     $pi = $loc->PrmPos[$att_style];
                     $Txt = substr_replace($Txt, $pi[4].$new.$pi[4], $pi[2], $pi[3]-$pi[2]);
                 }
-                unset($this->OtbsSheetSlidesVisible[$name]);
-                unset($this->OtbsSheetSlidesVisible[$id]);
+                unset($this->OtbsSheetSlidesVisible[$name], $this->OtbsSheetSlidesVisible[$id]);
             }
         }
 
@@ -4878,7 +4878,7 @@ class OpenTBSPlugin extends TBSZip
         $att = 'chart:label-cell-address="'.$series['ref'].'"';
         $elSeries = TBSXmlLoc::FindElementHavingAtt($Txt, $att, 0);
 
-        if ($elSeries!==false) {
+        if ($elSeries) {
             $elSeries->ReplaceSrc('');
         }
     }
