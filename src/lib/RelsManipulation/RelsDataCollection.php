@@ -35,6 +35,9 @@ class RelsDataCollection
      * @var int
      */
     public $FicType;
+    /**
+     * @var string
+     */
     public $FicTxt;
     public $ParentIdx;
     public $FicIdx;

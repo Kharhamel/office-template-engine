@@ -6,48 +6,37 @@ namespace OfficeTemplateEngine\lib\PicturesManipulation;
 use OfficeTemplateEngine\Exceptions\OfficeTemplateEngineException;
 use OfficeTemplateEngine\Exceptions\PicturesManipulationException;
 use OfficeTemplateEngine\lib\FileHelpers\TempArchive;
+use OfficeTemplateEngine\lib\RelsManipulation\RelsDataCollection;
 use OfficeTemplateEngine\lib\TBSEngine;
 use OfficeTemplateEngine\lib\TBSXmlLoc;
 use OfficeTemplateEngine\lib\TBSZip;
 
 class PicturePreparer
 {
+
     /**
-     * @var TempArchive
+     * Found the relevant attribute for the image source, and then add parameter 'att' to the TBS locator.
+     * @param RelsDataCollection[] $OpenXmlRid
      */
-    private $archive;
-    /**
-     * @var PicPathFinder
-     */
-    private $picPathFinder;
-
-    public function __construct(TempArchive $archive)
+    public static function TbsPicPrepare(&$Txt, &$Loc, bool $IsCaching, TempArchive $archive, array &$OpenXmlRid, string $ExtType, array $ExtInfo, string $OtbsCurrFile): void
     {
-        $this->archive = $archive;
-        $this->picPathFinder = new PicPathFinder($this->archive);
-    }
 
-    // Found the relevant attribute for the image source, and then add parameter 'att' to the TBS locator.
-    public function TbsPicPrepare(string &$Txt, &$Loc, bool $IsCaching, string $extType, array $extInfo, $otbsCurrFile, &$OpenXmlRid): void
-    {
-        $InternalPicPath = null;
-
-        if ($Loc->PrmLst->pic_prepared) {
+        if (isset($Loc->PrmLst->pic_prepared)) {
             return;
         }
 
         if ($Loc->PrmLst->att) {
-            throw new PicturesManipulationException('Parameter att is used with parameter ope=changepic in the field ['.$Loc->FullName.']. changepic will be ignored');
+            throw new OfficeTemplateEngineException('Parameter att is used with parameter ope=changepic in the field ['.$Loc->FullName.']. changepic will be ignored');
         }
 
         $backward = true;
 
         if ($Loc->PrmLst->tagpos) {
-            $tagPosition = $Loc->PrmLst->tagpos;
-            if ($tagPosition==='before') {
+            $s = $Loc->PrmLst->tagpos;
+            if ($s=='before') {
                 $backward = false;
-            } elseif ($tagPosition==='inside') {
-                if ($extType==='openxml') {
+            } elseif ($s=='inside') {
+                if ($ExtType=='openxml') {
                     $backward = false;
                 }
             }
@@ -55,9 +44,9 @@ class PicturePreparer
 
         // Find the target attribute
         $att = false;
-        if ($extType==='odf') {
+        if ($ExtType==='odf') {
             $att = 'draw:image#xlink:href';
-        } elseif ($extType==='openxml') {
+        } elseif ($ExtType==='openxml') {
             $att = PictureFinder::firstPicAtt($Txt, $Loc->PosBeg, $backward, $Loc->FullName);
         } else {
             throw new OfficeTemplateEngineException('Parameter ope=changepic used in the field ['.$Loc->FullName.'] is not supported with the current document type.');
@@ -75,13 +64,13 @@ class PicturePreparer
         // Get picture dimension information
         if ($Loc->PrmLst->adjust) {
             $FieldLen = 0;
-            if ($extType==='odf') {
-                $Loc->otbsDim = $this->TbsPicGetDim_ODF($Txt, $Loc->PosBeg, false, $Loc->PosBeg, $FieldLen);
+            if ($ExtType==='odf') {
+                $Loc->otbsDim = self::TbsPicGetDim_ODF($Txt, $Loc->PosBeg, false, $Loc->PosBeg, $FieldLen);
             } else {
                 if (strpos($att, 'v:imagedata')!==false) {
-                    $Loc->otbsDim = $this->TbsPicGetDim_OpenXML_vml($Txt, $Loc->PosBeg, false, $Loc->PosBeg, $FieldLen);
+                    $Loc->otbsDim = self::TbsPicGetDim_OpenXML_vml($Txt, $Loc->PosBeg, false, $Loc->PosBeg, $FieldLen);
                 } else {
-                    $Loc->otbsDim = $this->TbsPicGetDim_OpenXML_dml($Txt, $Loc->PosBeg, false, $Loc->PosBeg, $FieldLen, $otbsCurrFile, $extInfo);
+                    $Loc->otbsDim = self::TbsPicGetDim_OpenXML_dml($Txt, $Loc->PosBeg, false, $Loc->PosBeg, $FieldLen, $OtbsCurrFile, $ExtInfo);
                 }
             }
         }
@@ -91,48 +80,45 @@ class PicturePreparer
             // Get the value in the template
             $Value = substr($Txt, $Loc->PosBeg, $Loc->PosEnd -  $Loc->PosBeg +1);
 
-            if ($extType==='odf') {
+            $InternalPicPath = null;
+            if ($ExtType==='odf') {
                 $InternalPicPath = $Value;
-            } elseif ($extType==='openxml') {
-                $InternalPicPath = $this->picPathFinder->OpenXML_GetInternalPicPath($Value, $otbsCurrFile, $OpenXmlRid);
-                if ($InternalPicPath === false) {
-                    throw new PicturesManipulationException('The picture to merge with field ['.$Loc->FullName.'] cannot be found. Value=' . $Value);
-                }
+            } elseif ($ExtType==='openxml') {
+                $InternalPicPath = PicPathFinder::getInternalPicPath($Value, $OtbsCurrFile, $OpenXmlRid, $archive, $Loc->FullName);
             }
 
             // Set the picture file to empty
-            $this->archive->fileReplace($InternalPicPath, '', TBSZip::TBSZIP_STRING, false);
+            $archive->FileReplace($InternalPicPath, '', TBSZip::TBSZIP_STRING, false);
         }
 
         $Loc->PrmLst->pic_prepared = true;
-        return;
     }
 
-    private function TbsPicGetDim_ODF($Txt, $Pos, $Forward, $FieldPos, $FieldLen)
+    public static function TbsPicGetDim_ODF($Txt, $Pos, $Forward, $FieldPos, $FieldLen): array
     {
         // Found the attributes for the image dimensions, in an ODF file
         // unit (can be: mm, cm, in, pi, pt)
         $Offset = 0;
-        $dim = $this->TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, 'draw:frame', 'svg:width="', 'svg:height="', 3, false, false);
+        $dim = self::TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, 'draw:frame', 'svg:width="', 'svg:height="', 3, false, false);
         return array($dim);
     }
 
-    private function TbsPicGetDim_OpenXML_vml($Txt, $Pos, $Forward, $FieldPos, $FieldLen)
+    public static function TbsPicGetDim_OpenXML_vml($Txt, $Pos, $Forward, $FieldPos, $FieldLen): array
     {
         $Offset = 0;
-        $dim = $this->TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, 'v:shape', 'width:', 'height:', 2, false, false);
+        $dim = self::TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, 'v:shape', 'width:', 'height:', 2, false, false);
         return array($dim);
     }
 
-    private function TbsPicGetDim_OpenXML_dml($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $otbsCurrFile, array $extInfo)
+    public static function TbsPicGetDim_OpenXML_dml($Txt, $Pos, $Forward, $FieldPos, $FieldLen, string $OtbsCurrFile, array $ExtInfo): array
     {
 
         $Offset = 0;
 
         // Try to find the drawing element
-        if (isset($extInfo['pic_entity'])) {
-            $tag = $extInfo['pic_entity'];
-            $Loc = TBSXmlLoc::FindElement($Txt, $tag, $Pos, false);
+        if (isset($ExtInfo['pic_entity'])) {
+            $tag = $ExtInfo['pic_entity'];
+            $Loc = TBSXmlLoc::FindElement($Txt, $ExtInfo['pic_entity'], $Pos, false);
             if ($Loc) {
                 $Txt = $Loc->GetSrc();
                 $Pos = 0;
@@ -141,9 +127,9 @@ class PicturePreparer
             }
         }
 
-        $dim_shape = $this->TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, 'wp:extent', 'cx="', 'cy="', 0, 12700, false);
-        $dim_inner = $this->TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, 'a:ext', 'cx="', 'cy="', 0, 12700, 'uri="');
-        $dim_drawing = $this->TbsPicGetDim_Drawings($Txt, $Pos, $FieldPos, $FieldLen, $Offset, $dim_inner, $otbsCurrFile); // check for XLSX
+        $dim_shape = self::TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, 'wp:extent', 'cx="', 'cy="', 0, 12700, false);
+        $dim_inner = self::TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, 'a:ext', 'cx="', 'cy="', 0, 12700, 'uri="');
+        $dim_drawing = self::TbsPicGetDim_Drawings($Txt, $Pos, $FieldPos, $FieldLen, $Offset, $dim_inner, $OtbsCurrFile); // check for XLSX
 
         // dims must be sorted in reverse order of location
         $result = array();
@@ -160,9 +146,74 @@ class PicturePreparer
 
         return $result;
     }
+    /**
+     * Get Dim in an OpenXML Drawing (pictures in an XLSX)
+     * @return array|bool
+     */
+    public static function TbsPicGetDim_Drawings($Txt, $Pos, $FieldPos, $FieldLen, $Offset, $dim_inner, string $OtbsCurrFile)
+    {
 
-    // Found the attributes for the image dimensions, in an ODF file
-    private function TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, $Element, $AttW, $AttH, $AllowedDec, $CoefToPt, $IgnoreIfAtt)
+        // The <a:ext> coordinates must have been found previously.
+        if ($dim_inner===false) {
+            return false;
+        }
+        // The current file must be an XLSX drawing sub-file.
+        if (strpos($OtbsCurrFile, 'xl/drawings/')!==0) {
+            return false;
+        }
+
+        if ($Pos==0) {
+            // The parent element has already been found
+            $PosEl = 0;
+        } else {
+            // Found  parent element
+            $loc = TBSXmlLoc::FindStartTag($Txt, 'xdr:twoCellAnchor', $Pos, false);
+            if ($loc===false) {
+                return false;
+            }
+            $PosEl = $loc->PosBeg;
+        }
+
+        $loc = TBSXmlLoc::FindStartTag($Txt, 'xdr:to', $PosEl, true);
+        if ($loc===false) {
+            return false;
+        }
+        $p = $loc->PosBeg;
+
+        $res = array();
+
+        $el_lst = array('w'=>'xdr:colOff', 'h'=>'xdr:rowOff');
+        foreach ($el_lst as $i => $el) {
+            $loc = TBSXmlLoc::FindElement($Txt, $el, $p, true);
+            if ($loc===false) {
+                return false;
+            }
+            $beg =  $Offset + $loc->GetInnerStart();
+            if ($beg>$FieldPos) {
+                $beg = $beg - $FieldLen;
+            }
+            $val = $dim_inner[$i.'v'];
+            $tval = $loc->GetInnerSrc();
+            $res[$i.'b'] = $beg;
+            $res[$i.'l'] = $loc->GetInnerLen();
+            $res[$i.'u'] = '';
+            $res[$i.'v'] = $val;
+            $res[$i.'t'] = $tval;
+            $res[$i.'o'] = intval($tval) - $val;
+        }
+
+        $res['r'] = ($res['hv']==0) ? 0.0 : $res['wv']/$res['hv']; // ratio W/H;
+        $res['dec'] = 0;
+        $res['cpt'] = 12700;
+
+        return $res;
+    }
+
+    /**
+     * Found the attributes for the image dimensions, in an ODF file
+     * @return array|bool
+     */
+    public static function TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, $Element, $AttW, $AttH, $AllowedDec, $CoefToPt, $IgnoreIfAtt)
     {
 
         while (true) {
@@ -226,65 +277,5 @@ class PicturePreparer
                 $Pos = $p + (($Forward) ? +1 : -1);
             }
         }
-    }
-
-    // Get Dim in an OpenXML Drawing (pictures in an XLSX)
-    private function TbsPicGetDim_Drawings($Txt, $Pos, $FieldPos, $FieldLen, $Offset, $dim_inner, $otbsCurrFile)
-    {
-
-        // The <a:ext> coordinates must have been found previously.
-        if ($dim_inner===false) {
-            return false;
-        }
-        // The current file must be an XLSX drawing sub-file.
-        if (strpos($otbsCurrFile, 'xl/drawings/')!==0) {
-            return false;
-        }
-
-        if ($Pos==0) {
-            // The parent element has already been found
-            $PosEl = 0;
-        } else {
-            // Found  parent element
-            $loc = TBSXmlLoc::FindStartTag($Txt, 'xdr:twoCellAnchor', $Pos, false);
-            if ($loc===false) {
-                return false;
-            }
-            $PosEl = $loc->PosBeg;
-        }
-
-        $loc = TBSXmlLoc::FindStartTag($Txt, 'xdr:to', $PosEl, true);
-        if ($loc===false) {
-            return false;
-        }
-        $p = $loc->PosBeg;
-
-        $res = array();
-
-        $el_lst = array('w'=>'xdr:colOff', 'h'=>'xdr:rowOff');
-        foreach ($el_lst as $i => $el) {
-            $loc = TBSXmlLoc::FindElement($Txt, $el, $p, true);
-            if ($loc===false) {
-                return false;
-            }
-            $beg =  $Offset + $loc->GetInnerStart();
-            if ($beg>$FieldPos) {
-                $beg = $beg - $FieldLen;
-            }
-            $val = $dim_inner[$i.'v'];
-            $tval = $loc->GetInnerSrc();
-            $res[$i.'b'] = $beg;
-            $res[$i.'l'] = $loc->GetInnerLen();
-            $res[$i.'u'] = '';
-            $res[$i.'v'] = $val;
-            $res[$i.'t'] = $tval;
-            $res[$i.'o'] = intval($tval) - $val;
-        }
-
-        $res['r'] = ($res['hv']==0) ? 0.0 : $res['wv']/$res['hv']; // ratio W/H;
-        $res['dec'] = 0;
-        $res['cpt'] = 12700;
-
-        return $res;
     }
 }

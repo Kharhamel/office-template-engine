@@ -81,7 +81,7 @@ class TBSZip
         return $this->archive->fileGetIdxAdd($Name);
     }
 
-    function FileRead($NameOrIdx, $Uncompress = true)
+    function FileRead($NameOrIdx, $Uncompress = true): string
     {
         return $this->archive->fileRead($NameOrIdx, $Uncompress);
     }

@@ -21,6 +21,7 @@ use OfficeTemplateEngine\Exceptions\OfficeTemplateEngineException;
 use OfficeTemplateEngine\lib\Cleaners\MsPowerpointCleaner;
 use OfficeTemplateEngine\lib\FileHelpers\PathFinder;
 use OfficeTemplateEngine\lib\FileHelpers\TempArchive;
+use OfficeTemplateEngine\lib\PicturesManipulation\PicPathFinder;
 use OfficeTemplateEngine\lib\PicturesManipulation\PictureFinder;
 use OfficeTemplateEngine\lib\PicturesManipulation\PicturePreparer;
 use OfficeTemplateEngine\lib\PicturesManipulation\PicVariable;
@@ -1013,315 +1014,13 @@ class OpenTBSPlugin extends TBSZip
         $x = str_replace('<br />', $z, $x);
     }
 
-    function XmlFormat($Txt)
-    {
-    // format an XML source the be nicely aligned
-
-        // delete line breaks
-        $Txt = str_replace("\r", '', $Txt);
-        $Txt = str_replace("\n", '', $Txt);
-
-        // init values
-        $p = 0;
-        $lev = 0;
-        $Res = '';
-
-        $to = true;
-        while ($to!==false) {
-            $to = strpos($Txt, '<', $p);
-            if ($to!==false) {
-                $tc = strpos($Txt, '>', $to);
-                if ($to===false) {
-                    $to = false; // anomaly
-                } else {
-                    // get text between the tags
-                    $x = trim(substr($Txt, $p, $to-$p), ' ');
-                    if ($x!=='') {
-                        $Res .= "\n".str_repeat(' ', max($lev, 0)).$x;
-                    }
-                    // get the tag
-                    $x = substr($Txt, $to, $tc-$to+1);
-                    if ($Txt[$to+1]==='/') {
-                        $lev--;
-                    }
-                    $Res .= "\n".str_repeat(' ', max($lev, 0)).$x;
-                    // change the level
-                    if (($Txt[$to+1]!=='?') && ($Txt[$to+1]!=='/') && ($Txt[$tc-1]!=='/')) {
-                        $lev++;
-                    }
-                    // next position
-                    $p = $tc + 1;
-                }
-            }
-        }
-
-        $Res = substr($Res, 1); // delete the first line break
-        if ($p<strlen($Txt)) {
-            $Res .= trim(substr($Txt, $p), ' '); // complete the end
-        }
-
-        return $Res;
-    }
-
     // Found the relevant attribute for the image source, and then add parameter 'att' to the TBS locator.
     function TbsPicPrepare(&$Txt, &$Loc, $IsCaching)
     {
+        PicturePreparer::TbsPicPrepare($Txt, $Loc, $IsCaching, $this->archive, $this->OpenXmlRid, $this->ExtType, $this->ExtInfo, $this->TBS->OtbsCurrFile);
+    }
 
-        if (isset($Loc->PrmLst->pic_prepared)) {
-            return true;
-        }
     
-        if ($Loc->PrmLst->att) {
-            throw new OfficeTemplateEngineException('Parameter att is used with parameter ope=changepic in the field ['.$Loc->FullName.']. changepic will be ignored');
-        }
-        
-        $backward = true;
-
-        if ($Loc->PrmLst->tagpos) {
-            $s = $Loc->PrmLst->tagpos;
-            if ($s=='before') {
-                $backward = false;
-            } elseif ($s=='inside') {
-                if ($this->ExtType=='openxml') {
-                    $backward = false;
-                }
-            }
-        }
-        
-        // Find the target attribute
-        $att = false;
-        if ($this->ExtType==='odf') {
-            $att = 'draw:image#xlink:href';
-        } elseif ($this->ExtType==='openxml') {
-            $att = PictureFinder::firstPicAtt($Txt, $Loc->PosBeg, $backward, $Loc->FullName);
-        } else {
-            throw new OfficeTemplateEngineException('Parameter ope=changepic used in the field ['.$Loc->FullName.'] is not supported with the current document type.');
-        }
-                
-        // Move the field to the attribute
-        // This technical works with cached fields because already cached fields are placed before the picture.
-        $prefix = $backward ? '' : '+';
-        $Loc->PrmLst->att = $prefix.$att;
-        TBSEngine::f_Xml_AttFind($Txt, $Loc, true);
-
-        // Delete parameter att to prevent TBS from another processing
-        $Loc->PrmLst->att = null;
-       
-        // Get picture dimension information
-        if ($Loc->PrmLst->adjust) {
-            $FieldLen = 0;
-            if ($this->ExtType==='odf') {
-                $Loc->otbsDim = $this->TbsPicGetDim_ODF($Txt, $Loc->PosBeg, false, $Loc->PosBeg, $FieldLen);
-            } else {
-                if (strpos($att, 'v:imagedata')!==false) {
-                    $Loc->otbsDim = $this->TbsPicGetDim_OpenXML_vml($Txt, $Loc->PosBeg, false, $Loc->PosBeg, $FieldLen);
-                } else {
-                    $Loc->otbsDim = $this->TbsPicGetDim_OpenXML_dml($Txt, $Loc->PosBeg, false, $Loc->PosBeg, $FieldLen);
-                }
-            }
-        }
-        
-        // Set the original picture to empty
-        if ($Loc->PrmLst->unique) {
-            // Get the value in the template
-            $Value = substr($Txt, $Loc->PosBeg, $Loc->PosEnd -  $Loc->PosBeg +1);
-
-            if ($this->ExtType==='odf') {
-                $InternalPicPath = $Value;
-            } elseif ($this->ExtType==='openxml') {
-                $InternalPicPath = $this->OpenXML_GetInternalPicPath($Value);
-                if ($InternalPicPath === false) {
-                    $this->raiseError('The picture to merge with field ['.$Loc->FullName.'] cannot be found. Value=' . $Value);
-                }
-            }
-
-            // Set the picture file to empty
-            $this->FileReplace($InternalPicPath, '', TBSZip::TBSZIP_STRING, false);
-        }
-        
-        $Loc->PrmLst->pic_prepared = true;
-        return true;
-    }
-
-    function TbsPicGetDim_ODF($Txt, $Pos, $Forward, $FieldPos, $FieldLen)
-    {
-    // Found the attributes for the image dimensions, in an ODF file
-        // unit (can be: mm, cm, in, pi, pt)
-        $Offset = 0;
-        $dim = $this->TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, 'draw:frame', 'svg:width="', 'svg:height="', 3, false, false);
-        return array($dim);
-    }
-
-    function TbsPicGetDim_OpenXML_vml($Txt, $Pos, $Forward, $FieldPos, $FieldLen)
-    {
-        $Offset = 0;
-        $dim = $this->TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, 'v:shape', 'width:', 'height:', 2, false, false);
-        return array($dim);
-    }
-
-    function TbsPicGetDim_OpenXML_dml($Txt, $Pos, $Forward, $FieldPos, $FieldLen)
-    {
-
-        $Offset = 0;
-
-        // Try to find the drawing element
-        if (isset($this->ExtInfo['pic_entity'])) {
-            $tag = $this->ExtInfo['pic_entity'];
-            $Loc = TBSXmlLoc::FindElement($Txt, $this->ExtInfo['pic_entity'], $Pos, false);
-            if ($Loc) {
-                $Txt = $Loc->GetSrc();
-                $Pos = 0;
-                $Forward = true;
-                $Offset = $Loc->PosBeg;
-            }
-        }
-
-        $dim_shape = $this->TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, 'wp:extent', 'cx="', 'cy="', 0, 12700, false);
-        $dim_inner = $this->TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, 'a:ext', 'cx="', 'cy="', 0, 12700, 'uri="');
-        $dim_drawing = $this->TbsPicGetDim_Drawings($Txt, $Pos, $FieldPos, $FieldLen, $Offset, $dim_inner); // check for XLSX
-
-        // dims must be sorted in reverse order of location
-        $result = array();
-        if ($dim_shape!==false) {
-            $result[$dim_shape['wb']] = $dim_shape;
-        }
-        if ($dim_inner!==false) {
-            $result[$dim_inner['wb']] = $dim_inner;
-        }
-        if ($dim_drawing!==false) {
-            $result[$dim_drawing['wb']] = $dim_drawing;
-        }
-        krsort($result);
-        
-        return $result;
-    }
-
-    // Found the attributes for the image dimensions, in an ODF file
-    function TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, $Element, $AttW, $AttH, $AllowedDec, $CoefToPt, $IgnoreIfAtt)
-    {
-
-        while (true) {
-            $p = TBSEngine::f_Xml_FindTagStart($Txt, $Element, true, $Pos, $Forward, true);
-            if ($p===false) {
-                return false;
-            }
-
-            $pe = strpos($Txt, '>', $p);
-            if ($pe===false) {
-                return false;
-            }
-
-            $x = substr($Txt, $p, $pe -$p);
-
-            if (($IgnoreIfAtt===false) || (strpos($x, $IgnoreIfAtt)===false)) {
-                $att_lst = array('w'=>$AttW, 'h'=>$AttH);
-                $res_lst = array();
-
-                foreach ($att_lst as $i => $att) {
-                        $l = strlen($att);
-                        $b = strpos($x, $att);
-                    if ($b===false) {
-                        return false;
-                    }
-                        $b = $b + $l;
-                        $e = strpos($x, '"', $b);
-                        $e2 = strpos($x, ';', $b); // in case of VML format, width and height are styles separted by ;
-                    if ($e2!==false) {
-                        $e = min($e, $e2);
-                    }
-                    if ($e===false) {
-                        return false;
-                    }
-                        $lt = $e - $b;
-                        $t = substr($x, $b, $lt);
-                        $pu = $lt; // unit first char
-                    while (($pu>1) && (!is_numeric($t[$pu-1]))) {
-                        $pu--;
-                    }
-                        $u = ($pu>=$lt) ? '' : substr($t, $pu);
-                        $v = floatval(substr($t, 0, $pu));
-                        $beg = $Offset+$p+$b;
-                    if ($beg>$FieldPos) {
-                        $beg = $beg - $FieldLen;
-                    }
-                        $res_lst[$i.'b'] = $beg; // start position in the main string
-                        $res_lst[$i.'l'] = $lt; // length of the text
-                        $res_lst[$i.'u'] = $u; // unit
-                        $res_lst[$i.'v'] = $v; // value
-                        $res_lst[$i.'t'] = $t; // text
-                        $res_lst[$i.'o'] = 0; // offset
-                }
-
-                $res_lst['r'] = ($res_lst['hv']==0) ? 0.0 : $res_lst['wv']/$res_lst['hv']; // ratio W/H
-                $res_lst['dec'] = $AllowedDec; // save the allowed decimal for this attribute
-                $res_lst['cpt'] = $CoefToPt;
-                return $res_lst;
-            } else {
-                // Next try
-                $Pos = $p + (($Forward) ? +1 : -1);
-            }
-        }
-    }
-
-    // Get Dim in an OpenXML Drawing (pictures in an XLSX)
-    function TbsPicGetDim_Drawings($Txt, $Pos, $FieldPos, $FieldLen, $Offset, $dim_inner)
-    {
-
-        // The <a:ext> coordinates must have been found previously.
-        if ($dim_inner===false) {
-            return false;
-        }
-        // The current file must be an XLSX drawing sub-file.
-        if (strpos($this->TBS->OtbsCurrFile, 'xl/drawings/')!==0) {
-            return false;
-        }
-        
-        if ($Pos==0) {
-            // The parent element has already been found
-            $PosEl = 0;
-        } else {
-            // Found  parent element
-            $loc = TBSXmlLoc::FindStartTag($Txt, 'xdr:twoCellAnchor', $Pos, false);
-            if ($loc===false) {
-                return false;
-            }
-            $PosEl = $loc->PosBeg;
-        }
-        
-        $loc = TBSXmlLoc::FindStartTag($Txt, 'xdr:to', $PosEl, true);
-        if ($loc===false) {
-            return false;
-        }
-        $p = $loc->PosBeg;
-
-        $res = array();
-
-        $el_lst = array('w'=>'xdr:colOff', 'h'=>'xdr:rowOff');
-        foreach ($el_lst as $i => $el) {
-            $loc = TBSXmlLoc::FindElement($Txt, $el, $p, true);
-            if ($loc===false) {
-                return false;
-            }
-            $beg =  $Offset + $loc->GetInnerStart();
-            if ($beg>$FieldPos) {
-                $beg = $beg - $FieldLen;
-            }
-            $val = $dim_inner[$i.'v'];
-            $tval = $loc->GetInnerSrc();
-            $res[$i.'b'] = $beg;
-            $res[$i.'l'] = $loc->GetInnerLen();
-            $res[$i.'u'] = '';
-            $res[$i.'v'] = $val;
-            $res[$i.'t'] = $tval;
-            $res[$i.'o'] = intval($tval) - $val;
-        }
-
-        $res['r'] = ($res['hv']==0) ? 0.0 : $res['wv']/$res['hv']; // ratio W/H;
-        $res['dec'] = 0;
-        $res['cpt'] = 12700;
-
-        return $res;
-    }
 
     /**
      * Return the path of the image on the server corresponding the current field being merged.
@@ -2331,30 +2030,6 @@ class OpenTBSPlugin extends TBSZip
         $this->TbsStorePut($idx, $Txt);
         
         return $NewCredit;
-    }
-    
-    function OpenXML_GetMediaRelativeToCurrent()
-    {
-        $file = $this->TBS->OtbsCurrFile;
-        $x = explode('/', $file);
-        $dir = $x[0] . '/media';
-        return PathFinder::getRelativePath($dir, $file);
-    }
-
-    /**
-     * Return the absolute internal path of a target for a given Rid used in the current file.
-     */
-    function OpenXML_GetInternalPicPath(string $Rid)
-    {
-        // $this->OpenXML_CTypesPrepareExt($InternalPicPath, '');
-        $TargetDir = $this->OpenXML_GetMediaRelativeToCurrent();
-        $o = RelsDataFinder::createDataCollectionObject($this->TBS->OtbsCurrFile, $TargetDir, $this->OpenXmlRid, $this->archive);
-        if (isset($o->TargetLst[$Rid])) {
-            $x = $o->TargetLst[$Rid]; // relative path
-            return PathFinder::getAbsolutePath($x, $this->TBS->OtbsCurrFile);
-        } else {
-            return false;
-        }
     }
     
     /**
@@ -3676,9 +3351,6 @@ class OpenTBSPlugin extends TBSZip
         // Retrieve Sheet files
         $idx = $this->FileGetIdx('xl/_rels/workbook.xml.rels');
         $Txt = $this->FileRead($idx);
-        if ($Txt===false) {
-            return false;
-        }
 
         $p = 0;
         while ($loc=TBSXmlLoc::FindStartTag($Txt, 'Relationship', $p, true)) {
@@ -3878,9 +3550,6 @@ class OpenTBSPlugin extends TBSZip
         $o = RelsDataFinder::createDataCollectionObject('ppt/presentation.xml', $prefix, $this->OpenXmlRid, $this->archive);
 
         $Txt = $this->FileRead($PresFile);
-        if ($Txt===false) {
-            return false;
-        }
 
         $p = 0;
         $i = 0;

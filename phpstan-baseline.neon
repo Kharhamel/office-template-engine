@@ -76,11 +76,6 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsCurrFile\\.$#"
-			count: 13
-			path: src/lib/OpenTBSPlugin.php
-
-		-
 			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsExcel_KeepRelative\\.$#"
 			count: 4
 			path: src/lib/OpenTBSPlugin.php
@@ -262,16 +257,6 @@ parameters:
 
 		-
 			message: "#^Method OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:TbsApplyOptim\\(\\) should return bool but returns null\\.$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between int and false will always evaluate to false\\.$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Variable \\$InternalPicPath might not be defined\\.$#"
 			count: 1
 			path: src/lib/OpenTBSPlugin.php
 
@@ -831,13 +816,13 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Variable \\$Block might not be defined\\.$#"
-			count: 1
+			message: "#^Variable \\$Loc might not be defined\\.$#"
+			count: 24
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Variable \\$Loc might not be defined\\.$#"
-			count: 12
+			message: "#^Variable \\$Block might not be defined\\.$#"
+			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
