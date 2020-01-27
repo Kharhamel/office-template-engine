@@ -4,6 +4,7 @@
 namespace OfficeTemplateEngine;
 
 use OfficeTemplateEngine\Exceptions\OfficeTemplateEngineException;
+use OfficeTemplateEngine\Exceptions\PicturesManipulationException;
 use OfficeTemplateEngine\Services\OpenTBS;
 use PHPUnit\Framework\TestCase;
 use ZipArchive;
@@ -86,6 +87,8 @@ class OpenTBSTest extends TestCase
         $this->assertNotFalse($injectImageName);
         $editedSlideText = $zip->getFromName('ppt/slides/slide1.xml');
         $this->assertNotFalse(strpos($editedSlideText, $textToInject));
+        $editedRelsText = $zip->getFromName('ppt/slides/_rels/slide1.xml.rels');
+        $this->assertNotFalse(strpos($editedRelsText, '<Relationship Id="opentbs1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/opentbs_added_1.jpeg"/></Relationships>'));
     }
 
     public function testTextInjectionOn2slides(): void

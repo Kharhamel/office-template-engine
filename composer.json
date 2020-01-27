@@ -1,9 +1,17 @@
 {
     "name": "kharhamel/office-template-engine",
-    "description": "OpenTBS Bundle for Symfony - create OpenOffice and Ms Office documents with Symfony",
+    "type": "library",
+    "description": "Template engine for php - easily create OpenOffice and Ms Office documents",
     "keywords": ["TBS","OpenTBS", "document", "OpenOffice", "MS Office", "odt", "docx", "xlsx", "pptx"],
     "homepage": "https://github.com/Kharhamel/office-template-engine",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Arthmaël Poly",
+            "email": "oognic@gmail.com",
+            "role": "Developer"
+        }
+    ],
     "require": {
         "php": ">=7.2"
     },

@@ -76,11 +76,6 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\TBSEngine\\:\\:\\$OtbsCurrFile\\.$#"
-			count: 13
-			path: src/lib/OpenTBSPlugin.php
-
-		-
 			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$MsExcel_KeepRelative\\.$#"
 			count: 4
 			path: src/lib/OpenTBSPlugin.php
@@ -92,11 +87,6 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenDocManif\\.$#"
-			count: 4
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property OfficeTemplateEngine\\\\lib\\\\OpenTBSPlugin\\:\\:\\$OpenXmlRid\\.$#"
 			count: 4
 			path: src/lib/OpenTBSPlugin.php
 
@@ -271,37 +261,12 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between int and false will always evaluate to false\\.$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property object\\:\\:\\$FullName\\.$#"
-			count: 2
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property object\\:\\:\\$PosBeg\\.$#"
-			count: 11
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property object\\:\\:\\$otbsDim\\.$#"
-			count: 3
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Access to an undefined property object\\:\\:\\$PosEnd\\.$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^Variable \\$InternalPicPath might not be defined\\.$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
 			message: "#^Undefined variable\\: \\$Loc$#"
+			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: src/lib/OpenTBSPlugin.php
 
@@ -411,22 +376,7 @@ parameters:
 			path: src/lib/OpenTBSPlugin.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$DocPath      Full path of the sub\\-file in the archive\\)\\: Unexpected token \"\\$DocPath\", expected type at offset 98$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
 			message: "#^Call to function is_array\\(\\) with bool\\|string will always evaluate to false\\.$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$DocPath      Full path of the sub\\-file in the archive\\)\\: Unexpected token \"\\$DocPath\", expected type at offset 360$#"
-			count: 1
-			path: src/lib/OpenTBSPlugin.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$TargetPrefix Prefix of the 'Target' attribute\\. For example \\$TargetPrefix\\='\\.\\./drawings/'\\)\\: Unexpected token \"\\$TargetPrefix\", expected type at offset 429$#"
 			count: 1
 			path: src/lib/OpenTBSPlugin.php
 
@@ -493,6 +443,11 @@ parameters:
 		-
 			message: "#^Access to an undefined property object\\:\\:\\$PrmPos\\.$#"
 			count: 1
+			path: src/lib/OpenTBSPlugin.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$PosBeg\\.$#"
+			count: 3
 			path: src/lib/OpenTBSPlugin.php
 
 		-
@@ -861,13 +816,13 @@ parameters:
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Variable \\$Block might not be defined\\.$#"
-			count: 1
+			message: "#^Variable \\$Loc might not be defined\\.$#"
+			count: 24
 			path: src/lib/TBSEngine.php
 
 		-
-			message: "#^Variable \\$Loc might not be defined\\.$#"
-			count: 12
+			message: "#^Variable \\$Block might not be defined\\.$#"
+			count: 1
 			path: src/lib/TBSEngine.php
 
 		-
@@ -1138,15 +1093,5 @@ parameters:
 		-
 			message: "#^Result of && is always false\\.$#"
 			count: 1
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Parameter \\#1 \\$input of function str_pad expects string, \\(float\\|int\\) given\\.$#"
-			count: 3
-			path: src/lib/TBSZip.php
-
-		-
-			message: "#^Parameter \\#1 \\$input of function str_pad expects string, int given\\.$#"
-			count: 2
 			path: src/lib/TBSZip.php
 

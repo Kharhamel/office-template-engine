@@ -19,6 +19,14 @@ namespace OfficeTemplateEngine\lib;
 use OfficeTemplateEngine\lib\Cleaners\MsWordCleaner;
 use OfficeTemplateEngine\Exceptions\OfficeTemplateEngineException;
 use OfficeTemplateEngine\lib\Cleaners\MsPowerpointCleaner;
+use OfficeTemplateEngine\lib\FileHelpers\PathFinder;
+use OfficeTemplateEngine\lib\FileHelpers\TempArchive;
+use OfficeTemplateEngine\lib\PicturesManipulation\PicPathFinder;
+use OfficeTemplateEngine\lib\PicturesManipulation\PictureFinder;
+use OfficeTemplateEngine\lib\PicturesManipulation\PicturePreparer;
+use OfficeTemplateEngine\lib\PicturesManipulation\PicVariable;
+use OfficeTemplateEngine\lib\RelsManipulation\RelsDataCollection;
+use OfficeTemplateEngine\lib\RelsManipulation\RelsDataFinder;
 
 /**
  * Main class which is a TinyButStrong plug-in.
@@ -48,6 +56,15 @@ class OpenTBSPlugin extends TBSZip
     private $ExtEquiv;
     private $TbsCurrIdx;
     private $TbsStoreLst;
+    /**
+     * @var RelsDataCollection[]
+     */
+    private $OpenXmlRid;
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
      * @return string[]
@@ -234,7 +251,7 @@ class OpenTBSPlugin extends TBSZip
         if ($this->OpenDocManif!==false) {
             $this->OpenDoc_ManifestCommit();  // Commit special OpenDocument features if any
         }
-        if ($this->OpenXmlRid!==false) {
+        if ($this->OpenXmlRid!==[]) {
             $this->OpenXML_Rels_CommitNewRids(); // Must be done also after the loop because some Rid can be added with [onshow]
         }
         
@@ -269,8 +286,8 @@ class OpenTBSPlugin extends TBSZip
     function OnCacheField($BlockName, &$Loc, &$Txt, $PrmProc)
     {
 
-        if (isset($Loc->PrmLst['ope'])) {
-            $ope_lst = explode(',', $Loc->PrmLst['ope']); // in this event, ope is not exploded
+        if ($Loc->PrmLst->ope) {
+            $ope_lst = explode(',', $Loc->PrmLst->ope); // in this event, ope is not exploded
 
             // Prepare to change picture
             if (in_array('changepic', $ope_lst)) {
@@ -298,7 +315,8 @@ class OpenTBSPlugin extends TBSZip
     function OnOperation($FieldName, &$Value, &$PrmLst, &$Txt, $PosBeg, $PosEnd, &$Loc)
     {
     // in this event, ope is exploded, there is one function call for each ope command
-        $ope = $PrmLst['ope'];
+        $PrmLst =  new PicVariable($PrmLst);
+        $ope = $PrmLst->ope;
         if ($ope==='addpic') {
             // for compatibility
             $this->TbsPicAdd($Value, $PrmLst, $Txt, $Loc, 'ope=addpic');
@@ -321,11 +339,11 @@ class OpenTBSPlugin extends TBSZip
             $x = substr($ope, 0, 4);
             if (($x==='tbs:') || ($x==='xlsx') || (substr($ope, 0, 3)==='ods')) {
                 if ($this->ExtEquiv==='ods') {
-                    if (!isset($Loc->PrmLst['cellok'])) {
+                    if (!$Loc->PrmLst->cellok) {
                         $this->OpenDoc_ChangeCellType($Txt, $Loc, $ope, true, $Value);
                     }
                 } elseif ($this->ExtEquiv==='xlsx') {
-                    if (!isset($Loc->PrmLst['cellok'])) {
+                    if (!$Loc->PrmLst->cellok) {
                         $this->MsExcel_ChangeCellType($Txt, $Loc, $ope);
                     }
                     $this->MsExcel_ChangeCellValue($Loc, $Value);
@@ -692,7 +710,7 @@ class OpenTBSPlugin extends TBSZip
         $this->OpenDoc_SheetSlides = false;
         $this->OpenDoc_Styles = false;
 
-        $this->OpenXmlRid = false;
+        $this->OpenXmlRid = [];
         $this->OpenXmlCTypes = false;
         $this->OpenXmlCharts = false;
         $this->OpenXmlSharedStr = false;
@@ -996,344 +1014,39 @@ class OpenTBSPlugin extends TBSZip
         $x = str_replace('<br />', $z, $x);
     }
 
-    function XmlFormat($Txt)
-    {
-    // format an XML source the be nicely aligned
-
-        // delete line breaks
-        $Txt = str_replace("\r", '', $Txt);
-        $Txt = str_replace("\n", '', $Txt);
-
-        // init values
-        $p = 0;
-        $lev = 0;
-        $Res = '';
-
-        $to = true;
-        while ($to!==false) {
-            $to = strpos($Txt, '<', $p);
-            if ($to!==false) {
-                $tc = strpos($Txt, '>', $to);
-                if ($to===false) {
-                    $to = false; // anomaly
-                } else {
-                    // get text between the tags
-                    $x = trim(substr($Txt, $p, $to-$p), ' ');
-                    if ($x!=='') {
-                        $Res .= "\n".str_repeat(' ', max($lev, 0)).$x;
-                    }
-                    // get the tag
-                    $x = substr($Txt, $to, $tc-$to+1);
-                    if ($Txt[$to+1]==='/') {
-                        $lev--;
-                    }
-                    $Res .= "\n".str_repeat(' ', max($lev, 0)).$x;
-                    // change the level
-                    if (($Txt[$to+1]!=='?') && ($Txt[$to+1]!=='/') && ($Txt[$tc-1]!=='/')) {
-                        $lev++;
-                    }
-                    // next position
-                    $p = $tc + 1;
-                }
-            }
-        }
-
-        $Res = substr($Res, 1); // delete the first line break
-        if ($p<strlen($Txt)) {
-            $Res .= trim(substr($Txt, $p), ' '); // complete the end
-        }
-
-        return $Res;
-    }
-
     // Found the relevant attribute for the image source, and then add parameter 'att' to the TBS locator.
     function TbsPicPrepare(&$Txt, &$Loc, $IsCaching)
     {
+        PicturePreparer::TbsPicPrepare($Txt, $Loc, $IsCaching, $this->archive, $this->OpenXmlRid, $this->ExtType, $this->ExtInfo, $this->TBS->OtbsCurrFile);
+    }
 
-        if (isset($Loc->PrmLst['pic_prepared'])) {
-            return true;
-        }
     
-        if (isset($Loc->PrmLst['att'])) {
-            return $this->raiseError('Parameter att is used with parameter ope=changepic in the field ['.$Loc->FullName.']. changepic will be ignored');
-        }
-        
-        $backward = true;
-
-        if (isset($Loc->PrmLst['tagpos'])) {
-            $s = $Loc->PrmLst['tagpos'];
-            if ($s=='before') {
-                $backward = false;
-            } elseif ($s=='inside') {
-                if ($this->ExtType=='openxml') {
-                    $backward = false;
-                }
-            }
-        }
-        
-        // Find the target attribute
-        $att = false;
-        if ($this->ExtType==='odf') {
-            $att = 'draw:image#xlink:href';
-        } elseif ($this->ExtType==='openxml') {
-            $att = $this->OpenXML_FirstPicAtt($Txt, $Loc->PosBeg, $backward);
-            if ($att===false) {
-                return $this->raiseError('Parameter ope=changepic used in the field ['.$Loc->FullName.'] has failed to found the picture.');
-            }
-        } else {
-            return $this->raiseError('Parameter ope=changepic used in the field ['.$Loc->FullName.'] is not supported with the current document type.');
-        }
-                
-        // Move the field to the attribute
-        // This technical works with cached fields because already cached fields are placed before the picture.
-        $prefix = ($backward) ? '' : '+';
-        $Loc->PrmLst['att'] = $prefix.$att;
-        TBSEngine::f_Xml_AttFind($Txt, $Loc, true);
-
-        // Delete parameter att to prevent TBS from another processing
-        unset($Loc->PrmLst['att']);
-       
-        // Get picture dimension information
-        if (isset($Loc->PrmLst['adjust'])) {
-            $FieldLen = 0;
-            if ($this->ExtType==='odf') {
-                $Loc->otbsDim = $this->TbsPicGetDim_ODF($Txt, $Loc->PosBeg, false, $Loc->PosBeg, $FieldLen);
-            } else {
-                if (strpos($att, 'v:imagedata')!==false) {
-                    $Loc->otbsDim = $this->TbsPicGetDim_OpenXML_vml($Txt, $Loc->PosBeg, false, $Loc->PosBeg, $FieldLen);
-                } else {
-                    $Loc->otbsDim = $this->TbsPicGetDim_OpenXML_dml($Txt, $Loc->PosBeg, false, $Loc->PosBeg, $FieldLen);
-                }
-            }
-        }
-        
-        // Set the original picture to empty
-        if (isset($Loc->PrmLst['unique']) && $Loc->PrmLst['unique']) {
-            // Get the value in the template
-            $Value = substr($Txt, $Loc->PosBeg, $Loc->PosEnd -  $Loc->PosBeg +1);
-
-            if ($this->ExtType==='odf') {
-                $InternalPicPath = $Value;
-            } elseif ($this->ExtType==='openxml') {
-                $InternalPicPath = $this->OpenXML_GetInternalPicPath($Value);
-                if ($InternalPicPath === false) {
-                    $this->raiseError('The picture to merge with field ['.$Loc->FullName.'] cannot be found. Value=' . $Value);
-                }
-            }
-
-            // Set the picture file to empty
-            $this->FileReplace($InternalPicPath, '', TBSZip::TBSZIP_STRING, false);
-        }
-        
-        $Loc->PrmLst['pic_prepared'] = true;
-        return true;
-    }
-
-    function TbsPicGetDim_ODF($Txt, $Pos, $Forward, $FieldPos, $FieldLen)
-    {
-    // Found the attributes for the image dimensions, in an ODF file
-        // unit (can be: mm, cm, in, pi, pt)
-        $Offset = 0;
-        $dim = $this->TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, 'draw:frame', 'svg:width="', 'svg:height="', 3, false, false);
-        return array($dim);
-    }
-
-    function TbsPicGetDim_OpenXML_vml($Txt, $Pos, $Forward, $FieldPos, $FieldLen)
-    {
-        $Offset = 0;
-        $dim = $this->TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, 'v:shape', 'width:', 'height:', 2, false, false);
-        return array($dim);
-    }
-
-    function TbsPicGetDim_OpenXML_dml($Txt, $Pos, $Forward, $FieldPos, $FieldLen)
-    {
-
-        $Offset = 0;
-
-        // Try to find the drawing element
-        if (isset($this->ExtInfo['pic_entity'])) {
-            $tag = $this->ExtInfo['pic_entity'];
-            $Loc = TBSXmlLoc::FindElement($Txt, $this->ExtInfo['pic_entity'], $Pos, false);
-            if ($Loc) {
-                $Txt = $Loc->GetSrc();
-                $Pos = 0;
-                $Forward = true;
-                $Offset = $Loc->PosBeg;
-            }
-        }
-
-        $dim_shape = $this->TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, 'wp:extent', 'cx="', 'cy="', 0, 12700, false);
-        $dim_inner = $this->TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, 'a:ext', 'cx="', 'cy="', 0, 12700, 'uri="');
-        $dim_drawing = $this->TbsPicGetDim_Drawings($Txt, $Pos, $FieldPos, $FieldLen, $Offset, $dim_inner); // check for XLSX
-
-        // dims must be sorted in reverse order of location
-        $result = array();
-        if ($dim_shape!==false) {
-            $result[$dim_shape['wb']] = $dim_shape;
-        }
-        if ($dim_inner!==false) {
-            $result[$dim_inner['wb']] = $dim_inner;
-        }
-        if ($dim_drawing!==false) {
-            $result[$dim_drawing['wb']] = $dim_drawing;
-        }
-        krsort($result);
-        
-        return $result;
-    }
-
-    // Found the attributes for the image dimensions, in an ODF file
-    function TbsPicGetDim_Any($Txt, $Pos, $Forward, $FieldPos, $FieldLen, $Offset, $Element, $AttW, $AttH, $AllowedDec, $CoefToPt, $IgnoreIfAtt)
-    {
-
-        while (true) {
-            $p = TBSEngine::f_Xml_FindTagStart($Txt, $Element, true, $Pos, $Forward, true);
-            if ($p===false) {
-                return false;
-            }
-
-            $pe = strpos($Txt, '>', $p);
-            if ($pe===false) {
-                return false;
-            }
-
-            $x = substr($Txt, $p, $pe -$p);
-
-            if (($IgnoreIfAtt===false) || (strpos($x, $IgnoreIfAtt)===false)) {
-                $att_lst = array('w'=>$AttW, 'h'=>$AttH);
-                $res_lst = array();
-
-                foreach ($att_lst as $i => $att) {
-                        $l = strlen($att);
-                        $b = strpos($x, $att);
-                    if ($b===false) {
-                        return false;
-                    }
-                        $b = $b + $l;
-                        $e = strpos($x, '"', $b);
-                        $e2 = strpos($x, ';', $b); // in case of VML format, width and height are styles separted by ;
-                    if ($e2!==false) {
-                        $e = min($e, $e2);
-                    }
-                    if ($e===false) {
-                        return false;
-                    }
-                        $lt = $e - $b;
-                        $t = substr($x, $b, $lt);
-                        $pu = $lt; // unit first char
-                    while (($pu>1) && (!is_numeric($t[$pu-1]))) {
-                        $pu--;
-                    }
-                        $u = ($pu>=$lt) ? '' : substr($t, $pu);
-                        $v = floatval(substr($t, 0, $pu));
-                        $beg = $Offset+$p+$b;
-                    if ($beg>$FieldPos) {
-                        $beg = $beg - $FieldLen;
-                    }
-                        $res_lst[$i.'b'] = $beg; // start position in the main string
-                        $res_lst[$i.'l'] = $lt; // length of the text
-                        $res_lst[$i.'u'] = $u; // unit
-                        $res_lst[$i.'v'] = $v; // value
-                        $res_lst[$i.'t'] = $t; // text
-                        $res_lst[$i.'o'] = 0; // offset
-                }
-
-                $res_lst['r'] = ($res_lst['hv']==0) ? 0.0 : $res_lst['wv']/$res_lst['hv']; // ratio W/H
-                $res_lst['dec'] = $AllowedDec; // save the allowed decimal for this attribute
-                $res_lst['cpt'] = $CoefToPt;
-                return $res_lst;
-            } else {
-                // Next try
-                $Pos = $p + (($Forward) ? +1 : -1);
-            }
-        }
-    }
-
-    // Get Dim in an OpenXML Drawing (pictures in an XLSX)
-    function TbsPicGetDim_Drawings($Txt, $Pos, $FieldPos, $FieldLen, $Offset, $dim_inner)
-    {
-
-        // The <a:ext> coordinates must have been found previously.
-        if ($dim_inner===false) {
-            return false;
-        }
-        // The current file must be an XLSX drawing sub-file.
-        if (strpos($this->TBS->OtbsCurrFile, 'xl/drawings/')!==0) {
-            return false;
-        }
-        
-        if ($Pos==0) {
-            // The parent element has already been found
-            $PosEl = 0;
-        } else {
-            // Found  parent element
-            $loc = TBSXmlLoc::FindStartTag($Txt, 'xdr:twoCellAnchor', $Pos, false);
-            if ($loc===false) {
-                return false;
-            }
-            $PosEl = $loc->PosBeg;
-        }
-        
-        $loc = TBSXmlLoc::FindStartTag($Txt, 'xdr:to', $PosEl, true);
-        if ($loc===false) {
-            return false;
-        }
-        $p = $loc->PosBeg;
-
-        $res = array();
-
-        $el_lst = array('w'=>'xdr:colOff', 'h'=>'xdr:rowOff');
-        foreach ($el_lst as $i => $el) {
-            $loc = TBSXmlLoc::FindElement($Txt, $el, $p, true);
-            if ($loc===false) {
-                return false;
-            }
-            $beg =  $Offset + $loc->GetInnerStart();
-            if ($beg>$FieldPos) {
-                $beg = $beg - $FieldLen;
-            }
-            $val = $dim_inner[$i.'v'];
-            $tval = $loc->GetInnerSrc();
-            $res[$i.'b'] = $beg;
-            $res[$i.'l'] = $loc->GetInnerLen();
-            $res[$i.'u'] = '';
-            $res[$i.'v'] = $val;
-            $res[$i.'t'] = $tval;
-            $res[$i.'o'] = intval($tval) - $val;
-        }
-
-        $res['r'] = ($res['hv']==0) ? 0.0 : $res['wv']/$res['hv']; // ratio W/H;
-        $res['dec'] = 0;
-        $res['cpt'] = 12700;
-
-        return $res;
-    }
 
     /**
      * Return the path of the image on the server corresponding the current field being merged.
      */
-    function TbsPicExternalPath(&$Value, &$PrmLst)
+    function TbsPicExternalPath(&$Value, PicVariable $PrmLst)
     {
     
         $TBS = &$this->TBS;
     
         // set the path where files should be taken
-        if (isset($PrmLst['from'])) {
-            if (!isset($PrmLst['pic_prepared'])) {
-                $TBS->meth_Merge_AutoVar($PrmLst['from'], true); // merge automatic TBS fields in the path
+        if ($PrmLst->from) {
+            if (!$PrmLst->pic_prepared) {
+                $TBS->meth_Merge_AutoVar($PrmLst->from, true); // merge automatic TBS fields in the path
             }
-            $FullPath = str_replace($TBS->_ChrVal, $Value, $PrmLst['from']); // merge [val] fields in the path
+            $FullPath = str_replace($TBS->_ChrVal, $Value, $PrmLst->from); // merge [val] fields in the path
         } else {
             $FullPath = $Value;
         }
-        if ((!isset($PrmLst['pic_prepared'])) && isset($PrmLst['default'])) {
-            $TBS->meth_Merge_AutoVar($PrmLst['default'], true); // merge automatic TBS fields in the path
+        if (!$PrmLst->pic_prepared && $PrmLst->default) {
+            $TBS->meth_Merge_AutoVar($PrmLst->default, true); // merge automatic TBS fields in the path
         }
 
         // check if the picture exists, and eventually use the default picture
         if (!file_exists($FullPath)) {
-            if (isset($PrmLst['default'])) {
-                $x = $PrmLst['default'];
+            if ($PrmLst->default) {
+                $x = $PrmLst->default;
                 if ($x==='current') {
                     return false;
                 } elseif (file_exists($x)) {
@@ -1353,19 +1066,19 @@ class OpenTBSPlugin extends TBSZip
      * Add a picture inside the archive, use parameters 'from' and 'as'.
      * Argument $Prm is only used for error messages.
      */
-    function TbsPicAdd(&$Value, &$PrmLst, &$Txt, &$Loc, $Prm)
+    function TbsPicAdd(&$Value, PicVariable $PrmLst, &$Txt, &$Loc, $Prm)
     {
         
         $TBS = &$this->TBS;
 
-        $PrmLst['pic_prepared'] = true; // mark the locator as Picture prepared
+        $PrmLst->pic_prepared = true; // mark the locator as Picture prepared
         
         $ExternalPath = $this->TbsPicExternalPath($Value, $PrmLst);
         
         if ($ExternalPath === false) {
-            if (isset($PrmLst['att'])) {
+            if ($PrmLst->att) {
                 // can happen when using MergeField()
-                unset($PrmLst['att']);
+                $PrmLst->att = null;
                 $Value = '';
             } else {
                 // parameter att already applied during Field caching
@@ -1375,11 +1088,11 @@ class OpenTBSPlugin extends TBSZip
         }
 
         // set the name of the internal file
-        if (isset($PrmLst['as'])) {
-            if (!isset($PrmLst['pic_prepared'])) {
-                $TBS->meth_Merge_AutoVar($PrmLst['as'], true); // merge automatic TBS fields in the path
+        if ($PrmLst->as) {
+            if (!$PrmLst->pic_prepared) {
+                $TBS->meth_Merge_AutoVar($PrmLst->as, true); // merge automatic TBS fields in the path
             }
-            $InternalPath = str_replace($TBS->_ChrVal, $Value, $PrmLst['as']); // merge [val] fields in the path
+            $InternalPath = str_replace($TBS->_ChrVal, $Value, $PrmLst->as); // merge [val] fields in the path
         } else {
             // uniqueness by the name of the file, not its full path, this is a weakness
             // OpenXML does not support spaces and accents in internal file names.
@@ -1398,7 +1111,7 @@ class OpenTBSPlugin extends TBSZip
         }
 
         // actually add the picture inside the archive
-        if ($this->FileGetIdxAdd($InternalPath)===false) {
+        if ($this->archive->fileGetIdxAdd($InternalPath)===false) {
             $this->fileAdd($InternalPath, $ExternalPath, TBSZip::TBSZIP_FILE, true);
         }
 
@@ -1638,7 +1351,7 @@ class OpenTBSPlugin extends TBSZip
         return $PrmVal;
     }
 
-    function TbsDeleteColumns(&$Txt, $Value, $PrmLst, $PosBeg, $PosEnd)
+    function TbsDeleteColumns(&$Txt, $Value, PicVariable $PrmLst, $PosBeg, $PosEnd)
     {
 
         $ext = $this->ExtEquiv;
@@ -1663,7 +1376,7 @@ class OpenTBSPlugin extends TBSZip
         }
 
         // Retreive the list of columns id to delete
-        $col_lst = $this->TbsMergeVarFields($PrmLst['colnum'], $Value);
+        $col_lst = $this->TbsMergeVarFields($PrmLst->colnum, $Value);
         $col_lst = str_replace(' ', '', $col_lst);
         if (($col_lst=='') || ($col_lst=='0')) {
             return false; // there is nothing to do
@@ -1675,8 +1388,8 @@ class OpenTBSPlugin extends TBSZip
         }
 
         // Add columns by shifting
-        if (isset($PrmLst['colshift'])) {
-            $col_shift = intval($this->TbsMergeVarFields($PrmLst['colshift'], $Value));
+        if ($PrmLst->colshift) {
+            $col_shift = intval($this->TbsMergeVarFields($PrmLst->colshift, $Value));
             if ($col_shift<>0) {
                 $step = ($col_shift>0) ? -1 : +1;
                 for ($s = $col_shift; $s<>0; $s = $s + $step) {
@@ -2320,99 +2033,6 @@ class OpenTBSPlugin extends TBSZip
     }
     
     /**
-     * Return the path of file $FullPath relatively to the path of file $RelativeTo.
-     * For example:
-     * 'dir1/dir2/file_a.xml' relatively to 'dir1/dir2/file_b.xml' is 'file_a.xml'
-     * 'dir1/file_a.xml' relatively to 'dir1/dir2/file_b.xml' is '../file_a.xml'
-     */
-    function OpenXML_GetRelativePath($FullPath, $RelativeTo)
-    {
-        
-        $fp = explode('/', $FullPath);
-        $fp_file = array_pop($fp);
-        $fp_max = count($fp)-1;
-        
-        $rt = explode('/', $RelativeTo);
-        $rt_file = array_pop($rt);
-        $rt_max = count($rt)-1;
-        
-        // First different item
-        $min = min($fp_max, $rt_max);
-        while (($min>=0) && ($fp[0]==$rt[0])) {
-            $min--;
-            array_shift($fp);
-            array_shift($rt);
-        }
-
-        $path  = str_repeat('../', count($rt));
-        $path .= implode('/', $fp);
-        if (count($fp)>0) {
-            $path .= '/';
-        }
-        $path .= $fp_file;
-        
-        return $path;
-    }
-
-    /**
-     * Return the absolute path of file $RelativePath which is relative to the full path $RelativeTo.
-     * For example:
-     * '../file_a.xml' relatively to 'dir1/dir2/file_b.xml' is 'dir1/file_a.xml'
-     */
-    function OpenXML_GetAbsolutePath($RelativePath, $RelativeTo)
-    {
-        
-        // May be reltaive to the root
-        if (substr($RelativePath, 0, 1) == '/') {
-            return substr($RelativePath, 1);
-        }
-
-        $rp = explode('/', $RelativePath);
-        $rt = explode('/', $RelativeTo);
-        
-        // Get off the file name;
-        array_pop($rt);
-        
-        while ($rp[0] == '..') {
-            array_pop($rt);
-            array_shift($rp);
-        }
-        
-        while ($rp[0] == '.') {
-            array_shift($rp);
-        }
-        
-        $path = array_merge($rt, $rp);
-        $path = implode('/', $path);
-        
-        return $path;
-    }
-    
-    function OpenXML_GetMediaRelativeToCurrent()
-    {
-        $file = $this->TBS->OtbsCurrFile;
-        $x = explode('/', $file);
-        $dir = $x[0] . '/media';
-        return $this->OpenXML_GetRelativePath($dir, $file);
-    }
-
-    /**
-     * Return the absolute internal path of a target for a given Rid used in the current file.
-     */
-    function OpenXML_GetInternalPicPath($Rid)
-    {
-        // $this->OpenXML_CTypesPrepareExt($InternalPicPath, '');
-        $TargetDir = $this->OpenXML_GetMediaRelativeToCurrent();
-        $o = $this->OpenXML_Rels_GetObj($this->TBS->OtbsCurrFile, $TargetDir);
-        if (isset($o->TargetLst[$Rid])) {
-            $x = $o->TargetLst[$Rid]; // relative path
-            return $this->OpenXML_GetAbsolutePath($x, $this->TBS->OtbsCurrFile);
-        } else {
-            return false;
-        }
-    }
-    
-    /**
      * Delete an XML file in the OpenXML archive.
      * The file is delete from the declaration file [Content_Types].xml and from the relationships of the specified files.
      * @param {string} $FullPath The full path of the file to delete.
@@ -2435,7 +2055,7 @@ class OpenTBSPlugin extends TBSZip
         // Delete the relationships
         $nb = 0;
         foreach ($RelatedTo as $file) {
-            $target = $this->OpenXML_GetRelativePath($FullPath, $file);
+            $target = PathFinder::getRelativePath($FullPath, $file);
             $att = 'Target="' . $target . '"';
             if ($this->OpenXML_Rels_DeleteRel($file, $att)) {
                 $nb++;
@@ -2443,16 +2063,6 @@ class OpenTBSPlugin extends TBSZip
         }
         
         return $nb;
-    }
-
-    /**
-     * Return the path of the Rel file in the archive for a given XML document.
-     * @param $DocPath      Full path of the sub-file in the archive
-     */
-    function OpenXML_Rels_GetPath($DocPath)
-    {
-        $DocName = basename($DocPath);
-        return str_replace($DocName, '_rels/'.$DocName.'.rels', $DocPath);
     }
 
     /**
@@ -2466,7 +2076,7 @@ class OpenTBSPlugin extends TBSZip
     function OpenXML_Rels_DeleteRel($DocPath, $AttExpr, $ReturnAttLst = false)
     {
     
-        $RelsPath = $this->OpenXML_Rels_GetPath($DocPath);
+        $RelsPath = PathFinder::relsGetPath($DocPath);
         $idx = $this->FileGetIdx($RelsPath);
         if ($idx===false) {
             $this->raiseError("Cannot edit target in '$RelsPath' because the file is not found.");
@@ -2490,88 +2100,6 @@ class OpenTBSPlugin extends TBSZip
         }
     }
 
-    /**
-     * Return an object that represents the informations of an .rels file, but for optimization, targets are scanned only for asked directories.
-     * The result is stored in a cache so that a second call will not compute again.
-     * The function stores Rids of files existing in a the $TargetPrefix directory of the archive (image, ...).
-     * @param $DocPath      Full path of the sub-file in the archive
-     * @param $TargetPrefix Prefix of the 'Target' attribute. For example $TargetPrefix='../drawings/'
-     */
-    function OpenXML_Rels_GetObj($DocPath, $TargetPrefix)
-    {
-
-        if ($this->OpenXmlRid===false) {
-            $this->OpenXmlRid = array();
-        }
-
-        // Create the object if it does not exist yet
-        if (!isset($this->OpenXmlRid[$DocPath])) {
-            $o = (object) null;
-            $o->RidLst = array();    // Current Rids in the template ($Target=>$Rid)
-            $o->TargetLst = array(); // Current Targets in the template ($Rid=>$Target)
-            $o->RidNew = array();    // New Rids to add at the end of the merge
-            $o->DirLst = array();    // Processed target dir
-            $o->ChartLst = false;    // Chart list, computed in another method
-
-            $o->FicPath = $this->OpenXML_Rels_GetPath($DocPath);
-
-            $FicIdx = $this->FileGetIdx($o->FicPath);
-            if ($FicIdx===false) {
-                $o->FicType = 1;
-                $Txt = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>';
-            } else {
-                $o->FicIdx = $FicIdx;
-                $o->FicType = 0;
-                $Txt = $this->FileRead($FicIdx, true);
-            }
-            $o->FicTxt = $Txt;
-            $o->ParentIdx = $this->FileGetIdx($DocPath);
-
-            $this->OpenXmlRid[$DocPath] = &$o;
-        } else {
-            $o = &$this->OpenXmlRid[$DocPath];
-            $Txt = &$o->FicTxt;
-        }
-
-        // Feed the Rid and Target lists for the asked directory
-        if (!isset($o->DirLst[$TargetPrefix])) {
-            $o->DirLst[$TargetPrefix] = true;
-
-            // read existing Rid in the file
-            $zTarget = ' Target="'.$TargetPrefix;
-            $zId  = ' Id="';
-            $p = -1;
-            while (($p = strpos($Txt, $zTarget, $p+1))!==false) {
-                // Get the target name
-                $p1 = $p + strlen($zTarget);
-                $p2 = strpos($Txt, '"', $p1);
-                if ($p2===false) {
-                    return $this->raiseError("(OpenXML) end of attribute Target not found in position ".$p1." of sub-file ".$o->FicPath);
-                }
-                $TargetEnd = substr($Txt, $p1, $p2 -$p1);
-                $Target = $TargetPrefix.$TargetEnd;
-                // Get the Id
-                $p1 = strrpos(substr($Txt, 0, $p), '<');
-                if ($p1===false) {
-                    return $this->raiseError("(OpenXML) beginning of tag not found in position ".$p." of sub-file ".$o->FicPath);
-                }
-                $p1 = strpos($Txt, $zId, $p1);
-                if ($p1!==false) {
-                    $p1 = $p1 + strlen($zId);
-                    $p2 = strpos($Txt, '"', $p1);
-                    if ($p2===false) {
-                        return $this->raiseError("(OpenXML) end of attribute Id not found in position ".$p1." of sub-file ".$o->FicPath);
-                    }
-                    $Rid = substr($Txt, $p1, $p2 - $p1);
-                    $o->RidLst[$Target] = $Rid;
-                    $o->TargetLst[$Rid] = $Target;
-                }
-            }
-        }
-
-        return $o;
-    }
-
     /*
     * Add a new Rid in the file in the Rels file. Return the Rid.
     * Rels files are attached to XML files and are listing, and gives all rids and their corresponding targets used in the XML file.
@@ -2579,7 +2107,7 @@ class OpenTBSPlugin extends TBSZip
     function OpenXML_Rels_AddNewRid($DocPath, $TargetDir, $FileName)
     {
 
-        $o = $this->OpenXML_Rels_GetObj($DocPath, $TargetDir);
+        $o = RelsDataFinder::createDataCollectionObject($DocPath, $TargetDir, $this->OpenXmlRid, $this->archive);
 
         $Target = $TargetDir.$FileName;
 
@@ -2606,7 +2134,7 @@ class OpenTBSPlugin extends TBSZip
                 // search position for insertion
                 $p = strpos($o->FicTxt, '</Relationships>');
                 if ($p===false) {
-                    return $this->raiseError("(OpenXML) closing tag </Relationships> not found in subfile ".$o->FicPath);
+                    throw new OfficeTemplateEngineException("(OpenXML) closing tag </Relationships> not found in subfile ".$o->FicPath);
                 }
 
                 // build the string to insert
@@ -3117,7 +2645,7 @@ class OpenTBSPlugin extends TBSZip
 
         $file = $this->archive->CdFileLst->get($idx)['v_name'];
         $relative = (substr_count($file, '/')==1) ? '' : '../';
-        $o = $this->OpenXML_Rels_GetObj($file, $relative.'charts/');
+        $o = RelsDataFinder::createDataCollectionObject($file, $relative.'charts/', $this->OpenXmlRid, $this->archive);
 
         if ($o->ChartLst===false) {
             if ($Txt===false) {
@@ -3184,7 +2712,7 @@ class OpenTBSPlugin extends TBSZip
                     $res = $this->OpenXML_Rels_DeleteRel($doc, $att, array('Target', 'TargetMode'));
                     // Delete the target file if embedded
                     if ($res && ($res['TargetMode'] != 'External')) {
-                        $file = $this->OpenXML_GetAbsolutePath($res['Target'], $doc);
+                        $file = PathFinder::getAbsolutePath($res['Target'], $doc);
                         $this->FileReplace($file, false);
                     }
                 }
@@ -3422,7 +2950,7 @@ class OpenTBSPlugin extends TBSZip
         $compat_limit_num = 1048576 - 10000;
         while (($p=TBSEngine::f_Xml_FindTagStart($Txt, $Tag, true, $p, true, true))!==false) {
             $Loc->PrmPos = array();
-            $Loc->PrmLst = array();
+            $Loc->PrmLst = new PicVariable();
             $p2 = $p + $tag_len + 2; // count the char '<' before and the char ' ' after
             $PosEnd = strpos($Txt, '>', $p2);
             TBSEngine::f_Loc_PrmRead($Txt, $p2, true, '\'"', '<', '>', $Loc, $PosEnd, true); // read parameters
@@ -3823,9 +3351,6 @@ class OpenTBSPlugin extends TBSZip
         // Retrieve Sheet files
         $idx = $this->FileGetIdx('xl/_rels/workbook.xml.rels');
         $Txt = $this->FileRead($idx);
-        if ($Txt===false) {
-            return false;
-        }
 
         $p = 0;
         while ($loc=TBSXmlLoc::FindStartTag($Txt, 'Relationship', $p, true)) {
@@ -3991,7 +3516,7 @@ class OpenTBSPlugin extends TBSZip
 
         $dir = '../drawings/';
         $dir_len = strlen($dir);
-        $o = $this->OpenXML_Rels_GetObj($this->TBS->OtbsCurrFile, $dir);
+        $o = RelsDataFinder::createDataCollectionObject($this->TBS->OtbsCurrFile, $dir, $this->OpenXmlRid, $this->archive);
         foreach ($o->TargetLst as $t) {
             if ((substr($t, 0, $dir_len)===$dir) && (substr($t, -4)==='.xml')) {
                 $lst[] = 'xl/drawings/'.substr($t, $dir_len);
@@ -4022,12 +3547,9 @@ class OpenTBSPlugin extends TBSZip
         $PresFile = 'ppt/presentation.xml';
 
         $prefix = ($Master) ? 'slideMasters/' : 'slides/';
-        $o = $this->OpenXML_Rels_GetObj('ppt/presentation.xml', $prefix);
+        $o = RelsDataFinder::createDataCollectionObject('ppt/presentation.xml', $prefix, $this->OpenXmlRid, $this->archive);
 
         $Txt = $this->FileRead($PresFile);
-        if ($Txt===false) {
-            return false;
-        }
 
         $p = 0;
         $i = 0;
@@ -4125,7 +3647,7 @@ class OpenTBSPlugin extends TBSZip
 
         $xml_file = 'ppt/presentation.xml';
         $xml_idx = $this->FileGetIdx($xml_file);
-        $rel_idx = $this->FileGetIdx($this->OpenXML_Rels_GetPath($xml_file));
+        $rel_idx = $this->FileGetIdx(PathFinder::relsGetPath($xml_file));
 
         $xml_txt = $this->TbsStoreGet($xml_idx, 'Slide Delete and Display / XML');
         $rel_txt = $this->TbsStoreGet($rel_idx, 'Slide Delete and Display / REL');
@@ -4147,7 +3669,7 @@ class OpenTBSPlugin extends TBSZip
                 }
 
                 $del_lst[] = $s['file'];
-                $del_lst[] = $this->OpenXML_Rels_GetPath($s['file']);
+                $del_lst[] = PathFinder::relsGetPath($s['file']);
                 $del_lst2[] = basename($s['file']);
             } else {
                 $first_kept = basename($s['file']);
@@ -4399,7 +3921,7 @@ class OpenTBSPlugin extends TBSZip
 
         $places = array('header', 'footer');
         $files = array();
-        $rels = $this->OpenXML_Rels_GetObj('word/document.xml', '');
+        $rels = RelsDataFinder::createDataCollectionObject('word/document.xml', '', $this->OpenXmlRid, $this->archive);
         
         foreach ($places as $place) {
             $p = 0;

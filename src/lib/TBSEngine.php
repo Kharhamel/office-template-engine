@@ -17,6 +17,7 @@
 namespace OfficeTemplateEngine\lib;
 
 use OfficeTemplateEngine\Exceptions\OfficeTemplateEngineException;
+use OfficeTemplateEngine\lib\PicturesManipulation\PicVariable;
 
 class TBSEngine
 {
@@ -71,6 +72,7 @@ class TBSEngine
      * @var array
      */
     private $_UserFctLst;
+    public $OtbsCurrFile;
 
     function __construct($Options = null, $VarPrefix = '', $FctPrefix = '')
     {
@@ -81,7 +83,7 @@ class TBSEngine
         }
 
     // Set options
-        $this->VarRef =& $GLOBALS; //todo improve this
+        $this->VarRef =[]; //todo improve this
         if (is_array($Options)) {
             $this->SetOption($Options);
         }
@@ -291,16 +293,14 @@ class TBSEngine
             return $GLOBALS['_TBS_BlockAlias'];
         }
         return $this->throwAlert('with GetOption() method', 'option \''.$o.'\' is not supported.');
-        ;
     }
 
     public function ResetVarRef($ToGlobal)
     {
         if ($ToGlobal) {
-            $this->VarRef = &$GLOBALS;
+            $this->VarRef = [];
         } else {
-            $x = array();
-            $this->VarRef = &$x;
+            $this->VarRef = [];
         }
     }
 
@@ -498,7 +498,7 @@ class TBSEngine
             }
             while ($Loc = $this->meth_Locator_FindTbs($this->Source, $Name, $PosBeg, '.')) {
                 if ($Prm) {
-                    $Loc->PrmLst = array_merge($DefaultPrm, $Loc->PrmLst);
+                    $Loc->PrmLst = new PicVariable(array_merge($DefaultPrm, $Loc->PrmLst));
                 }
                 // Apply user function
                 if ($IsUserFct) {
