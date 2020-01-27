@@ -498,8 +498,11 @@ class TempArchive
 
         return $nbr;
     }
-    
-    public function fileReplace($NameOrIdx, $Data, $DataType = TBSZip::TBSZIP_STRING, $Compress = true)
+
+    /**
+     * @param string|int $NameOrIdx
+     */
+    public function fileReplace($NameOrIdx, string $Data, $DataType = TBSZip::TBSZIP_STRING, $Compress = true)
     {
         // Store replacement information.
 
