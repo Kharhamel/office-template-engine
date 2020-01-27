@@ -18,7 +18,7 @@ class PicturePreparer
      * Found the relevant attribute for the image source, and then add parameter 'att' to the TBS locator.
      * @param RelsDataCollection[] $OpenXmlRid
      */
-    public static function TbsPicPrepare(&$Txt, &$Loc, bool $IsCaching, TempArchive $archive, array &$OpenXmlRid, string $ExtType, array $ExtInfo, string $OtbsCurrFile): void
+    public static function picPrepare(&$Txt, &$Loc, bool $IsCaching, TempArchive $archive, array &$OpenXmlRid, string $ExtType, array $ExtInfo, string $OtbsCurrFile): void
     {
 
         if (isset($Loc->PrmLst->pic_prepared)) {

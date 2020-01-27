@@ -41,7 +41,7 @@ class TBSZip
      */
     private $LastReadIdx;
     /**
-     * @var string
+     * @var int
      */
     private $OutputMode;
     private $OutputHandle;
@@ -93,7 +93,7 @@ class TBSZip
 
     /**
      * Return the state of the file.
-     * @return {string} 'u'=unchanged, 'm'=modified, 'd'=deleted, 'a'=added, false=unknown
+     * return {string} 'u'=unchanged, 'm'=modified, 'd'=deleted, 'a'=added, false=unknown
      */
     function FileGetState($NameOrIdx)
     {
